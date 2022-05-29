@@ -1,0 +1,16 @@
+﻿<Field Display="@Display">
+    <FieldLabel>@Text</FieldLabel>
+    @ChildContent
+</Field>
+
+@code {
+
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public IFluentDisplay Display { get; set; } = Blazorise.Display.Always;
+}

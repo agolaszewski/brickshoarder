@@ -12,7 +12,7 @@ namespace BricksHoarder.Redis
 
             services.AddSingleton(b =>
             {
-                var redis = b.GetService<ConnectionMultiplexer>();
+                var redis = b.GetRequiredService<ConnectionMultiplexer>();
                 return redis.GetDatabase();
             });
 
