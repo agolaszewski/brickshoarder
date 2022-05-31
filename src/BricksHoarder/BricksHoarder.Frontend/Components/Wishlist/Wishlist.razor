@@ -3,7 +3,10 @@
     <Column>
         <Card Margin="Margin.Is4.OnY">
             <CardHeader>
-                <CardTitle>Wish</CardTitle>
+                <Div Flex="Flex.JustifyContent.Between">
+                    <Span>Wish list</Span>
+                    <Button Color="Color.Primary" Clicked="OnAddButtonClicked"><Icon Name="IconName.Add"/></Button>
+                </Div>
             </CardHeader>
             <CardBody>
                 <DataGrid TItem="Details" Data="data">
@@ -63,8 +66,11 @@
         </Card>
     </Column>
 </Row>
+<AddToWishListModal @bind-Visible="addToWishListModalVisible"></AddToWishListModal>
 
 @code {
+
+    private bool addToWishListModalVisible;
 
     public class Details
     {
@@ -80,5 +86,10 @@
         data.Add(new Details() { Id = "1231231"}); 
         data.Add(new Details() { Id = "1231231"}); 
         await base.OnInitializedAsync();
+    }
+
+    public void OnAddButtonClicked()
+    {
+        addToWishListModalVisible = true;
     }
 }
