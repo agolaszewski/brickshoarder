@@ -31,8 +31,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Redis", "Bric
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.EventStore", "BricksHoarder.EventStore\BricksHoarder.EventStore.csproj", "{AAA8B6D6-2A60-4449-B569-FA0187C53002}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Frontend", "BricksHoarder.Frontend\BricksHoarder.Frontend.csproj", "{9B5CA00C-C9F7-4BAB-9DEC-28283B4FF1A2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,10 +85,6 @@ Global
 		{AAA8B6D6-2A60-4449-B569-FA0187C53002}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAA8B6D6-2A60-4449-B569-FA0187C53002}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAA8B6D6-2A60-4449-B569-FA0187C53002}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9B5CA00C-C9F7-4BAB-9DEC-28283B4FF1A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B5CA00C-C9F7-4BAB-9DEC-28283B4FF1A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B5CA00C-C9F7-4BAB-9DEC-28283B4FF1A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B5CA00C-C9F7-4BAB-9DEC-28283B4FF1A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,7 +97,6 @@ Global
 		{EB9A23C3-3870-46F2-8737-12B144C1B391} = {11B2C7BC-7DA5-4CF7-9E27-3B38D05357FC}
 		{30C0772F-8AC8-470C-A452-6D049E2CDDB1} = {11B2C7BC-7DA5-4CF7-9E27-3B38D05357FC}
 		{AAA8B6D6-2A60-4449-B569-FA0187C53002} = {11B2C7BC-7DA5-4CF7-9E27-3B38D05357FC}
-		{9B5CA00C-C9F7-4BAB-9DEC-28283B4FF1A2} = {662C9B86-7C3B-449F-96B4-B8503D7FFBBF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E820C2F3-08C8-491E-84A1-4E46C6D0C013}
