@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Newtonsoft.Json;
 
-namespace KalkulatorKredytuHipotecznego.Store.States
+namespace BricksHoarder.Frontend.Store.States
 {
     public record BaseState<TState>
     {

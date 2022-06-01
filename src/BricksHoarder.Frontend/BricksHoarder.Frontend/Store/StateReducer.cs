@@ -1,7 +1,4 @@
-﻿using Fluxor;
-using KalkulatorKredytuHipotecznego.Store.States;
-
-namespace KalkulatorKredytuHipotecznego.Store
+﻿namespace BricksHoarder.Frontend.Store
 {
     //public class StateReducer : Reducer<CalculationState, StateChanged>
     //{

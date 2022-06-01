@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Frontend.Providers;
+﻿using BricksHoarder.Abstraction;
+using BricksHoarder.Abstraction.WishListService;
 
 namespace BricksHoarder.Frontend.Store.Features.WishListFeature.Actions
 {
