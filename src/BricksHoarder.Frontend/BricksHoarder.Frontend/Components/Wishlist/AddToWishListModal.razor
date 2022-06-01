@@ -1,0 +1,60 @@
+﻿@using Fluxor
+@using BricksHoarder.Abstraction
+@using BricksHoarder.Abstraction.WishListService
+@using BricksHoarder.Frontend.Store.Features.WishListFeature.Actions
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<Modal @bind-Visible="@Visible" Animated="true" AnimationDuration="150">
+    <ModalContent Size="ModalSize.Default" Centered="true">
+        <ModalHeader>
+            <ModalTitle>
+                <Icon Name="IconName.Add" />
+                Add to wish list
+            </ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                <TextEdit Autofocus Placeholder="Set number" @bind-Text="setNumber"  />
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="OnCancelButtonClicked">Cancel</Button>
+            <Button Color="Color.Primary" Clicked="OnAddButtonClicked">Add</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+
+@code{
+
+    [Inject]
+    public IDispatcher Dispatcher { get; set; }
+
+    [Inject]
+    public IWishListService WishListService { get; set; }
+
+    [Parameter]
+    public bool Visible { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> VisibleChanged { get; set; }
+
+
+    private string setNumber { get; set; }
+
+    public Task OnCancelButtonClicked()
+    {
+        Visible = false;
+        return VisibleChanged.InvokeAsync(Visible);
+    }
+
+    public async Task OnAddButtonClicked()
+    {
+        await WishListService.AddAsync(setNumber);
+        Dispatcher.Dispatch(new ItemAddedToWishList(setNumber));
+
+        Visible = false;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+}

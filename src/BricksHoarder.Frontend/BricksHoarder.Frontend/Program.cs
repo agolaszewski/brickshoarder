@@ -1,6 +1,8 @@
+using Blazored.LocalStorage;
 using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using BricksHoarder.Frontend.Services;
 using Fluxor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -36,6 +38,9 @@ namespace BricksHoarder.Frontend
             });
 
             builder.RootComponents.Add<App>("#app");
+            builder.Services.AddServices();
+
+            builder.Services.AddBlazoredLocalStorage();
 
             var host = builder.Build();
 

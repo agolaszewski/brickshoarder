@@ -1,5 +1,5 @@
-﻿using BricksHoarder.Frontend.Providers;
-using KalkulatorKredytuHipotecznego.Store.States;
+﻿using BricksHoarder.Abstraction;
+using BricksHoarder.Abstraction.WishListService;
 
 namespace BricksHoarder.Frontend.Store.States
 {

@@ -1,9 +1,9 @@
-﻿using BricksHoarder.Frontend.Providers;
+﻿using BricksHoarder.Abstraction;
+using BricksHoarder.Abstraction.WishListService;
 using BricksHoarder.Frontend.Store.Features.WishListFeature.Actions;
 using BricksHoarder.Frontend.Store.States;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using KalkulatorKredytuHipotecznego.Store.States;
 using Microsoft.AspNetCore.Components;
 
 namespace BricksHoarder.Frontend.Pages.Main
@@ -16,16 +16,18 @@ namespace BricksHoarder.Frontend.Pages.Main
         [Inject]
         private IDispatcher Dispatcher { get; set; }
 
+        [Inject]
+        public IWishListService WishListService { get; set; }
+
         protected override void OnParametersSet()
         {
             BaseState<WishListState>.Dispatcher = Dispatcher;
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-           var provider = new WishListDataProvider();
-           var wishList = provider.GetWishListDetails();
-           Dispatcher.Dispatch(new WishListDetailsLoaded(wishList));
+            var wishList = await WishListService.GetAsync();
+            Dispatcher.Dispatch(new WishListDetailsLoaded(wishList));
         }
     }
 }

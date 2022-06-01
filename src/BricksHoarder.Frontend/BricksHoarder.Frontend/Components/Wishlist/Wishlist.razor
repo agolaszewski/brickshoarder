@@ -1,4 +1,6 @@
 ﻿@page "/tests/datagrid/data/in-memory"
+@using BricksHoarder.Abstraction
+@using BricksHoarder.Abstraction.WishListService
 <Row>
     <Column>
         <Card Margin="Margin.Is4.OnY">
@@ -9,9 +11,9 @@
                 </Div>
             </CardHeader>
             <CardBody>
-                <DataGrid TItem="Details" Data="data">
+                <DataGrid TItem="WishListDetails" Data="Items" PageSize="100">
                     <DataGridColumns>
-                        <DataGridColumn TItem="Details" Field="@nameof(Details.Id)" Caption="First Name"/>
+                        <DataGridColumn TItem="WishListDetails" Field="@nameof(WishListDetails.SetNumber)" Caption="Set Number"/>
                     </DataGridColumns>
                 </DataGrid>
                 @*<DataGrid TItem="Employee"
@@ -72,21 +74,8 @@
 
     private bool addToWishListModalVisible;
 
-    public class Details
-    {
-        public string Id { get; set; }
-    }
-
-    List<Details> data = new List<Details>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        data.Add(new Details() { Id = "1231231"}); 
-        data.Add(new Details() { Id = "1231231"}); 
-        data.Add(new Details() { Id = "1231231"}); 
-        data.Add(new Details() { Id = "1231231"}); 
-        await base.OnInitializedAsync();
-    }
+    [Parameter]
+    public IReadOnlyList<WishListDetails> Items { get; set; } 
 
     public void OnAddButtonClicked()
     {
