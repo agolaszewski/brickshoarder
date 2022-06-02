@@ -11,10 +11,31 @@
                 </Div>
             </CardHeader>
             <CardBody>
-                <DataGrid TItem="WishListDetails" Data="Items" PageSize="100">
+                <DataGrid TItem="WishListDetails" Data="Items" PageSize="100" ShowPager Sortable="false">
                     <DataGridColumns>
-                        <DataGridColumn TItem="WishListDetails" Field="@nameof(WishListDetails.SetNumber)" Caption="Set Number"/>
+                        <DataGridColumn TItem="WishListDetails" Field="@nameof(WishListDetails.SetNumber)" Caption="Set Number" Filterable="true"/>
+                        <DataGridColumn TItem="WishListDetails" Field="@nameof(WishListDetails.LegoUrl)" Caption="Lego">
+                            <DisplayTemplate>
+                                <Anchor To="@context.LegoUrl" Target="Target.Blank">Link</Anchor>
+                            </DisplayTemplate>
+                        </DataGridColumn>
+                        <DataGridColumn TItem="WishListDetails" Field="@nameof(WishListDetails.PromoKlockiUrl)" Caption="PromoKlocki">
+                            <DisplayTemplate>
+                                <Anchor To="@context.PromoKlockiUrl" Target="Target.Blank">Link</Anchor>
+                            </DisplayTemplate>
+                        </DataGridColumn>
+                        <DataGridColumn TItem="WishListDetails" Field="@nameof(WishListDetails.BrickEconomyUrl)" Caption="Brick Economy">
+                            <DisplayTemplate>
+                                <Anchor To="@context.BrickEconomyUrl" Target="Target.Blank">Link</Anchor>
+                            </DisplayTemplate>
+                        </DataGridColumn>
+                        <DataGridColumn TItem="WishListDetails" Field="@nameof(WishListDetails.OlxUrl)" Caption="Olx">
+                            <DisplayTemplate>
+                                <Anchor To="@context.OlxUrl" Target="Target.Blank">Link</Anchor>
+                            </DisplayTemplate>
+                        </DataGridColumn>
                     </DataGridColumns>
+
                 </DataGrid>
                 @*<DataGrid TItem="Employee"
                           Data="inMemoryData"
