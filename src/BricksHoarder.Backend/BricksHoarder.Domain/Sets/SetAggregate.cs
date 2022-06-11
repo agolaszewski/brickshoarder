@@ -34,12 +34,4 @@ namespace BricksHoarder.Domain.Sets
             LastModifiedDate = @event.LastModifiedDate;
         }
     }
-
-    public record ImagesCollection(Uri? Main, Uri? Fallback)
-    {
-        public Uri? Get()
-        {
-            return Main ?? Fallback;
-        }
-    }
 }
