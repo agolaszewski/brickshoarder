@@ -2,7 +2,7 @@
 using EventStore.Client;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace RealWorld.EventStore
+namespace BricksHoarder.EventStore
 {
     public static class ServiceCollectionExtensions
     {

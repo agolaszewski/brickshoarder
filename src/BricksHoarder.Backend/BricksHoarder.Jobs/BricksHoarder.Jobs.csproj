@@ -7,10 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BricksHoarder.Commands\BricksHoarder.Commands.csproj" />
-    <ProjectReference Include="..\BricksHoarder.Common.DDD\BricksHoarder.Common.DDD.csproj" />
+    <PackageReference Include="Rebrickable.Api" Version="3.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
-    <ProjectReference Include="..\BricksHoarder.Events\BricksHoarder.Events.csproj" />
   </ItemGroup>
 
 </Project>

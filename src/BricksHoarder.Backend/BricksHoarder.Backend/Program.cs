@@ -1,4 +1,4 @@
-namespace RealWorld.Backend
+namespace BricksHoarder.Backend
 {
     public class Program
     {

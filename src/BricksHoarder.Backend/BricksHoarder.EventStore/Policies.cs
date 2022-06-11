@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Polly;
+﻿using Polly;
 using StackExchange.Redis;
 
-namespace RealWorld.EventStore
+namespace BricksHoarder.EventStore
 {
     internal static class Policies
     {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 using AutoMapper;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
@@ -12,8 +9,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
 
-
-namespace RealWorld.Common.DDD.Aggregates
+namespace BricksHoarder.Common.DDD.Aggregates
 {
     public abstract class AggregateRoot<TAggregate> : IAggregateRoot
         where TAggregate : AggregateRoot<TAggregate>
@@ -28,7 +24,7 @@ namespace RealWorld.Common.DDD.Aggregates
 
         public long Version { get; set; }
 
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public bool ToDelete { get; set; }
 

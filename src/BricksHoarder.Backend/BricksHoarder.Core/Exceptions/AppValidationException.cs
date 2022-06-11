@@ -5,14 +5,14 @@ namespace BricksHoarder.Core.Exceptions
 {
     public class AppValidationException : ValidationException
     {
-        public AppValidationException(Guid aggregateId, IEnumerable<ValidationFailure> errors) : base(errors.ToList())
+        public AppValidationException(string aggregateId, IEnumerable<ValidationFailure> errors) : base(errors.ToList())
         {
             AggregateId = aggregateId;
         }
 
-        public Guid AggregateId { get; }
+        public string AggregateId { get; }
 
-        public AppValidationException(Guid aggregateId, string property, string message) : base(new List<ValidationFailure> { new ValidationFailure(property, message) })
+        public AppValidationException(string aggregateId, string property, string message) : base(new List<ValidationFailure> { new ValidationFailure(property, message) })
         {
         }
     }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
@@ -10,7 +6,6 @@ using BricksHoarder.Core.Exceptions;
 using BricksHoarder.Core.Specification;
 using BricksHoarder.Events;
 using EventStore.Client;
-using FluentValidation.Results;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
@@ -20,7 +15,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 using StreamPosition = EventStore.Client.StreamPosition;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
-namespace RealWorld.EventStore
+namespace BricksHoarder.EventStore
 {
     public class EventStoreAggregateStore : IAggregateStore
     {
@@ -44,7 +39,7 @@ namespace RealWorld.EventStore
             _publishEndpoint = publishEndpoint;
         }
 
-        public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid aggregateId) where TAggregate : class, IAggregateRoot, new()
+        public async Task<TAggregate> GetByIdAsync<TAggregate>(string aggregateId) where TAggregate : class, IAggregateRoot, new()
         {
             var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
             if (aggregate is null)
@@ -55,7 +50,7 @@ namespace RealWorld.EventStore
             return aggregate;
         }
 
-        public async Task<TAggregate> GetByIdAsync<TAggregate, TCommand>(Guid aggregateId, TCommand command) where TAggregate : class, IAggregateRoot, new() where TCommand : ICommand
+        public async Task<TAggregate> GetByIdAsync<TAggregate, TCommand>(string aggregateId, TCommand command) where TAggregate : class, IAggregateRoot, new() where TCommand : ICommand
         {
             var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
             if (aggregate is null)
@@ -182,10 +177,10 @@ namespace RealWorld.EventStore
             return JsonSerializer.Deserialize(json, Type.GetType((string)eventType));
         }
 
-        public Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(Guid aggregateId)
+        public Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId)
             where TAggregate : class, IAggregateRoot, new()
         {
-            return GetByIdOrDefaultAsync<TAggregate>(aggregateId.ToString(), int.MaxValue);
+            return GetByIdOrDefaultAsync<TAggregate>(aggregateId, int.MaxValue);
         }
 
         private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId, int version)

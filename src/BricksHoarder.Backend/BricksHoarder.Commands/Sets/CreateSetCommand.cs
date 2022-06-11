@@ -1,6 +1,6 @@
-﻿using BricksHoarder.Core.Events;
+﻿using BricksHoarder.Core.Commands;
 
-public record SetCreated : IEvent
+public record CreateSetCommand : ICommand
 {
     public string SetNumber { get; set; }
 

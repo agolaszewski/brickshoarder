@@ -6,7 +6,7 @@ namespace BricksHoarder.Core.Aggregates
     {
         IEnumerable<EventComposite> Events { get; }
 
-        Guid Id { get; set; }
+        string Id { get; set; }
 
         long Version { get; set; }
 
