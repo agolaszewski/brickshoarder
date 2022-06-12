@@ -15,6 +15,6 @@ public class SyncSetsJob : IJob<SyncSetsJobInput>
     public async Task Run(SyncSetsJobInput input)
     {
         var response = await _rebrickableClient.LegoSetsListAsync(page: input.PageNumber, page_size: 100, ordering: "year");
-        IReadOnlyList<Result> sets = response.Results.Where(set => set.NumParts > 0).ToList();
+        IReadOnlyList<Result> sets = response.Results.Where(set => set.NumParts > 0).ToList(); 
     }
 }
