@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using BricksHoarder.Cache.InMemory;
 using BricksHoarder.Marten;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.UserSecrets;
@@ -29,6 +30,9 @@ namespace BricksHoarder.Commands.Functional.Tests
 
                 return new RebrickableClient(httpClient);
             });
+            services.AddInMemoryCache();
+
+
             services.AddMartenEventStore(null);
         }
     }

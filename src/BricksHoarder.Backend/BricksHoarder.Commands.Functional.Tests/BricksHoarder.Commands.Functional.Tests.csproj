@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BricksHoarder.Cache.InMemory\BricksHoarder.Cache.InMemory.csproj" />
     <ProjectReference Include="..\BricksHoarder.Commands\BricksHoarder.Commands.csproj" />
     <ProjectReference Include="..\BricksHoarder.Marten\BricksHoarder.Marten.csproj" />
   </ItemGroup>
