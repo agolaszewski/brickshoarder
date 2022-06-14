@@ -11,9 +11,9 @@ namespace BricksHoarder.Commands.Functional.Tests
     {
         private readonly ICommandHandler<CreateSetCommand> _createSetCommandHandler;
 
-        public CommandsTests(ICommandHandler<CreateSetCommand> createSetCommandHandler)
+        public CommandsTests(/*ICommandHandler<CreateSetCommand> createSetCommandHandler*/)
         {
-            _createSetCommandHandler = createSetCommandHandler;
+            _createSetCommandHandler = null;
         }
 
         [Fact]

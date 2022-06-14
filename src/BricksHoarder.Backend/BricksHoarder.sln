@@ -41,11 +41,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Jobs.Runner",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Commands", "BricksHoarder.Commands\BricksHoarder.Commands.csproj", "{D1F4F0EF-3B7D-4636-89D0-2A6A512D1D94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricksHoarder.Marten", "BricksHoarder.Marten\BricksHoarder.Marten.csproj", "{1D8A62AF-5DEE-4CA9-A1FE-59F82CD4ED77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Marten", "BricksHoarder.Marten\BricksHoarder.Marten.csproj", "{1D8A62AF-5DEE-4CA9-A1FE-59F82CD4ED77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricksHoarder.Commands.Functional.Tests", "BricksHoarder.Commands.Functional.Tests\BricksHoarder.Commands.Functional.Tests.csproj", "{531DF7D5-C663-4653-B313-474F3C04D8B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Commands.Functional.Tests", "BricksHoarder.Commands.Functional.Tests\BricksHoarder.Commands.Functional.Tests.csproj", "{531DF7D5-C663-4653-B313-474F3C04D8B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricksHoarder.Cache.InMemory", "BricksHoarder.Cache.InMemory\BricksHoarder.Cache.InMemory.csproj", "{4C12FA37-640A-4475-8565-C08F03D96B0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Cache.InMemory", "BricksHoarder.Cache.InMemory\BricksHoarder.Cache.InMemory.csproj", "{4C12FA37-640A-4475-8565-C08F03D96B0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{944B1AEA-C5E7-4E64-BA3E-7325603F3B16}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,6 +127,10 @@ Global
 		{4C12FA37-640A-4475-8565-C08F03D96B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C12FA37-640A-4475-8565-C08F03D96B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C12FA37-640A-4475-8565-C08F03D96B0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{944B1AEA-C5E7-4E64-BA3E-7325603F3B16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{944B1AEA-C5E7-4E64-BA3E-7325603F3B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{944B1AEA-C5E7-4E64-BA3E-7325603F3B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{944B1AEA-C5E7-4E64-BA3E-7325603F3B16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

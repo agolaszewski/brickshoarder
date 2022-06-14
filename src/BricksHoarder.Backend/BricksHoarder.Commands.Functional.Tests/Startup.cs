@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using BricksHoarder.Cache.InMemory;
+﻿using BricksHoarder.Cache.InMemory;
+using BricksHoarder.Domain;
 using BricksHoarder.Marten;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using RebrickableApi;
+using System;
+using System.Net.Http;
 
 namespace BricksHoarder.Commands.Functional.Tests
 {
@@ -18,20 +12,16 @@ namespace BricksHoarder.Commands.Functional.Tests
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            var config = new ConfigurationBuilder()
-                .AddUserSecrets<Startup>()
-                .Build();
-
             services.AddSingleton<RebrickableClient>(_ =>
             {
                 var httpClient = new HttpClient();
                 httpClient.BaseAddress = new Uri("https://rebrickable.com");
-                httpClient.DefaultRequestHeaders.Add("Authorization", $"key {config["RebrickableApi:Key"]}");
+                httpClient.DefaultRequestHeaders.Add("Authorization", $"key x");
 
                 return new RebrickableClient(httpClient);
             });
             services.AddInMemoryCache();
-
+            services.AddDomain();
 
             services.AddMartenEventStore(null);
         }

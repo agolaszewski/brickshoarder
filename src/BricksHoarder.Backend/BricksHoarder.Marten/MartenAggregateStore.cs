@@ -21,13 +21,13 @@ namespace BricksHoarder.Marten
         public MartenAggregateStore(
             IDocumentStore eventStore,
             ICacheService cache,
-            IServiceProvider context,
-            IPublishEndpoint publishEndpoint)
+            IServiceProvider context
+            /*IPublishEndpoint publishEndpoint*/)
         {
             _eventStore = eventStore;
             _cache = cache;
             _context = context;
-            _publishEndpoint = publishEndpoint;
+            _publishEndpoint = null;
         }
 
         public async Task<TAggregate> GetByIdAsync<TAggregate>(string aggregateId)
