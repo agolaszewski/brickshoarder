@@ -1,7 +1,7 @@
 ﻿namespace BricksHoarder.Core.Jobs
 {
-    public interface IJob<TInput>
+    public interface IJob<in TInput>
     {
-
+        Task RunAsync(TInput input);
     }
 }

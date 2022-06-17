@@ -2,9 +2,11 @@
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Common;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Jobs;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
 using BricksHoarder.Helpers;
+using BricksHoarder.Jobs;
 using BricksHoarder.Marten;
 using BricksHoarder.RabbitMq;
 using MassTransit;
@@ -26,14 +28,17 @@ services.AddLogging(config =>
 
 services.AddSingleton<IRebrickableClient>(_ =>
 {
+    var configuration = new RebrickableCredentials(config);
     var httpClient = new HttpClient();
-    httpClient.BaseAddress = new Uri(config.Get("Rebrickable:Url"));
-    httpClient.DefaultRequestHeaders.Add("Authorization", $"key {config.Get("Rebrickable:Key")}");
+    httpClient.BaseAddress = configuration.Url;
+    httpClient.DefaultRequestHeaders.Add("Authorization", configuration.Key);
 
     return new RebrickableClient(httpClient);
 });
 services.AddInMemoryCache();
 services.AddDomain();
+services.AddJobs();
+
 services.AddAutoMapper(config =>
 {
     config.AddDomainProfiles();
@@ -47,9 +52,12 @@ var provider = services.BuildServiceProvider();
 var bus = provider.GetService<IBusControl>();
 await bus.StartAsync();
 
-var handler = provider.GetService<ICommandDispatcher>();
+var handler = provider.GetService<IJob<SyncSetsJobInput>>();
 
-await handler.DispatchAsync(new CreateSetCommand("000", "123", 2022, 1, 1, null, DateTime.Today));
+await handler.RunAsync(new SyncSetsJobInput()
+{
+    PageNumber = 1
+});
 
 while (true)
 {

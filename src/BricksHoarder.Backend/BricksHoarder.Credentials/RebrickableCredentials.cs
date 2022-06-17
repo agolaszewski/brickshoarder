@@ -7,12 +7,12 @@ namespace BricksHoarder.Credentials
     {
         public RebrickableCredentials(IConfiguration configuration)
         {
-            Url = configuration.Get("Rebrickable:Url");
+            Url = new Uri(configuration.Get("Rebrickable:Url"));
             Key = $"key {configuration.Get("Rebrickable:Key")}";
         }
 
         public string Key { get; }
 
-        public string Url { get; }
+        public Uri Url { get; }
     }
 }

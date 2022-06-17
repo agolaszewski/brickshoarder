@@ -115,7 +115,7 @@ namespace BricksHoarder.Marten
         private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId, int version)
             where TAggregate : class, IAggregateRoot, new()
         {
-            if (version <= 0)
+            if (version < 0)
             {
                 throw new InvalidOperationException("Cannot get version <= 0");
             }
