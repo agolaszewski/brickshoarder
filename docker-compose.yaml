@@ -19,3 +19,18 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: postgres@postgres.pl
       PGADMIN_DEFAULT_PASSWORD: postgres
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    volumes:
+      - BricksHoarder-data-rabbitmq:/var/lib/rabbitmq
+
+volumes:
+  BricksHoarder-data-rabbitmq:

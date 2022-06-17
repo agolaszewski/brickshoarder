@@ -21,8 +21,8 @@ namespace BricksHoarder.Marten
         public MartenAggregateStore(
             IDocumentStore eventStore,
             ICacheService cache,
-            IServiceProvider context
-            /*IPublishEndpoint publishEndpoint*/)
+            IServiceProvider context,
+            IPublishEndpoint publishEndpoint)
         {
             _eventStore = eventStore;
             _cache = cache;
@@ -72,7 +72,7 @@ namespace BricksHoarder.Marten
             var eventStoreOutcome = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(async () =>
             {
                 await using var session = _eventStore.OpenSession();
-                session.Events.Append(streamName, aggregate.Events);
+                session.Events.Append(streamName, aggregate.Events.Select(a => a.Event).ToList());
                 await session.SaveChangesAsync();
             });
 

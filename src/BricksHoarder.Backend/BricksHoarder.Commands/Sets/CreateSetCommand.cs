@@ -1,20 +1,8 @@
 ﻿using BricksHoarder.Core.Commands;
 
-public record CreateSetCommand : ICommand
+namespace BricksHoarder.Commands.Sets;
+
+public record CreateSetCommand(string SetNumber, string Name, int Year, int ThemeId, int NumberOfParts, Uri? ImageUrl, DateTime LastModifiedDate) : ICommand
 {
-    public string SetNumber { get; set; }
-
-    public string Name { get; set; }
-
-    public int Year { get; set; }
-
-    public int ThemeId { get; set; }
-
-    public int NumParts { get; set; }
-
-    public string SetImgUrl { get; set; }
-
-    public DateTime LastModifiedDate { get; set; }
-
     public Guid CorrelationId { get; set; }
 }

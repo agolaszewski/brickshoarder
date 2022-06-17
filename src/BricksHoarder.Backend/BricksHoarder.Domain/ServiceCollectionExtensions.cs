@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Core.Aggregates;
+﻿using AutoMapper;
+using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Core.Queries;
@@ -70,6 +71,13 @@ namespace BricksHoarder.Domain
                     .AddClasses(classes => classes.AssignableTo(typeof(IAggregateMap<>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
+        }
+
+        public static IMapperConfigurationExpression AddDomainProfiles(this IMapperConfigurationExpression @that)
+        {
+            var domainAssembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(assembly => assembly.GetName().Name == "BricksHoarder.Domain");
+            @that.AddMaps(domainAssembly);
+            return @that;
         }
     }
 }

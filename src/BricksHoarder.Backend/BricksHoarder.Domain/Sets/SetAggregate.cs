@@ -1,5 +1,7 @@
-﻿using BricksHoarder.Common.DDD.Aggregates;
+﻿using BricksHoarder.Commands.Sets;
+using BricksHoarder.Common.DDD.Aggregates;
 using BricksHoarder.Core.Aggregates;
+using BricksHoarder.Events;
 
 namespace BricksHoarder.Domain.Sets
 {
@@ -12,7 +14,7 @@ namespace BricksHoarder.Domain.Sets
 
         public int ThemeId { get; set; }
 
-        public int NumParts { get; set; }
+        public int NumberOfParts { get; set; }
 
         public ImagesCollection Images { get; set; }
 
@@ -29,8 +31,8 @@ namespace BricksHoarder.Domain.Sets
             Names.Add("en-US", @event.Name);
             Year = @event.Year;
             ThemeId = @event.ThemeId;
-            NumParts = @event.NumParts;
-            Images = new ImagesCollection(null, new Uri(@event.SetImgUrl));
+            NumberOfParts = @event.NumberOfParts;
+            Images = new ImagesCollection(null, @event.ImageUrl?.OriginalString);
             LastModifiedDate = @event.LastModifiedDate;
         }
     }
