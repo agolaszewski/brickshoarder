@@ -1,19 +1,17 @@
-﻿using BricksHoarder.Core.Jobs;
-using Microsoft.Extensions.DependencyInjection;
+﻿using MassTransit;
 
-namespace BricksHoarder.Domain
+namespace BricksHoarder.Jobs
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddJobs(this IServiceCollection services)
+        public static void AddJobsConsumers(this IBusRegistrationConfigurator busRegistrationConfigurator)
         {
-            var jobsAssembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(assembly => assembly.GetName().Name == "BricksHoarder.Jobs");
+            busRegistrationConfigurator.AddConsumer<SyncSetsConsumer>();
+        }
 
-            services.Scan(scan =>
-                scan.FromAssemblies(jobsAssembly!)
-                    .AddClasses(classes => classes.AssignableTo(typeof(IJob<>)))
-                    .AsImplementedInterfaces().WithTransientLifetime()
-            );
+        public static void UseJobsConsumers(this IReceiveEndpointConfigurator receiveEndpointConfigurator, IBusRegistrationContext busRegistrationContext)
+        {
+            receiveEndpointConfigurator.ConfigureConsumer<SyncSetsConsumer>(busRegistrationContext);
         }
     }
 }

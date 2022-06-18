@@ -38,5 +38,15 @@ namespace BricksHoarder.Kafka
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Guid> ScheduleDispatchAsync<TCommand>(TCommand command, DateTime when) where TCommand : class, ICommand
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Guid> ScheduleDispatchAsync<TCommand>(TCommand command, TimeSpan @from) where TCommand : class, ICommand
+        {
+            throw new NotImplementedException();
+        }
     }
 }

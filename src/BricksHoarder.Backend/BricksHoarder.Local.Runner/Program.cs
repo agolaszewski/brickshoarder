@@ -1,11 +1,8 @@
 ﻿using BricksHoarder.Cache.InMemory;
-using BricksHoarder.Commands.Sets;
 using BricksHoarder.Common;
 using BricksHoarder.Core.Commands;
-using BricksHoarder.Core.Jobs;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
-using BricksHoarder.Helpers;
 using BricksHoarder.Jobs;
 using BricksHoarder.Marten;
 using BricksHoarder.RabbitMq;
@@ -37,7 +34,6 @@ services.AddSingleton<IRebrickableClient>(_ =>
 });
 services.AddInMemoryCache();
 services.AddDomain();
-services.AddJobs();
 
 services.AddAutoMapper(config =>
 {
@@ -45,21 +41,20 @@ services.AddAutoMapper(config =>
 });
 
 services.AddMartenEventStore(new PostgresCredentials(config, "Marten"));
-services.AddDispatcher(new RabbitMqCredentials(config));
 services.CommonServices();
+services.AddRabbitMq(new RabbitMqCredentials(config));
 
 var provider = services.BuildServiceProvider();
 var bus = provider.GetService<IBusControl>();
 await bus.StartAsync();
 
-var handler = provider.GetService<IJob<SyncSetsJobInput>>();
-
-await handler.RunAsync(new SyncSetsJobInput()
+var dispatcher = provider.GetService<ICommandDispatcher>();
+await dispatcher!.DispatchAsync(new SyncSetsCommand()
 {
+    CorrelationId = Guid.Empty,
     PageNumber = 1
 });
 
 while (true)
 {
-    
 }

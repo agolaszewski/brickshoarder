@@ -106,21 +106,27 @@ namespace BricksHoarder.Marten
             throw new NotImplementedException();
         }
 
+        public async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>()
+            where TAggregate : class, IAggregateRoot, new()
+        {
+            var streamName = typeof(TAggregate).Name;
+            return await GetByIdOrDefaultAsync<TAggregate>(streamName, 0);
+        }
+
         public async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId)
             where TAggregate : class, IAggregateRoot, new()
         {
-            return await GetByIdOrDefaultAsync<TAggregate>(aggregateId, 0);
+            var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
+            return await GetByIdOrDefaultAsync<TAggregate>(streamName, 0);
         }
 
-        private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId, int version)
+        private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string streamName, int version)
             where TAggregate : class, IAggregateRoot, new()
         {
             if (version < 0)
             {
                 throw new InvalidOperationException("Cannot get version <= 0");
             }
-
-            var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
 
             TAggregate aggregate = new TAggregate
             {
@@ -136,7 +142,7 @@ namespace BricksHoarder.Marten
             long sliceStart = aggregate.Version + 1;
 
             using var session = _eventStore.OpenSession();
-            var events = await session.Events.FetchStreamAsync(aggregateId, version: version, fromVersion: sliceStart);
+            var events = await session.Events.FetchStreamAsync(streamName, version: version, fromVersion: sliceStart);
 
             foreach (var @event in events)
             {

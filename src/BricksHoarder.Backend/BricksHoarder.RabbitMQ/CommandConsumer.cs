@@ -3,7 +3,6 @@ using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Core.Exceptions;
-using BricksHoarder.Core.Helpers;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Response = BricksHoarder.Common.CQRS.Responses.Response;
@@ -14,8 +13,10 @@ namespace BricksHoarder.RabbitMq
     {
         //private readonly IExceptionHandler _exceptionHandler;
         private readonly ICommandHandler<TCommand> _handler;
+
         //private readonly IEventFactory _eventFactory;
         private readonly IAggregateStore _aggregateStore;
+
         private readonly ILogger<CommandConsumer<TCommand>> _logger;
 
         public CommandConsumer(

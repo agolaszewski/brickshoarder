@@ -13,5 +13,7 @@ namespace BricksHoarder.Core.Aggregates
         Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot;
 
         Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId) where TAggregate : class, IAggregateRoot, new();
+
+        Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>() where TAggregate : class, IAggregateRoot, new();
     }
 }
