@@ -2,6 +2,6 @@
 {
     public interface IEvent
     {
-        Guid CorrelationId { get; set; }
+        Guid CorrelationId { get; init; }
     }
 }

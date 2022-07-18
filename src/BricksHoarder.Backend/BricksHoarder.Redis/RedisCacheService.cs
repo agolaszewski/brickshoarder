@@ -1,8 +1,8 @@
-﻿using System.Text.Json;
-using BricksHoarder.Core.Services;
+﻿using BricksHoarder.Core.Services;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using StackExchange.Redis;
+using System.Text.Json;
 
 namespace BricksHoarder.Redis
 {
@@ -10,7 +10,7 @@ namespace BricksHoarder.Redis
     {
         private readonly IDatabase _cache;
 
-        private static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
+        private static readonly JsonSerializerOptions SerializeOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
@@ -31,10 +31,10 @@ namespace BricksHoarder.Redis
             _cache.StringSetAsync(key, json, expire);
         }
 
-        public T Get<T>(string key, T value) where T : class
+        public async Task<T?> GetAsync<T>(string key) where T : class
         {
-            RedisValue json = _cache.StringGet(key);
-            return string.IsNullOrWhiteSpace(json) ? null : JsonSerializer.Deserialize<T>(json);
+            RedisValue value = await _cache.StringGetAsync(key);
+            return value.IsNullOrEmpty ? null : JsonSerializer.Deserialize<T>(value);
         }
 
         public async Task<T> GetAsync<T>(string key, Func<Task<T>> fallback, bool isForced, TimeSpan? expire) where T : class

@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using AutoMapper;
+﻿using AutoMapper;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
@@ -8,6 +7,7 @@ using BricksHoarder.Core.Specification;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json.Serialization;
 
 namespace BricksHoarder.Common.DDD.Aggregates
 {
@@ -62,7 +62,7 @@ namespace BricksHoarder.Common.DDD.Aggregates
             if (specificationFor is not null)
             {
                 IValidator<TAggregate> validator = specificationFor.Apply(@event);
-                ValidationResult result = validator.Validate(this as TAggregate);
+                ValidationResult result = validator.Validate((this as TAggregate)!);
                 if (!result.IsValid)
                 {
                     throw new AppValidationException(Id, result.Errors);

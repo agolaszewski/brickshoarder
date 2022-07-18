@@ -1,20 +1,9 @@
 ﻿using BricksHoarder.Core.Events;
 
-public record SetCreated : IEvent
+namespace BricksHoarder.Events
 {
-    public string SetNumber { get; set; }
-
-    public string Name { get; set; }
-
-    public int Year { get; set; }
-
-    public int ThemeId { get; set; }
-
-    public int NumParts { get; set; }
-
-    public string SetImgUrl { get; set; }
-
-    public DateTime LastModifiedDate { get; set; }
-
-    public Guid CorrelationId { get; set; }
+    public record SetCreated(string SetNumber, string Name, int Year, int ThemeId, int NumberOfParts, Uri? ImageUrl, DateTime LastModifiedDate) : IEvent
+    {
+        public Guid CorrelationId { get; init; }
+    }
 }

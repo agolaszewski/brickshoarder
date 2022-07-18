@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Core.Aggregates;
+﻿using BricksHoarder.Commands.Sets;
+using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 
 namespace BricksHoarder.Domain.Sets

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>56356ce2-c1ec-45c3-bb67-236d4d791571</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="Rebrickable.Api" Version="3.0.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BricksHoarder.AzureServiceBus\BricksHoarder.AzureServiceBus.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Cache.InMemory\BricksHoarder.Cache.InMemory.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Common\BricksHoarder.Common.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Jobs\BricksHoarder.Jobs.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Marten\BricksHoarder.Marten.csproj" />
+    <ProjectReference Include="..\BricksHoarder.RabbitMQ\BricksHoarder.RabbitMq.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Redis\BricksHoarder.Redis.csproj" />
+  </ItemGroup>
+
+</Project>

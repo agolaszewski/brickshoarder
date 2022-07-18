@@ -1,4 +1,5 @@
 ﻿using BricksHoarder.Core.Services;
+using BricksHoarder.Credentials;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
@@ -6,9 +7,9 @@ namespace BricksHoarder.Redis
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddRedis(this IServiceCollection services, string connectionString)
+        public static void AddRedis(this IServiceCollection services, RedisCredentials redisCredentials)
         {
-            services.AddSingleton(b => ConnectionMultiplexer.Connect(connectionString));
+            services.AddSingleton(b => ConnectionMultiplexer.Connect(redisCredentials.ConnectionString));
 
             services.AddSingleton(b =>
             {
