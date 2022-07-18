@@ -15,6 +15,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
+	  <ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
 	</ItemGroup>
 
 </Project>

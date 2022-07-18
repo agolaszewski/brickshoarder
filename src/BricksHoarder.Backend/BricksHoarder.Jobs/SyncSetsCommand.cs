@@ -6,6 +6,6 @@ namespace BricksHoarder.Jobs
     {
         public int PageNumber { get; set; }
 
-        public Guid CorrelationId { get; set; }
+        public Guid CorrelationId { get; init; }
     }
 }

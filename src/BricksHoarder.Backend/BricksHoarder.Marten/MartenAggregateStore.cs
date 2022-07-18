@@ -6,7 +6,6 @@ using Marten;
 using Marten.Events;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using Polly;
 
 namespace BricksHoarder.Marten
@@ -44,7 +43,7 @@ namespace BricksHoarder.Marten
 
         public TAggregate GetNew<TAggregate>() where TAggregate : class, IAggregateRoot, new()
         {
-            var model = new TAggregate { Context = _context, Version = -1 };
+            var model = new TAggregate { Context = _context, Version = 0 };
             return model;
         }
 
@@ -69,16 +68,21 @@ namespace BricksHoarder.Marten
                 }
             }
 
+            if (!aggregate.Events.Any())
+            {
+                return;
+            }
+
             var eventStoreOutcome = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(async () =>
             {
                 await using var session = _eventStore.OpenSession();
-                session.Events.Append(streamName, aggregate.Events.Select(a => a.Event).ToList());
+                session.Events.Append(streamName, aggregate.Version, aggregate.Events.Select(a => a.Event).ToList());
                 await session.SaveChangesAsync();
             });
 
             if (eventStoreOutcome.Outcome == OutcomeType.Successful)
             {
-                aggregate.Version += aggregate.Events.Count() - 1;
+                aggregate.Version += aggregate.Events.Count();
                 _cache.Set(streamName, aggregate, TimeSpan.FromHours(1));
                 return;
             }
@@ -109,7 +113,7 @@ namespace BricksHoarder.Marten
         public async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>()
             where TAggregate : class, IAggregateRoot, new()
         {
-            var streamName = typeof(TAggregate).Name;
+            var streamName = typeof(TAggregate).Name + ":";
             return await GetByIdOrDefaultAsync<TAggregate>(streamName, 0);
         }
 
@@ -162,13 +166,12 @@ namespace BricksHoarder.Marten
 
         private object DeserializeEvent(IEvent @event)
         {
-            if (@event.EventTypeName == null)
+            if (@event.DotNetTypeName == null)
             {
                 throw new NullReferenceException("EventTypeName is null");
             }
 
-            string json = (@event.Data as string)!;
-            return JsonConvert.DeserializeObject(json, Type.GetType(@event.DotNetTypeName)!)!;
+            return @event.Data;
         }
     }
 }

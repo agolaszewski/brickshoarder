@@ -16,58 +16,58 @@ namespace BricksHoarder.Domain
             var domainAssembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(assembly => assembly.GetName().Name == "BricksHoarder.Domain");
 
             services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
+                scan.FromAssemblies(domainAssembly!)
                     .AddClasses(classes => classes.AssignableTo(typeof(IValidator<>)))
                     .AsImplementedInterfaces().WithTransientLifetime()
             );
 
             services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
+                scan.FromAssemblies(domainAssembly!)
                     .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
 
             services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
+                scan.FromAssemblies(domainAssembly!)
                     .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
 
             services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
+                scan.FromAssemblies(domainAssembly!)
                     .AddClasses(classes => classes.AssignableTo(typeof(IEventHandler<>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
 
             services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
+                scan.FromAssemblies(domainAssembly!)
                     .AddClasses(classes => classes.AssignableTo(typeof(ISpecificationForCommand<,>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
 
             services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
+                scan.FromAssemblies(domainAssembly!)
                     .AddClasses(filter => filter.Where(implementation => typeof(ICommand).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
                     .AsSelf()
                     .WithScopedLifetime()
             );
 
             services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
+                scan.FromAssemblies(domainAssembly!)
                     .AddClasses(filter => filter.Where(implementation => typeof(IQuery).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
                     .AsSelf()
                     .WithScopedLifetime()
             );
 
             services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
+                scan.FromAssemblies(domainAssembly!)
                     .AddClasses(filter => filter.Where(implementation => typeof(IQuery).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
                     .AsSelf()
                     .WithScopedLifetime()
             );
 
             services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly)
+                scan.FromAssemblies(domainAssembly!)
                     .AddClasses(classes => classes.AssignableTo(typeof(IAggregateMap<>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );

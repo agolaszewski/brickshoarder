@@ -4,7 +4,7 @@ namespace BricksHoarder.Events
 {
     public record AggregateInOutOfSyncState : IEvent
     {
-        public Guid CorrelationId { get; set; }
+        public Guid CorrelationId { get; init; }
 
         public string AggregateId { get; set; }
 

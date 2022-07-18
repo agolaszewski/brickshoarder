@@ -6,7 +6,7 @@ services:
   postgresql:
     image: "ionx/postgres-plv8:12.2"
     ports:
-     - "5432:5432"
+      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
@@ -31,6 +31,17 @@ services:
       RABBITMQ_DEFAULT_VHOST: "/"
     volumes:
       - BricksHoarder-data-rabbitmq:/var/lib/rabbitmq
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - BricksHoarder-data-redis:/var/lib/redis/data
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    ports:
+      - "8005:8001"
 
 volumes:
   BricksHoarder-data-rabbitmq:
+  BricksHoarder-data-redis:

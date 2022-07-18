@@ -19,6 +19,6 @@ namespace BricksHoarder.Core.Events
 
         public IEnumerable<string> Errors { get; set; } = new List<string>();
 
-        public Guid CorrelationId { get; set; }
+        public Guid CorrelationId { get; init; }
     }
 }

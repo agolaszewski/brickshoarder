@@ -1,11 +1,15 @@
 ﻿using BricksHoarder.Cache.InMemory;
+using BricksHoarder.Commands.Sets;
+using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
+using BricksHoarder.Domain.Sets;
 using BricksHoarder.Jobs;
 using BricksHoarder.Marten;
 using BricksHoarder.RabbitMq;
+using BricksHoarder.Redis;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +36,7 @@ services.AddSingleton<IRebrickableClient>(_ =>
 
     return new RebrickableClient(httpClient);
 });
-services.AddInMemoryCache();
+services.AddRedis(new RedisCredentials(new RedisLocalCredentialsBase(config)));
 services.AddDomain();
 
 services.AddAutoMapper(config =>
@@ -40,20 +44,32 @@ services.AddAutoMapper(config =>
     config.AddDomainProfiles();
 });
 
-services.AddMartenEventStore(new PostgresCredentials(config, "Marten"));
+//services.AddMartenEventStore(new PostgresCredentials(config, "Marten"));
+services.AddMartenEventStore(new PostgresAzureCredentials(config, "MartenAzure"));
 services.CommonServices();
-services.AddRabbitMq(new RabbitMqCredentials(config));
+//services.AddRabbitMq(new RabbitMqCredentials(config));
+services.AddAzureServiceBus(new AzureServiceBusCredentials(config, "AzureServiceBus"));
 
 var provider = services.BuildServiceProvider();
 var bus = provider.GetService<IBusControl>();
 await bus.StartAsync();
 
 var dispatcher = provider.GetService<ICommandDispatcher>();
-await dispatcher!.DispatchAsync(new SyncSetsCommand()
+await dispatcher.DispatchAsync(new SyncThemesCommand()
 {
-    CorrelationId = Guid.Empty,
-    PageNumber = 1
+    CorrelationId = Guid.Empty
 });
+//await dispatcher!.DispatchAsync(new CreateSetCommand()
+//{
+//   Name = "ASda",
+//   Year = 231,
+//   ThemeId = 1,
+//   CorrelationId = Guid.Empty,
+//   ImageUrl = null,
+//   LastModifiedDate = DateTime.UtcNow,
+//   NumberOfParts = 2,
+//   SetNumber = "441"
+//});
 
 while (true)
 {
