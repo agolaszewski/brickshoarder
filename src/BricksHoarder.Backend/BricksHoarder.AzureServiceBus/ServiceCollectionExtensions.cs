@@ -3,7 +3,10 @@ using BricksHoarder.Core.Commands;
 using BricksHoarder.Credentials;
 using BricksHoarder.Jobs;
 using MassTransit;
+using MassTransit.ServiceBusIntegration;
+using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace BricksHoarder.RabbitMq
 {
@@ -41,9 +44,8 @@ namespace BricksHoarder.RabbitMq
                     //});
                     cfg.Host(credentials.ConnectionString, x =>
                     {
-
                     });
-                    
+
                     cfg.ReceiveEndpoint("commands", ec =>
                     {
                         foreach (var commandType in commands)
@@ -55,6 +57,44 @@ namespace BricksHoarder.RabbitMq
                     });
                 }));
             });
+        }
+
+        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials)
+        {
+            services.AddSingleton<IMessageReceiver, MessageReceiver>();
+            services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
+
+            services.AddMassTransit(x =>
+            {
+                var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                   .SingleOrDefault(assembly => assembly.GetName().Name == "BricksHoarder.Domain");
+
+                var commands = domainAssembly.GetTypes()
+                    .Where(t => t.IsNested && t.Name == "Handler")
+                    .Select(t => t.GetInterfaces().First())
+                    .Where(t => typeof(ICommandHandler<>).IsAssignableFrom(t.GetGenericTypeDefinition()))
+                    .ToList();
+
+                foreach (var commandType in commands)
+                {
+                    var typeArguments = commandType.GetGenericArguments();
+                    x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(typeArguments));
+                }
+
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    var options = context.GetRequiredService<IOptions<ServiceBusOptions>>();
+                    options.Value.AutoCompleteMessages = true;
+
+                    cfg.Host(credentials.ConnectionString, x =>
+                    {
+                    });
+
+                    cfg.UseServiceBusMessageScheduler();
+                });
+            });
+
+            services.RemoveMassTransitHostedService();
         }
     }
 }

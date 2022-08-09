@@ -10,6 +10,31 @@ namespace BricksHoarder.Domain.Themes
     {
         private readonly List<Theme> _collection = new();
 
+        public IReadOnlyList<Theme> Collection => _collection;
+
+        public ThemesCollectionAggregate()
+        {
+        }
+
+        public ThemesCollectionAggregate(ThemesCollectionSnapshot snapshot)
+        {
+            foreach (var theme in snapshot.Themes)
+            {
+                var parent = _collection.FirstOrDefault(item => item.Id == theme.ParentId);
+                var newTheme = new Theme()
+                {
+                    Id = theme.Id,
+                    Parent = parent,
+                    Name = theme.Name
+                };
+                parent?.Children.Add(newTheme);
+
+                _collection.Add(newTheme);
+            }
+
+            Version = snapshot.Version;
+        }
+
         public void Apply(ThemeAdded @event)
         {
             var parent = _collection.FirstOrDefault(item => item.Id == @event.ParentId);

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using BricksHoarder.Common.DDD.Aggregates;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Core.Queries;
 using BricksHoarder.Core.Specification;
+using BricksHoarder.Domain.Themes;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -71,6 +73,9 @@ namespace BricksHoarder.Domain
                     .AddClasses(classes => classes.AssignableTo(typeof(IAggregateMap<>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
+
+            services.AddScoped(typeof(IAggragateSnapshot<>), typeof(DefaultAggregateSnapshot<>));
+            services.AddScoped<IAggragateSnapshot<ThemesCollectionAggregate>, ThemesCollectionAggragateSnapshot>();
         }
 
         public static IMapperConfigurationExpression AddDomainProfiles(this IMapperConfigurationExpression @that)

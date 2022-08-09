@@ -1,6 +1,7 @@
 ﻿using BricksHoarder.Commands.Themes;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Helpers;
 using RebrickableApi;
 
 namespace BricksHoarder.Domain.Themes;
@@ -40,11 +41,9 @@ public class SyncThemes
             do
             {
                 var response = await _rebrickableClient.LegoThemesListAsync(page: pageNumber, page_size: 1000, ordering: "id");
-
-                await Task.Delay(TimeSpan.FromSeconds(2));
                 collection.AddRange(response.Results);
 
-                hasMore = !string.IsNullOrWhiteSpace(response.Next);
+                hasMore = !response.Next.IsNullOrWhiteSpace();
                 pageNumber++;
             }
             while (hasMore);

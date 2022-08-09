@@ -16,6 +16,7 @@
     <ProjectReference Include="..\BricksHoarder.Common.DDD\BricksHoarder.Common.DDD.csproj" />
     <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
     <ProjectReference Include="..\BricksHoarder.Events\BricksHoarder.Events.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Helpers\BricksHoarder.Helpers.csproj" />
   </ItemGroup>
 
 </Project>

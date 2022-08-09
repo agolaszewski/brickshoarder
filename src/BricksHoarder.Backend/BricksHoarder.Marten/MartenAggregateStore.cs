@@ -83,7 +83,9 @@ namespace BricksHoarder.Marten
             if (eventStoreOutcome.Outcome == OutcomeType.Successful)
             {
                 aggregate.Version += aggregate.Events.Count();
-                _cache.Set(streamName, aggregate, TimeSpan.FromHours(1));
+
+                var aggregateSnapshot = _context.GetRequiredService<IAggragateSnapshot<TAggregate>>();
+                await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromHours(1));
                 return;
             }
 
@@ -137,7 +139,9 @@ namespace BricksHoarder.Marten
                 Version = -1
             };
 
-            var aggregateFromCache = await _cache.GetAsync<TAggregate>(streamName);
+            var aggregateSnapshot = _context.GetRequiredService<IAggragateSnapshot<TAggregate>>();
+
+            var aggregateFromCache = await aggregateSnapshot.LoadAsync(streamName);
             if (aggregateFromCache is not null)
             {
                 aggregate = aggregateFromCache;

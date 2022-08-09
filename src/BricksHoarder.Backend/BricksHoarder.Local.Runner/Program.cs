@@ -44,11 +44,11 @@ services.AddAutoMapper(config =>
     config.AddDomainProfiles();
 });
 
-//services.AddMartenEventStore(new PostgresCredentials(config, "Marten"));
-services.AddMartenEventStore(new PostgresAzureCredentials(config, "MartenAzure"));
+services.AddMartenEventStore(new PostgresCredentials(config, "Marten"));
+//services.AddMartenEventStore(new PostgresAzureCredentials(config, "MartenAzure"));
 services.CommonServices();
-//services.AddRabbitMq(new RabbitMqCredentials(config));
-services.AddAzureServiceBus(new AzureServiceBusCredentials(config, "AzureServiceBus"));
+services.AddRabbitMq(new RabbitMqCredentials(config));
+//services.AddAzureServiceBus(new AzureServiceBusCredentials(config, "AzureServiceBus"));
 
 var provider = services.BuildServiceProvider();
 var bus = provider.GetService<IBusControl>();
