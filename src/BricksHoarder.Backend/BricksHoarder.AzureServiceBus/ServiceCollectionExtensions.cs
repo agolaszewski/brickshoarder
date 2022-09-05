@@ -61,6 +61,7 @@ namespace BricksHoarder.RabbitMq
 
         public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials)
         {
+            services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
 

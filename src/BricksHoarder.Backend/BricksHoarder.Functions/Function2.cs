@@ -18,7 +18,7 @@ namespace BricksHoarder.Functions
         }
 
         [FunctionName("JobsTrigger")]
-        public async Task Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("*/5 * * * *")]TimerInfo trigger, ILogger log)
         {
             await _commandDispatcher.DispatchAsync(new SyncThemesCommand()
             {
