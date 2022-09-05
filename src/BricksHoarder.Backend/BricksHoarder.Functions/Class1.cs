@@ -4,7 +4,6 @@ using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
 using BricksHoarder.Marten;
 using BricksHoarder.RabbitMq;
-using BricksHoarder.Redis;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,10 +23,9 @@ namespace BricksHoarder.Functions
             builder.ConfigurationBuilder.Sources.Clear();
 
             builder.ConfigurationBuilder
-                .SetBasePath(context.ApplicationRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
-                .AddJsonFile($"appsettings.{context.EnvironmentName}.json", optional: true, reloadOnChange: false)
-                .AddEnvironmentVariables();
+               .AddJsonFile(Path.Combine(context.ApplicationRootPath, "appsettings.json"), optional: false, reloadOnChange: true)
+               .AddJsonFile(Path.Combine(context.ApplicationRootPath, $"appsettings.{context.EnvironmentName}.json"), optional: true, reloadOnChange: false)
+               .AddEnvironmentVariables();
         }
 
         public override void Configure(IFunctionsHostBuilder builder)
