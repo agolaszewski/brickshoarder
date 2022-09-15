@@ -58,10 +58,10 @@ namespace BricksHoarder.Domain.Themes
 
         public void Add(LegoThemesListAsyncResponse.Result theme)
         {
-            if (Exists(theme.Id) || IsMiniFigureTheme(theme))
-            {
-                return;
-            }
+            //if (Exists(theme.Id) || IsMiniFigureTheme(theme))
+            //{
+            //    return;
+            //}
 
             AddEvent(new ThemeAdded(theme.Id, theme.ParentId, theme.Name));
         }

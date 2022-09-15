@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Common.CQRS.Responses;
+﻿using BricksHoarder.AzureServiceBus;
+using BricksHoarder.Common.CQRS.Responses;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
@@ -18,12 +19,14 @@ namespace BricksHoarder.RabbitMq
         private readonly IAggregateStore _aggregateStore;
 
         private readonly ILogger<CommandConsumer<TCommand>> _logger;
+        private readonly IIntegrationEventDispatcher _integrationEventDispatcher;
 
         public CommandConsumer(
             ICommandHandler<TCommand> handler,
             //IEventFactory eventFactory,
             //IExceptionHandler exceptionHandler,
             IAggregateStore aggregateStore,
+            IIntegrationEventDispatcher integrationEventDispatcher,
             ILogger<CommandConsumer<TCommand>> logger)
         {
             _handler = handler;
@@ -31,6 +34,7 @@ namespace BricksHoarder.RabbitMq
             //_exceptionHandler = exceptionHandler;
             _aggregateStore = aggregateStore;
             _logger = logger;
+            _integrationEventDispatcher = integrationEventDispatcher;
         }
 
         public async Task Consume(ConsumeContext<TCommand> context)
@@ -48,6 +52,7 @@ namespace BricksHoarder.RabbitMq
                 {
                     await context.Publish(composite.Event, composite.Event.GetType());
                 }
+                await _integrationEventDispatcher.DispatchAsync(context);
 
                 await context.RespondAsync(new Response(aggregateRoot.Id));
             }
@@ -58,7 +63,7 @@ namespace BricksHoarder.RabbitMq
             }
             catch (Exception ex)
             {
-                await context.Publish(new UnhandledExceptionOccured() { CorrelationId = context.CorrelationId.Value,CommandFullName = context.Message.GetType().FullName!, Message = ex.Message });
+                await context.Publish(new UnhandledExceptionOccured() { CorrelationId = context.CorrelationId.Value, CommandFullName = context.Message.GetType().FullName!, Message = ex.Message });
                 //var exceptionId = _exceptionHandler.Handle(ex, context.Message);
                 //await context.RespondAsync(message: new ErrorResponse(exceptionId));
             }

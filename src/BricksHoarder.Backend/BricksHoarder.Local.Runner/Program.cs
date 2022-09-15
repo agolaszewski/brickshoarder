@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Commands.Themes;
+﻿using BricksHoarder.Cache.NoCache;
+using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Credentials;
@@ -32,7 +33,8 @@ services.AddSingleton<IRebrickableClient>(_ =>
 
     return new RebrickableClient(httpClient);
 });
-services.AddRedis(new RedisCredentials(new RedisLocalCredentialsBase(config)));
+//services.AddRedis(new RedisCredentials(new RedisLocalCredentialsBase(config)));
+services.AddNoCache();
 services.AddDomain();
 
 services.AddAutoMapper(config =>
@@ -40,11 +42,11 @@ services.AddAutoMapper(config =>
     config.AddDomainProfiles();
 });
 
-services.AddMartenEventStore(new PostgresCredentials(config, "Marten"));
-//services.AddMartenEventStore(new PostgresAzureCredentials(config, "MartenAzure"));
+//services.AddMartenEventStore(new PostgresCredentials(config, "Marten"));
+services.AddMartenEventStore(new PostgresAzureCredentials(config, "MartenAzure"));
 services.CommonServices();
-services.AddRabbitMq(new RabbitMqCredentials(config));
-//services.AddAzureServiceBus(new AzureServiceBusCredentials(config, "AzureServiceBus"));
+//services.AddRabbitMq(new RabbitMqCredentials(config));
+services.AddAzureServiceBus(new AzureServiceBusCredentials(config, "AzureServiceBus"));
 
 var provider = services.BuildServiceProvider();
 var bus = provider.GetService<IBusControl>();

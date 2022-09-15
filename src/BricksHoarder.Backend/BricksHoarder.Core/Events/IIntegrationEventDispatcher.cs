@@ -1,4 +1,6 @@
-﻿namespace BricksHoarder.Core.Events
+﻿using MassTransit;
+
+namespace BricksHoarder.Core.Events
 {
     public interface IIntegrationEventsQueue
     {
@@ -8,6 +10,6 @@
 
     public interface IIntegrationEventDispatcher
     {
-        Task DispatchAsync();
+        Task DispatchAsync(ConsumeContext context);
     }
 }

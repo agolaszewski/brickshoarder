@@ -1,5 +1,7 @@
-﻿using BricksHoarder.Common.CQRS;
+﻿using BricksHoarder.AzureServiceBus;
+using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
 using MassTransit;
 using MassTransit.ServiceBusIntegration;
@@ -15,6 +17,8 @@ namespace BricksHoarder.RabbitMq
         {
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<RequestToCommandMapper>();
+            services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
+            services.AddScoped<IIntegrationEventDispatcher, IntegrationEventsDispatcher>();
 
             services.AddMassTransit(x =>
             {

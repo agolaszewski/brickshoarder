@@ -1,6 +1,8 @@
 ﻿using BricksHoarder.Commands.Themes;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Events;
+using BricksHoarder.Events;
 using BricksHoarder.Helpers;
 using RebrickableApi;
 
@@ -12,11 +14,13 @@ public class SyncThemes
     {
         private readonly IRebrickableClient _rebrickableClient;
         private readonly IAggregateStore _aggregateStore;
+        private readonly IIntegrationEventsQueue _integrationEventsQueue;
 
-        public Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore)
+        public Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore,IIntegrationEventsQueue integrationEventsQueue)
         {
             _rebrickableClient = rebrickableClient;
             _aggregateStore = aggregateStore;
+            _integrationEventsQueue = integrationEventsQueue;
         }
 
         public async Task<IAggregateRoot> ExecuteAsync(SyncThemesCommand command)
@@ -28,6 +32,8 @@ public class SyncThemes
             {
                 collection.Add(themeApi);
             }
+
+            _integrationEventsQueue.Queue(new ThemesSynced());
 
             return collection;
         }
