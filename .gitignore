@@ -349,3 +349,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 /src/BricksHoarder.Backend/BricksHoarder.Functions/appSettings.json
+/src/BricksHoarder.Backend/BricksHoarder.Functions/Properties/ServiceDependencies/BricksHoarderFunctions20220905191359 - Zip Deploy/profile.arm.json

@@ -1,7 +1,6 @@
 ﻿using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Credentials;
-using BricksHoarder.Jobs;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,7 +29,6 @@ namespace BricksHoarder.RabbitMq
                     var typeArguments = commandType.GetGenericArguments();
                     x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(typeArguments));
                 }
-                x.AddJobsConsumers();
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
@@ -54,7 +52,6 @@ namespace BricksHoarder.RabbitMq
                             var typeArguments = commandType.GetGenericArguments();
                             ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
                         }
-                        ec.UseJobsConsumers(context);
                     });
                 }));
             });

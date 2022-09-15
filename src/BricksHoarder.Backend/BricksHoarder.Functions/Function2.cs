@@ -1,29 +1,25 @@
-using System;
-using System.Threading.Tasks;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Core.Commands;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace BricksHoarder.Functions
 {
-    public class JobsTrigger
+    public class SyncThemesFunction
     {
         private ICommandDispatcher _commandDispatcher;
 
-        public JobsTrigger(ICommandDispatcher commandDispatcher)
+        public SyncThemesFunction(ICommandDispatcher commandDispatcher)
         {
             _commandDispatcher = commandDispatcher;
         }
 
-        [FunctionName("JobsTrigger")]
-        public async Task Run([TimerTrigger("*/5 * * * *")]TimerInfo trigger, ILogger log)
+        [FunctionName("SyncThemesFunction")]
+        public async Task Run([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] TimerInfo trigger, ILogger log)
         {
-            await _commandDispatcher.DispatchAsync(new SyncThemesCommand()
-            {
-                CorrelationId = Guid.Empty
-            });
+            await _commandDispatcher.DispatchAsync(new SyncThemesCommand());
         }
     }
 }

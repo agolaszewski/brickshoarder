@@ -2,7 +2,7 @@
 
 namespace BricksHoarder.Commands.Themes
 {
-    public class SyncThemesCommand : ICommand
+    public record SyncThemesCommand : ICommand
     {
         public Guid CorrelationId { get; init; }
     }

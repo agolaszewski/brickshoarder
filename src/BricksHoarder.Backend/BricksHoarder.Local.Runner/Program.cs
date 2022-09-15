@@ -1,12 +1,8 @@
-﻿using BricksHoarder.Cache.InMemory;
-using BricksHoarder.Commands.Sets;
-using BricksHoarder.Commands.Themes;
+﻿using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
-using BricksHoarder.Domain.Sets;
-using BricksHoarder.Jobs;
 using BricksHoarder.Marten;
 using BricksHoarder.RabbitMq;
 using BricksHoarder.Redis;

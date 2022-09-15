@@ -1,4 +1,5 @@
 ﻿using BricksHoarder.Cache.InMemory;
+using BricksHoarder.Cache.NoCache;
 using BricksHoarder.Common;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
@@ -8,7 +9,6 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RebrickableApi;
-using System.IO;
 using System.Net.Http;
 
 [assembly: FunctionsStartup(typeof(BricksHoarder.Functions.Startup))]
@@ -23,9 +23,10 @@ namespace BricksHoarder.Functions
             builder.ConfigurationBuilder.Sources.Clear();
 
             builder.ConfigurationBuilder
-               .AddJsonFile(Path.Combine(context.ApplicationRootPath, "appsettings.json"), optional: false, reloadOnChange: true)
-               .AddJsonFile(Path.Combine(context.ApplicationRootPath, $"appsettings.{context.EnvironmentName}.json"), optional: true, reloadOnChange: false)
-               .AddEnvironmentVariables();
+                .SetBasePath(context.ApplicationRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .AddJsonFile($"appsettings.{context.EnvironmentName}.json", optional: true, reloadOnChange: false)
+                .AddEnvironmentVariables();
         }
 
         public override void Configure(IFunctionsHostBuilder builder)
@@ -44,7 +45,7 @@ namespace BricksHoarder.Functions
                 return new RebrickableClient(httpClient);
             });
 
-            services.AddInMemoryCache();
+            services.AddNoCache();
             services.AddDomain();
 
             services.AddAutoMapper(config =>

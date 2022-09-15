@@ -2,6 +2,5 @@
 {
     public interface ICommand
     {
-        Guid CorrelationId { get; init; }
     }
 }

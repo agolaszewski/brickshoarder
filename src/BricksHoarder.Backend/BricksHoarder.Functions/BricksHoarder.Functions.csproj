@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
@@ -7,7 +7,6 @@
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventGrid" Version="3.2.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />
     <PackageReference Include="Rebrickable.Api" Version="3.0.20" />
@@ -15,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BricksHoarder.AzureServiceBus\BricksHoarder.AzureServiceBus.csproj" />
     <ProjectReference Include="..\BricksHoarder.Cache.InMemory\BricksHoarder.Cache.InMemory.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Cache.NoCache\BricksHoarder.Cache.NoCache.csproj" />
     <ProjectReference Include="..\BricksHoarder.Common\BricksHoarder.Common.csproj" />
     <ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
     <ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
@@ -23,13 +23,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="appSettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
