@@ -4,12 +4,12 @@ using BricksHoarder.Common;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
 using BricksHoarder.Marten;
-using BricksHoarder.RabbitMq;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RebrickableApi;
 using System.Net.Http;
+using BricksHoarder.AzureServiceBus;
 
 [assembly: FunctionsStartup(typeof(BricksHoarder.Functions.Startup))]
 

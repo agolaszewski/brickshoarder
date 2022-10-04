@@ -76,13 +76,13 @@ namespace BricksHoarder.Marten
             var eventStoreOutcome = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(async () =>
             {
                 await using var session = _eventStore.OpenSession();
-                session.Events.Append(streamName, aggregate.Version, aggregate.Events.Select(a => a.Event).ToList());
+                session.Events.Append(streamName, aggregate.Version + aggregate.Events.Count(), aggregate.Events.Select(a => a.Event).ToList());
                 await session.SaveChangesAsync();
             });
 
             if (eventStoreOutcome.Outcome == OutcomeType.Successful)
             {
-                aggregate.Version += aggregate.Events.Count();
+                aggregate.Version += aggregate.Events.Count() + 1;
 
                 var aggregateSnapshot = _context.GetRequiredService<IAggragateSnapshot<TAggregate>>();
                 await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromHours(1));
@@ -136,7 +136,7 @@ namespace BricksHoarder.Marten
 
             TAggregate aggregate = new TAggregate
             {
-                Version = -1
+                Version = 0
             };
 
             var aggregateSnapshot = _context.GetRequiredService<IAggragateSnapshot<TAggregate>>();

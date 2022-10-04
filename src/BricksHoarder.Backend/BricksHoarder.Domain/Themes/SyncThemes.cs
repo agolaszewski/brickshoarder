@@ -16,7 +16,7 @@ public class SyncThemes
         private readonly IAggregateStore _aggregateStore;
         private readonly IIntegrationEventsQueue _integrationEventsQueue;
 
-        public Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore,IIntegrationEventsQueue integrationEventsQueue)
+        public Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore, IIntegrationEventsQueue integrationEventsQueue)
         {
             _rebrickableClient = rebrickableClient;
             _aggregateStore = aggregateStore;

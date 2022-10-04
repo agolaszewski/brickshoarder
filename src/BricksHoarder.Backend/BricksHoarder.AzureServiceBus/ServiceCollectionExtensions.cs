@@ -1,5 +1,4 @@
-﻿using BricksHoarder.AzureServiceBus;
-using BricksHoarder.Common.CQRS;
+﻿using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
@@ -9,7 +8,7 @@ using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace BricksHoarder.RabbitMq
+namespace BricksHoarder.AzureServiceBus
 {
     public static class ServiceCollectionExtensions
     {
@@ -18,8 +17,7 @@ namespace BricksHoarder.RabbitMq
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<RequestToCommandMapper>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-            services.AddScoped<IIntegrationEventDispatcher, IntegrationEventsDispatcher>();
-
+            
             services.AddMassTransit(x =>
             {
                 var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()
@@ -29,6 +27,10 @@ namespace BricksHoarder.RabbitMq
                     .Where(t => t.IsNested && t.Name == "Handler")
                     .Select(t => t.GetInterfaces().First())
                     .Where(t => typeof(ICommandHandler<>).IsAssignableFrom(t.GetGenericTypeDefinition()))
+                    .ToList();
+
+                var events = domainAssembly.GetTypes()
+                    .Where(t => t is IEvent)
                     .ToList();
 
                 foreach (var commandType in commands)
@@ -44,7 +46,7 @@ namespace BricksHoarder.RabbitMq
                     //    config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
                     //    return config;
                     //});
-                    cfg.Host(credentials.ConnectionString, x =>
+                    cfg.Host(credentials.ConnectionString, _ =>
                     {
                     });
 
@@ -56,6 +58,15 @@ namespace BricksHoarder.RabbitMq
                             ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
                         }
                     });
+
+                    cfg.ReceiveEndpoint("events", ec =>
+                    {
+                        foreach (var eventType in events)
+                        {
+                            var typeArguments = eventType.GetGenericArguments();
+                            ec.ConfigureConsumer(context, typeof(EventConsumer<>).MakeGenericType(typeArguments));
+                        }
+                    });
                 }));
             });
         }
@@ -65,22 +76,32 @@ namespace BricksHoarder.RabbitMq
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
-
+            services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
+            
             services.AddMassTransit(x =>
             {
                 var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()
                    .SingleOrDefault(assembly => assembly.GetName().Name == "BricksHoarder.Domain");
 
-                var commands = domainAssembly.GetTypes()
+                var commandsHandlersTypes = domainAssembly.GetTypes()
                     .Where(t => t.IsNested && t.Name == "Handler")
                     .Select(t => t.GetInterfaces().First())
                     .Where(t => typeof(ICommandHandler<>).IsAssignableFrom(t.GetGenericTypeDefinition()))
                     .ToList();
 
-                foreach (var commandType in commands)
+                var events = domainAssembly.GetTypes()
+                    .Where(t => t is IEvent)
+                    .ToList();
+
+                foreach (var commandHandlerType in commandsHandlersTypes)
                 {
-                    var typeArguments = commandType.GetGenericArguments();
+                    var typeArguments = commandHandlerType.GetGenericArguments();
                     x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(typeArguments));
+                }
+               
+                foreach (var eventType in events)
+                {
+                    //x.AddConsumer(typeof(EventConsumer<>).MakeGenericType(eventType));
                 }
 
                 x.UsingAzureServiceBus((context, cfg) =>
@@ -88,9 +109,18 @@ namespace BricksHoarder.RabbitMq
                     var options = context.GetRequiredService<IOptions<ServiceBusOptions>>();
                     options.Value.AutoCompleteMessages = true;
 
-                    cfg.Host(credentials.ConnectionString, x =>
+                    cfg.Host(credentials.ConnectionString, _ =>
                     {
                     });
+
+                    //cfg.ReceiveEndpoint("commands", ec =>
+                    //{
+                    //    foreach (var commandType in commandsHandlersTypes)
+                    //    {
+                    //        var typeArguments = commandType.GetGenericArguments();
+                    //        ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
+                    //    }
+                    //});
 
                     cfg.UseServiceBusMessageScheduler();
                 });

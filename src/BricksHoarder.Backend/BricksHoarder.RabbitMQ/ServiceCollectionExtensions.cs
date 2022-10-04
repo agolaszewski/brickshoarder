@@ -1,5 +1,6 @@
 ﻿using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,8 @@ namespace BricksHoarder.RabbitMq
         {
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<RequestToCommandMapper>();
+            services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
+            services.AddScoped<IIntegrationEventDispatcher, IntegrationEventsDispatcher>();
 
             services.AddMassTransit(x =>
             {
@@ -32,6 +35,7 @@ namespace BricksHoarder.RabbitMq
 
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
+                    cfg.PurgeOnStartup = true;
                     //cfg.ConfigureJsonSerializerOptions(config =>
                     //{
                     //    config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
@@ -45,14 +49,14 @@ namespace BricksHoarder.RabbitMq
                     });
                     cfg.UseInMemoryScheduler();
 
-                    cfg.ReceiveEndpoint("commands", ec =>
-                    {
-                        foreach (var commandType in commands)
-                        {
-                            var typeArguments = commandType.GetGenericArguments();
-                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
-                        }
-                    });
+                    //cfg.ReceiveEndpoint("commands", ec =>
+                    //{
+                    //    foreach (var commandType in commands)
+                    //    {
+                    //        var typeArguments = commandType.GetGenericArguments();
+                    //        ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
+                    //    }
+                    //});
                 }));
             });
         }

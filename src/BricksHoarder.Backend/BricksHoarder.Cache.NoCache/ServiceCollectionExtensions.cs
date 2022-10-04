@@ -1,5 +1,4 @@
-﻿using BricksHoarder.Cache.InMemory;
-using BricksHoarder.Core.Services;
+﻿using BricksHoarder.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BricksHoarder.Cache.NoCache
@@ -8,7 +7,7 @@ namespace BricksHoarder.Cache.NoCache
     {
         public static void AddNoCache(this IServiceCollection services)
         {
-            services.AddScoped<ICacheService, BricksHoarder.Cache.InMemory.NoCache>();
+            services.AddScoped<ICacheService, NoCache>();
         }
     }
 }

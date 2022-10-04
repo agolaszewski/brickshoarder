@@ -51,17 +51,12 @@ namespace BricksHoarder.Domain.Themes
 
         public bool Exists(int id) => _collection.Any(item => item.Id == id);
 
-        public bool IsMiniFigureTheme(LegoThemesListAsyncResponse.Result theme)
-        {
-            return theme.Id == 535 || theme?.ParentId == 535;
-        }
-
         public void Add(LegoThemesListAsyncResponse.Result theme)
         {
-            //if (Exists(theme.Id) || IsMiniFigureTheme(theme))
-            //{
-            //    return;
-            //}
+            if (Exists(theme.Id))
+            {
+                return;
+            }
 
             AddEvent(new ThemeAdded(theme.Id, theme.ParentId, theme.Name));
         }

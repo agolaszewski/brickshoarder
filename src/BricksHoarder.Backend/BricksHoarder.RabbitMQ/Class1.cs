@@ -1,16 +1,7 @@
-﻿using BricksHoarder.Common.CQRS;
-using BricksHoarder.Core.Events;
-using BricksHoarder.Core.Services;
+﻿using BricksHoarder.Core.Events;
 using MassTransit;
-using MassTransit.Transports;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
-namespace BricksHoarder.AzureServiceBus
+namespace BricksHoarder.RabbitMq
 {
     public class IntegrationEventsDispatcher : IIntegrationEventDispatcher
     {

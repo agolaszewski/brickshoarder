@@ -6,7 +6,7 @@ using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using ValidationException = FluentValidation.ValidationException;
 
-namespace BricksHoarder.RabbitMq
+namespace BricksHoarder.AzureServiceBus
 {
     public class CommandDispatcher : ICommandDispatcher
     {

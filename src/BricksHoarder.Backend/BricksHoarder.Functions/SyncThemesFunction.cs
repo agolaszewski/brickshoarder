@@ -17,7 +17,7 @@ namespace BricksHoarder.Functions
         }
 
         [FunctionName("SyncThemesFunction")]
-        public async Task Run([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] TimerInfo trigger, ILogger log)
+        public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = true)] TimerInfo trigger, ILogger log)
         {
             await _commandDispatcher.DispatchAsync(new SyncThemesCommand());
         }

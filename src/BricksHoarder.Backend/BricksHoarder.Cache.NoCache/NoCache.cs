@@ -1,6 +1,6 @@
 ﻿using BricksHoarder.Core.Services;
 
-namespace BricksHoarder.Cache.InMemory
+namespace BricksHoarder.Cache.NoCache
 {
     public class NoCache : ICacheService
     {
