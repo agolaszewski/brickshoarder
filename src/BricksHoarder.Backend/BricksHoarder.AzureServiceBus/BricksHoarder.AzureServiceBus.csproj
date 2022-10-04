@@ -8,10 +8,10 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MassTransit" Version="8.0.3" />
-		<PackageReference Include="MassTransit.Abstractions" Version="8.0.3" />
-		<PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.0.3" />
-		<PackageReference Include="MassTransit.WebJobs.ServiceBus" Version="8.0.3" />
+		<PackageReference Include="MassTransit" Version="8.0.6" />
+		<PackageReference Include="MassTransit.Abstractions" Version="8.0.6" />
+		<PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.0.6" />
+		<PackageReference Include="MassTransit.WebJobs.ServiceBus" Version="8.0.6" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
 		<PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
