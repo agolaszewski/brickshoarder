@@ -19,15 +19,18 @@ namespace BricksHoarder.AzureServiceBus
         private readonly ICommandHandler<TCommand> _handler;
         private readonly IAggregateStore _aggregateStore;
         private readonly ILogger<CommandConsumer<TCommand>> _logger;
+        private readonly IIntegrationEventsQueue _integrationEventsQueue;
 
         public CommandConsumer(
             ICommandHandler<TCommand> handler,
             IAggregateStore aggregateStore,
-            ILogger<CommandConsumer<TCommand>> logger)
+            ILogger<CommandConsumer<TCommand>> logger,
+            IIntegrationEventsQueue integrationEventsQueue)
         {
             _handler = handler;
             _aggregateStore = aggregateStore;
             _logger = logger;
+            _integrationEventsQueue = integrationEventsQueue;
         }
 
         public async Task Consume(ConsumeContext<TCommand> context)
@@ -38,6 +41,11 @@ namespace BricksHoarder.AzureServiceBus
 
                 IAggregateRoot aggregateRoot = await _handler.ExecuteAsync(context.Message);
                 await _aggregateStore.SaveAsync(aggregateRoot);
+
+                foreach (var @event in _integrationEventsQueue.Events)
+                {
+                    await context.Publish(@event);
+                }
             }
             finally
             {

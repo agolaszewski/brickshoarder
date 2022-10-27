@@ -9,7 +9,7 @@ namespace BricksHoarder.Functions
 {
     public class SyncThemesFunction
     {
-        private ICommandDispatcher _commandDispatcher;
+        private readonly ICommandDispatcher _commandDispatcher;
 
         public SyncThemesFunction(ICommandDispatcher commandDispatcher)
         {

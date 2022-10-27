@@ -14,7 +14,6 @@ namespace BricksHoarder.RabbitMq
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<RequestToCommandMapper>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-            services.AddScoped<IIntegrationEventDispatcher, IntegrationEventsDispatcher>();
 
             services.AddMassTransit(x =>
             {
