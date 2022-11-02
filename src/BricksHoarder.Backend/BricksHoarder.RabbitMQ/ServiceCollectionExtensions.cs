@@ -32,6 +32,15 @@ namespace BricksHoarder.RabbitMq
                     x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(typeArguments));
                 }
 
+                var sagas = domainAssembly.GetTypes()
+                    .Where(t => t.Name.EndsWith("Saga"));
+
+                foreach (var sagaType in sagas)
+                {
+                    x.AddSagaStateMachine(sagaType);
+                }
+                x.SetInMemorySagaRepositoryProvider();
+
                 x.AddBus(context => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
                     cfg.PurgeOnStartup = true;

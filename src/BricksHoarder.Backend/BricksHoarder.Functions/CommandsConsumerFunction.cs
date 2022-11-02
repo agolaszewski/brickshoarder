@@ -1,7 +1,6 @@
-using System;
 using MassTransit;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,7 +27,30 @@ namespace BricksHoarder.Functions
                 Console.WriteLine(e);
                 throw;
             }
-            
+        }
+    }
+
+    public class EventConsumerFunction
+    {
+        private readonly IMessageReceiver _receiver;
+
+        public EventConsumerFunction(IMessageReceiver receiver)
+        {
+            _receiver = receiver;
+        }
+
+        [FunctionName("EConsumer")]
+        public async Task Run([ServiceBusTrigger("brickshoarder.events/themessynced", "test", Connection = "ServiceBusConnectionString")] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _receiver.Handle("brickshoarder.events/themessynced", "test", command, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 

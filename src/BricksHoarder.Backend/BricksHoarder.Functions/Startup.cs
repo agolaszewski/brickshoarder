@@ -53,9 +53,10 @@ namespace BricksHoarder.Functions
                 config.AddDomainProfiles();
             });
 
-            services.AddMartenEventStore(new PostgresAzureCredentials(config, "MartenAzure"));
+            var martenCredentials = new PostgresAzureCredentials(config, "MartenAzure");
+            services.AddMartenEventStore(martenCredentials);
             services.CommonServices();
-            services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"));
+            services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), martenCredentials);
         }
     }
 }

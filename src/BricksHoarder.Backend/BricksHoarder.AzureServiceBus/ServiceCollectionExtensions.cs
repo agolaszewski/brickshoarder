@@ -17,7 +17,7 @@ namespace BricksHoarder.AzureServiceBus
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<RequestToCommandMapper>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-            
+
             services.AddMassTransit(x =>
             {
                 var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()
@@ -71,26 +71,22 @@ namespace BricksHoarder.AzureServiceBus
             });
         }
 
-        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials)
+        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, PostgresAzureCredentials postgresAzureCredentials)
         {
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-            
+
             services.AddMassTransit(x =>
             {
                 var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()
-                   .SingleOrDefault(assembly => assembly.GetName().Name == "BricksHoarder.Domain");
+                    .Single(assembly => assembly.GetName().Name == "BricksHoarder.Domain").GetTypes();
 
-                var commandsHandlersTypes = domainAssembly.GetTypes()
+                var commandsHandlersTypes = domainAssembly
                     .Where(t => t.IsNested && t.Name == "Handler")
                     .Select(t => t.GetInterfaces().First())
                     .Where(t => typeof(ICommandHandler<>).IsAssignableFrom(t.GetGenericTypeDefinition()))
-                    .ToList();
-
-                var events = domainAssembly.GetTypes()
-                    .Where(t => t is IEvent)
                     .ToList();
 
                 foreach (var commandHandlerType in commandsHandlersTypes)
@@ -98,7 +94,20 @@ namespace BricksHoarder.AzureServiceBus
                     var typeArguments = commandHandlerType.GetGenericArguments();
                     x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(typeArguments));
                 }
-               
+
+                var sagas = domainAssembly
+                    .Where(t => t.Name.EndsWith("Saga"));
+
+                foreach (var sagaType in sagas)
+                {
+                    x.AddSagaStateMachine(sagaType);
+                }
+                x.SetMartenSagaRepositoryProvider(postgresAzureCredentials.ConnectionString);
+
+                var events = domainAssembly
+                    .Where(t => t is IEvent)
+                    .ToList();
+
                 foreach (var eventType in events)
                 {
                     //x.AddConsumer(typeof(EventConsumer<>).MakeGenericType(eventType));

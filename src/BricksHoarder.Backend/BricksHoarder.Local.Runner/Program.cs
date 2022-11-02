@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RebrickableApi;
 using System.CommandLine;
+using BricksHoarder.Events;
 
 var rootCommand = new RootCommand("Local runner");
 var azureOption = new Option<bool>("--azure");
@@ -21,7 +22,7 @@ rootCommand.Add(azureOption);
 
 rootCommand.SetHandler(async (azureOptionValue) =>
 {
-    var env = azureOptionValue ? Environment.Azure : Environment.Local;
+    var env = Environment.Azure;
     await SetupAsync(env);
 },
 azureOption);
@@ -79,6 +80,11 @@ async Task SetupAsync(Environment env)
     var bus = provider.GetRequiredService<IBusControl>();
     await bus.StartAsync();
 
-    var dispatcher = provider.GetRequiredService<ICommandDispatcher>();
-    await dispatcher.DispatchAsync(new SyncThemesCommand());
+    await bus.Publish(new ThemesSynced());
+    await bus.Publish(new ThemesSynced());
+    await bus.Publish(new ThemesSynced());
+    await bus.Publish(new ThemesSynced());
+
+    //var dispatcher = provider.GetRequiredService<ICommandDispatcher>();
+    //await dispatcher.DispatchAsync(new SyncThemesCommand());
 }

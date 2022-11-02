@@ -3,4 +3,5 @@
 namespace BricksHoarder.Events
 {
     public record ThemesSynced() : IEvent;
+
 }
