@@ -44,7 +44,7 @@ namespace BricksHoarder.AzureServiceBus
 
                 foreach (var @event in _integrationEventsQueue.Events)
                 {
-                    await context.Publish(@event);
+                    await context.Publish(@event, @event.GetType(), x => x.CorrelationId = context.CorrelationId);
                 }
             }
             finally

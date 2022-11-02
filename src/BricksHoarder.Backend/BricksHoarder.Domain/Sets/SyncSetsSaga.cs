@@ -19,7 +19,7 @@ namespace BricksHoarder.Domain.Sets
 
             Event(() => ThemesSynced, x =>
             {
-                x.CorrelateBy(x => "SyncSets", _ => "SyncSets").SelectId(_ => NewId.NextGuid());
+                x.CorrelateById(x => x.CorrelationId!.Value);
             });
 
             Initially(When(ThemesSynced)

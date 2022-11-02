@@ -40,11 +40,11 @@ namespace BricksHoarder.Functions
         }
 
         [FunctionName("EConsumer")]
-        public async Task Run([ServiceBusTrigger("brickshoarder.events/themessynced", "test", Connection = "ServiceBusConnectionString")] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
+        public async Task Run([ServiceBusTrigger("brickshoarder.events/themessynced", "default", Connection = "ServiceBusConnectionString")] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
         {
             try
             {
-                await _receiver.Handle("brickshoarder.events/themessynced", "test", command, cancellationToken);
+                await _receiver.Handle("brickshoarder.events/themessynced", "default", command, cancellationToken);
             }
             catch (Exception e)
             {

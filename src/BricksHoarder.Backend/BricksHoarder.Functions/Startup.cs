@@ -1,4 +1,4 @@
-﻿using BricksHoarder.Cache.InMemory;
+﻿using BricksHoarder.AzureServiceBus;
 using BricksHoarder.Cache.NoCache;
 using BricksHoarder.Common;
 using BricksHoarder.Credentials;
@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RebrickableApi;
 using System.Net.Http;
-using BricksHoarder.AzureServiceBus;
 
 [assembly: FunctionsStartup(typeof(BricksHoarder.Functions.Startup))]
 
@@ -48,9 +47,9 @@ namespace BricksHoarder.Functions
             services.AddNoCache();
             services.AddDomain();
 
-            services.AddAutoMapper(config =>
+            services.AddAutoMapper(mapper =>
             {
-                config.AddDomainProfiles();
+                mapper.AddDomainProfiles();
             });
 
             var martenCredentials = new PostgresAzureCredentials(config, "MartenAzure");

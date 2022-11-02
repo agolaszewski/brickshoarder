@@ -80,7 +80,7 @@ namespace BricksHoarder.Domain
 
         public static IMapperConfigurationExpression AddDomainProfiles(this IMapperConfigurationExpression @that)
         {
-            var domainAssembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(assembly => assembly.GetName().Name == "BricksHoarder.Domain");
+            var domainAssembly = AppDomain.CurrentDomain.GetAssemblies().Single(assembly => assembly.GetName().Name == "BricksHoarder.Domain");
             @that.AddMaps(domainAssembly);
             return @that;
         }

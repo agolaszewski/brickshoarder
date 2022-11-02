@@ -1,10 +1,9 @@
 ﻿using BricksHoarder.AzureServiceBus;
 using BricksHoarder.Cache.NoCache;
-using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common;
-using BricksHoarder.Core.Commands;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
+using BricksHoarder.Events;
 using BricksHoarder.Marten;
 using BricksHoarder.RabbitMq;
 using BricksHoarder.Redis;
@@ -14,7 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RebrickableApi;
 using System.CommandLine;
-using BricksHoarder.Events;
+using BricksHoarder.Commands.Themes;
+using BricksHoarder.Core.Commands;
 
 var rootCommand = new RootCommand("Local runner");
 var azureOption = new Option<bool>("--azure");
@@ -80,11 +80,8 @@ async Task SetupAsync(Environment env)
     var bus = provider.GetRequiredService<IBusControl>();
     await bus.StartAsync();
 
-    await bus.Publish(new ThemesSynced());
-    await bus.Publish(new ThemesSynced());
-    await bus.Publish(new ThemesSynced());
-    await bus.Publish(new ThemesSynced());
+    //await bus.Publish(new ThemesSynced());
 
-    //var dispatcher = provider.GetRequiredService<ICommandDispatcher>();
-    //await dispatcher.DispatchAsync(new SyncThemesCommand());
+    var dispatcher = provider.GetRequiredService<ICommandDispatcher>();
+    await dispatcher.DispatchAsync(new SyncThemesCommand());
 }
