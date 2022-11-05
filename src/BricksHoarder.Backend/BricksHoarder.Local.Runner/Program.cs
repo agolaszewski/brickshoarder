@@ -29,9 +29,9 @@ azureOption);
 
 rootCommand.Invoke(args);
 
-while (true)
-{
-}
+//while (true)
+//{
+//}
 
 async Task SetupAsync(Environment env)
 {
@@ -80,7 +80,7 @@ async Task SetupAsync(Environment env)
     var bus = provider.GetRequiredService<IBusControl>();
     await bus.StartAsync();
 
-    //await bus.Publish(new ThemesSynced());
+    await bus.Publish(new SyncSagaStarted(), x => x.CorrelationId = Guid.NewGuid());
 
     var dispatcher = provider.GetRequiredService<ICommandDispatcher>();
     await dispatcher.DispatchAsync(new SyncThemesCommand());
