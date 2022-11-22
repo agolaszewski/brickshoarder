@@ -1,10 +1,8 @@
 ﻿using BricksHoarder.Core.Events;
-using MassTransit;
 
 namespace BricksHoarder.Events
 {
-    public record ThemesSynced : CorrelatedBy<Guid>, IEvent
+    public record ThemesSynced : IEvent
     {
-        public Guid CorrelationId { get; set; }
     }
 }

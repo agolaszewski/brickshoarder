@@ -23,6 +23,9 @@ namespace BricksHoarder.AzureServiceBus
                 var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()
                     .Single(assembly => assembly.GetName().Name == "BricksHoarder.Domain").GetTypes();
 
+                var eventsAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                    .Single(assembly => assembly.GetName().Name == "BricksHoarder.Events").GetTypes();
+
                 var commandsHandlersTypes = domainAssembly
                     .Where(t => t.IsNested && t.Name == "Handler")
                     .Select(t => t.GetInterfaces().First())
@@ -44,6 +47,10 @@ namespace BricksHoarder.AzureServiceBus
                 }
                 x.SetInMemorySagaRepositoryProvider();
 
+                var events = eventsAssembly
+                    .Where(t => t.GetInterface(nameof(IEvent)) is not null)
+                    .ToList();
+
                 x.AddBus(context => Bus.Factory.CreateUsingAzureServiceBus(cfg =>
                 {
                     //cfg.ConfigureJsonSerializerOptions(config =>
@@ -55,14 +62,13 @@ namespace BricksHoarder.AzureServiceBus
                     {
                     });
 
-                    cfg.ReceiveEndpoint("commands", ec =>
+                    cfg.Publish<IEvent>(x => x.Exclude = true);
+                    foreach (var eventType in events)
                     {
-                        foreach (var commandType in commandsHandlersTypes)
+                        cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{eventType.Name.ToLower()}", _ =>
                         {
-                            var typeArguments = commandType.GetGenericArguments();
-                            ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
-                        }
-                    });
+                        });
+                    }
 
                     //cfg.ReceiveEndpoint("events", ec =>
                     //{
@@ -79,8 +85,8 @@ namespace BricksHoarder.AzureServiceBus
         public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, PostgresAzureCredentials postgresAzureCredentials)
         {
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
-            services.AddSingleton<IMessageReceiver, MessageReceiver>();
-            services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
+            //services.AddSingleton<IMessageReceiver, MessageReceiver>();
+            //services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
 
             services.AddMassTransit(x =>
@@ -97,7 +103,9 @@ namespace BricksHoarder.AzureServiceBus
                     .Where(t => typeof(ICommandHandler<>).IsAssignableFrom(t.GetGenericTypeDefinition()))
                     .ToList();
 
-                foreach (var commandHandlerType in commandsHandlersTypes)
+                foreach (var commandHandlerType in 
+                         
+                         commandsHandlersTypes)
                 {
                     var typeArguments = commandHandlerType.GetGenericArguments();
                     x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(typeArguments));

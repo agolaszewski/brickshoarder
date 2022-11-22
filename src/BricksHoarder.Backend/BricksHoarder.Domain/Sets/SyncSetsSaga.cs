@@ -24,15 +24,13 @@ namespace BricksHoarder.Domain.Sets
             Initially(When(SyncSagaStarted)
                 .TransitionTo(ProcessingState)
                 .Then(_ => logger.LogInformation("XD"))
-                .Publish(new SyncThemesCommand()));
-                //.ThenAsync(async x =>
-                //{
-                //    var endpoint = x.ReceiveContext.SendEndpointProvider;
-                //    var send = await endpoint.GetSendEndpoint(new Uri("queue:commands"));
-                //    await send.Send(new SyncThemesCommand(), xx => xx.CorrelationId = x.CorrelationId);
-                //}));
+                .ThenAsync(async x =>
+                {
+                    await x.Send(new Uri("queue:commands"), new SyncThemesCommand(), c => c.CorrelationId = x.CorrelationId.Value);
+                }));
 
             Initially(When(ThemesSynced)
+                .TransitionTo(ProcessingState)
                 .Then(_ => logger.LogInformation("XD"))
                 .Finalize());
         }
