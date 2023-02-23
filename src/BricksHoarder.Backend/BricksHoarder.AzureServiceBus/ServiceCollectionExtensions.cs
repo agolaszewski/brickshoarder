@@ -2,6 +2,7 @@
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
+using BricksHoarder.Domain.Sets;
 using MassTransit;
 using MassTransit.ServiceBusIntegration;
 using Microsoft.Azure.WebJobs.ServiceBus;
@@ -51,18 +52,23 @@ namespace BricksHoarder.AzureServiceBus
                     .Where(t => t.GetInterface(nameof(IEvent)) is not null)
                     .ToList();
 
-                x.AddBus(context => Bus.Factory.CreateUsingAzureServiceBus(cfg =>
+                foreach (var eventType in events)
                 {
-                    //cfg.ConfigureJsonSerializerOptions(config =>
-                    //{
-                    //    config.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                    //    return config;
-                    //});
+                    //x.AddConsumer(typeof(EventConsumer<>).MakeGenericType(eventType));
+                }
+
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    var options = context.GetRequiredService<IOptions<ServiceBusOptions>>();
+                    options.Value.AutoCompleteMessages = true;
+
                     cfg.Host(credentials.ConnectionString, _ =>
                     {
                     });
 
                     cfg.Publish<IEvent>(x => x.Exclude = true);
+                    cfg.Publish<ICommand>(x => x.Exclude = true);
+
                     foreach (var eventType in events)
                     {
                         cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{eventType.Name.ToLower()}", _ =>
@@ -70,23 +76,16 @@ namespace BricksHoarder.AzureServiceBus
                         });
                     }
 
-                    //cfg.ReceiveEndpoint("events", ec =>
-                    //{
-                    //    foreach (var eventType in events)
-                    //    {
-                    //        var typeArguments = eventType.GetGenericArguments();
-                    //        ec.ConfigureConsumer(context, typeof(EventConsumer<>).MakeGenericType(typeArguments));
-                    //    }
-                    //});
-                }));
+                    cfg.UseServiceBusMessageScheduler();
+                });
             });
         }
 
         public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, PostgresAzureCredentials postgresAzureCredentials)
         {
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
-            //services.AddSingleton<IMessageReceiver, MessageReceiver>();
-            //services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
+            services.AddSingleton<IMessageReceiver, MessageReceiver>();
+            services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
 
             services.AddMassTransit(x =>
@@ -103,9 +102,7 @@ namespace BricksHoarder.AzureServiceBus
                     .Where(t => typeof(ICommandHandler<>).IsAssignableFrom(t.GetGenericTypeDefinition()))
                     .ToList();
 
-                foreach (var commandHandlerType in 
-                         
-                         commandsHandlersTypes)
+                foreach (var commandHandlerType in commandsHandlersTypes)
                 {
                     var typeArguments = commandHandlerType.GetGenericArguments();
                     x.AddConsumer(typeof(CommandConsumer<>).MakeGenericType(typeArguments));
@@ -114,11 +111,13 @@ namespace BricksHoarder.AzureServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                foreach (var sagaType in sagas)
-                {
-                    x.AddSagaStateMachine(sagaType);
-                }
-                x.SetInMemorySagaRepositoryProvider();
+                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsState>().InMemoryRepository();
+
+                //foreach (var sagaType in sagas)
+                //{
+                //    x.AddSagaStateMachine(sagaType);
+                //}
+                //x.SetInMemorySagaRepositoryProvider();
 
                 var events = eventsAssembly
                     .Where(t => t.GetInterface(nameof(IEvent)) is not null)
@@ -139,10 +138,13 @@ namespace BricksHoarder.AzureServiceBus
                     });
 
                     cfg.Publish<IEvent>(x => x.Exclude = true);
+                    cfg.Publish<ICommand>(x => x.Exclude = true);
+
                     foreach (var eventType in events)
                     {
                         cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{eventType.Name.ToLower()}", _ =>
                         {
+                            
                         });
                     }
 

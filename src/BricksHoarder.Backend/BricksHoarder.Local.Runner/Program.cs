@@ -15,6 +15,7 @@ using RebrickableApi;
 using System.CommandLine;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Core.Commands;
+using Environment = BricksHoarder.Local.Runner.Environment;
 
 var rootCommand = new RootCommand("Local runner");
 var azureOption = new Option<bool>("--azure");
@@ -80,7 +81,7 @@ async Task SetupAsync(Environment env)
     var bus = provider.GetRequiredService<IBusControl>();
     await bus.StartAsync();
 
-    //await bus.Publish(new SyncSagaStarted(), x => x.CorrelationId = Guid.NewGuid());
+    await bus.Publish(new ThemesSynced(), x => x.CorrelationId = Guid.NewGuid());
     //await bus.Publish(new SyncSagaStarted(), x => x.CorrelationId = Guid.NewGuid());
 
     var dispatcher = provider.GetRequiredService<ICommandDispatcher>();

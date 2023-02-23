@@ -19,13 +19,8 @@ namespace BricksHoarder.Functions
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
             FunctionsHostBuilderContext context = builder.GetContext();
-            builder.ConfigurationBuilder.Sources.Clear();
-
-            builder.ConfigurationBuilder
-                .SetBasePath(context.ApplicationRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
-                .AddJsonFile($"appsettings.{context.EnvironmentName}.json", optional: true, reloadOnChange: false)
-                .AddEnvironmentVariables();
+            builder.ConfigurationBuilder.SetBasePath(context.ApplicationRootPath);
+            builder.ConfigurationBuilder.AddJsonFile("local.settings.json", optional: false, reloadOnChange: false);
         }
 
         public override void Configure(IFunctionsHostBuilder builder)

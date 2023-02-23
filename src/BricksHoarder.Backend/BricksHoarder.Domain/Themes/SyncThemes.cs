@@ -23,22 +23,22 @@ public class SyncThemes
             _integrationEventsQueue = integrationEventsQueue;
         }
 
-        public async Task<IAggregateRoot> ExecuteAsync(SyncThemesCommand command)
+        public async Task<IAggregateRoot> HandleAsync(SyncThemesCommand command)
         {
             var themesFromApi = await GetAllThemes();
-            var collection = await _aggregateStore.GetByIdOrDefaultAsync<ThemesCollectionAggregate>();
+            var themes = await _aggregateStore.GetByIdOrDefaultAsync<ThemesCollectionAggregate>();
 
             foreach (var themeApi in themesFromApi)
             {
-                collection.Add(themeApi);
+                themes.Add(themeApi);
             }
 
             _integrationEventsQueue.Queue(new ThemesSynced());
 
-            return collection;
+            return themes;
         }
 
-        public async Task<IReadOnlyList<LegoThemesListAsyncResponse.Result>> GetAllThemes()
+        private async Task<IReadOnlyList<LegoThemesListAsyncResponse.Result>> GetAllThemes()
         {
             List<LegoThemesListAsyncResponse.Result> collection = new();
             int pageNumber = 1;

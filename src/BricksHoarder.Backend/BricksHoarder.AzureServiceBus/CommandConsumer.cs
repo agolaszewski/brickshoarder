@@ -6,14 +6,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.AzureServiceBus
 {
-    public class EventConsumer<TEvent> : IConsumer<TEvent> where TEvent : class, IEvent
-    {
-        public Task Consume(ConsumeContext<TEvent> context)
-        {
-            return Task.CompletedTask;
-        }
-    }
-
     public class CommandConsumer<TCommand> : IConsumer<TCommand> where TCommand : class, ICommand
     {
         private readonly ICommandHandler<TCommand> _handler;
@@ -39,7 +31,7 @@ namespace BricksHoarder.AzureServiceBus
             {
                 _logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.CorrelationId}");
 
-                IAggregateRoot aggregateRoot = await _handler.ExecuteAsync(context.Message);
+                IAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
                 await _aggregateStore.SaveAsync(aggregateRoot);
 
                 foreach (var @event in _integrationEventsQueue.Events)

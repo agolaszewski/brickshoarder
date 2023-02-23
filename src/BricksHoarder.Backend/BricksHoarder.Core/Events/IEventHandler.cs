@@ -1,7 +1,9 @@
-﻿namespace BricksHoarder.Core.Events
+﻿using BricksHoarder.Core.Commands;
+
+namespace BricksHoarder.Core.Events
 {
     public interface IEventHandler<in TEvent> where TEvent : IEvent
     {
-        Task HandleAsync(TEvent @event);
+        Task<IReadOnlyList<ICommand>> HandleAsync(TEvent @event);
     }
 }

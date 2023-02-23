@@ -1,19 +1,16 @@
 ﻿using BricksHoarder.Commands.Sets;
-using BricksHoarder.Commands.Themes;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Events;
 using BricksHoarder.Events;
 
 namespace BricksHoarder.Domain.EventsHandlers
 {
-    public class ThemesSyncedEventHandler : Common.CQRS.CommandDispatcherEventHandler<ThemesSynced, SyncSetsCommand>
+    public class ThemesSyncedEventHandler : IEventHandler<ThemesSynced>
     {
-        public ThemesSyncedEventHandler(ICommandDispatcher commandDispatcher) : base(commandDispatcher)
+        public Task<IReadOnlyList<ICommand>> HandleAsync(ThemesSynced @event)
         {
-        }
-
-        public override SyncSetsCommand Dispatch(ThemesSynced @event)
-        {
-            return new SyncSetsCommand();
+            IReadOnlyList<ICommand> command = new List<ICommand>() { new SyncSetsCommand() };
+            return Task.FromResult(command);
         }
     }
 }

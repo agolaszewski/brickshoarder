@@ -22,6 +22,7 @@
 		<ProjectReference Include="..\BricksHoarder.Common.CQRS\BricksHoarder.Common.CQRS.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
+		<ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

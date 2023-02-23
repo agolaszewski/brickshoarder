@@ -39,7 +39,7 @@ namespace BricksHoarder.RabbitMq
             {
                 _logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.CorrelationId}");
 
-                IAggregateRoot aggregateRoot = await _handler.ExecuteAsync(context.Message);
+                IAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
                 //_eventFactory.Make(aggregateRoot.Events);
 
                 await aggregateRoot.CommitAsync(_aggregateStore);

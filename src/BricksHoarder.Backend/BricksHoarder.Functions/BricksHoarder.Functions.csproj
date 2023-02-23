@@ -23,10 +23,6 @@
     <ProjectReference Include="..\BricksHoarder.Redis\BricksHoarder.Redis.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="appSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

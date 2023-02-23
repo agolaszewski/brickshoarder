@@ -15,7 +15,7 @@ namespace BricksHoarder.Domain.Sets
                 _aggregateStore = aggregateStore;
             }
 
-            public Task<IAggregateRoot> ExecuteAsync(CreateSetCommand command)
+            public Task<IAggregateRoot> HandleAsync(CreateSetCommand command)
             {
                 var set = _aggregateStore.GetNew<SetAggregate>();
                 set.Create(command);
