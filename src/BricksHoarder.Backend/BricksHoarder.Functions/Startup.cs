@@ -4,11 +4,10 @@ using BricksHoarder.Common;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
 using BricksHoarder.Marten;
+using BricksHoarder.Rebrickable;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RebrickableApi;
-using System.Net.Http;
 
 [assembly: FunctionsStartup(typeof(BricksHoarder.Functions.Startup))]
 
@@ -28,17 +27,7 @@ namespace BricksHoarder.Functions
             var services = builder.Services;
             var config = builder.GetContext().Configuration;
 
-            builder.Services.AddHttpClient();
-            services.AddSingleton<IRebrickableClient>(services =>
-            {
-                var configuration = new RebrickableCredentials(config);
-                var httpClient = services.GetRequiredService<HttpClient>();
-                httpClient.BaseAddress = configuration.Url;
-                httpClient.DefaultRequestHeaders.Add("Authorization", configuration.Key);
-
-                return new RebrickableClient(httpClient);
-            });
-
+            services.AddRebrickable(new RebrickableCredentials(config));
             services.AddNoCache();
             services.AddDomain();
 

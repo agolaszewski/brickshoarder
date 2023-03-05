@@ -40,9 +40,10 @@ namespace BricksHoarder.AzureServiceBus
             }
 
             Guid correlationId = _guidService.New;
+            var commandName = command.GetType().Name;
 
-            ISendEndpoint endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:commands"));
-            await endpoint.Send(command, x => { x.CorrelationId = correlationId; });
+            ISendEndpoint endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue:{commandName}"));
+            await endpoint.Send(command, callback => { callback.CorrelationId = correlationId; });
             return correlationId;
         }
 

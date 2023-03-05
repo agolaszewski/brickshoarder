@@ -21,4 +21,8 @@
     <ProjectReference Include="..\BricksHoarder.Helpers\BricksHoarder.Helpers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EventsHandlers\" />
+  </ItemGroup>
+
 </Project>

@@ -1,10 +1,13 @@
-﻿using BricksHoarder.Common.CQRS;
+﻿using BricksHoarder.Commands.Themes;
+using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain.Sets;
+using BricksHoarder.Events;
 using MassTransit;
 using MassTransit.ServiceBusIntegration;
+using MassTransit.Testing;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -69,6 +72,7 @@ namespace BricksHoarder.AzureServiceBus
                     cfg.Publish<IEvent>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
+
                     foreach (var eventType in events)
                     {
                         cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{eventType.Name.ToLower()}", _ =>
@@ -84,6 +88,7 @@ namespace BricksHoarder.AzureServiceBus
         public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, PostgresAzureCredentials postgresAzureCredentials)
         {
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
+            services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
@@ -140,22 +145,10 @@ namespace BricksHoarder.AzureServiceBus
                     cfg.Publish<IEvent>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
-                    foreach (var eventType in events)
+                    cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
                     {
-                        cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{eventType.Name.ToLower()}", _ =>
-                        {
-                            
-                        });
-                    }
-
-                    //cfg.ReceiveEndpoint("commands", ec =>
-                    //{
-                    //    foreach (var commandType in commandsHandlersTypes)
-                    //    {
-                    //        var typeArguments = commandType.GetGenericArguments();
-                    //        ec.ConfigureConsumer(context, typeof(CommandConsumer<>).MakeGenericType(typeArguments));
-                    //    }
-                    //});
+                        x.SetEntityName("brickshoarder.events/consumed/syncthemescommand");
+                    });
 
                     cfg.UseServiceBusMessageScheduler();
                 });

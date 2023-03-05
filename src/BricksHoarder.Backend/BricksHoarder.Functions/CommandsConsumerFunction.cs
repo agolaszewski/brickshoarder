@@ -1,48 +1,33 @@
+using BricksHoarder.AzureServiceBus;
+using BricksHoarder.Commands.Themes;
 using MassTransit;
 using Microsoft.Azure.WebJobs;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BricksHoarder.Functions
+namespace BricksHoarder.Functions;
+
+public class CommandFunctions
 {
-    public class CommandsConsumerFunction
+    private readonly IMessageReceiver _receiver;
+
+    public CommandFunctions(IMessageReceiver receiver)
     {
-        private readonly IMessageReceiver _receiver;
-
-        public CommandsConsumerFunction(IMessageReceiver receiver)
-        {
-            _receiver = receiver;
-        }
-
-        [FunctionName("CommandsConsumer")]
-        public async Task Run([ServiceBusTrigger("commands", Connection = "ServiceBusConnectionString")] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
-        {
-            try
-            {
-                await _receiver.Handle("commands", command, cancellationToken);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
+        _receiver = receiver;
     }
 
-    //public class EventsConsumerFunction
-    //{
-    //    private readonly IMessageReceiver _receiver;
-
-    //    public EventsConsumerFunction(IMessageReceiver receiver)
-    //    {
-    //        _receiver = receiver;
-    //    }
-
-    //    [FunctionName("EventsConsumer")]
-    //    public async Task Run([ServiceBusTrigger("events", Connection = "ServiceBusConnectionString")] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
-    //    {
-    //        await _receiver.Handle("events", @event, cancellationToken);
-    //    }
-    //}
+    [FunctionName($"{nameof(SyncThemesCommand)}Consumer")]
+    public async Task Run([ServiceBusTrigger("syncthemescommand", Connection = "ServiceBusConnectionString")] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _receiver.HandleConsumer<CommandConsumer<SyncThemesCommand>>("syncthemescommand", command, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 }

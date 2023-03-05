@@ -11,22 +11,23 @@ namespace BricksHoarder.Domain.Sets
         {
             InstanceState(x => x.CurrentState, ProcessingState);
 
-            Event(() => ThemesSynced, x => { x.CorrelateById(x => x.Message.HerpDerp); });
-            //Event(() => SyncSagaStarted, x => { x.CorrelateById(context => context.CorrelationId!.Value); });
+            Event(() => SyncSagaStarted, x => { x.CorrelateById(context => context.CorrelationId!.Value); });
+            Event(() => SyncThemesCommandConsumed, x => { x.CorrelateById(context => context.CorrelationId!.Value); });
 
-            //Initially(When(SyncSagaStarted)
-            //    .TransitionTo(ProcessingState)
-            //    .Then(_ => logger.LogInformation("XD")));
-
-            Initially(When(ThemesSynced)
+            Initially(When(SyncSagaStarted)
                 .TransitionTo(ProcessingState)
-                .Then(_ => logger.LogInformation("XD"))
-                .Finalize());
+                .Then(action => action.Send(new Uri($"queue:{nameof(SyncThemesCommand)}"), new SyncThemesCommand(), 
+                    x => x.CorrelationId = action.Saga.CorrelationId)));
+
+            During(ProcessingState,
+                When(SyncThemesCommandConsumed)
+                    .Then(action => logger.LogCritical("XD")).Finalize());
         }
 
         public State ProcessingState { get; }
 
-        //public Event<SyncSagaStarted> SyncSagaStarted { get; }
-        public Event<ThemesSynced> ThemesSynced { get; }
+        public Event<CommandConsumed<SyncThemesCommand>> SyncThemesCommandConsumed { get; }
+
+        public Event<SyncSagaStarted> SyncSagaStarted { get; }
     }
 }

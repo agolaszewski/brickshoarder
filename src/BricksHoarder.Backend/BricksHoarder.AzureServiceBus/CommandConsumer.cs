@@ -1,6 +1,7 @@
 ﻿using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
+using BricksHoarder.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -38,10 +39,17 @@ namespace BricksHoarder.AzureServiceBus
                 {
                     await context.Publish(@event, @event.GetType(), x => x.CorrelationId = context.CorrelationId);
                 }
+
+                await context.Publish(new CommandConsumed<TCommand>(context.CorrelationId!.Value),
+                    x => x.CorrelationId = context.CorrelationId);
+            }
+            catch (Exception e)
+            {
+                int x = 1;
             }
             finally
             {
-                _logger.LogDebug($"Consumed {context.Message.GetType().FullName} {context.CorrelationId}");
+                _logger.LogDebug($"Consumed {context.Message.GetType().FullName} {context.CorrelationId!}");
             }
         }
     }

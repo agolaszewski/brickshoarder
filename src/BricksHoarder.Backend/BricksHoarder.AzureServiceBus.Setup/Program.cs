@@ -16,10 +16,10 @@ async Task SetupAsync()
         .AddUserSecrets<Program>()
         .Build();
 
-    services.AddLogging(config =>
+    services.AddLogging(configure =>
     {
-        config.SetMinimumLevel(LogLevel.Debug);
-        config.AddConsole();
+        configure.SetMinimumLevel(LogLevel.Debug);
+        configure.AddConsole();
     });
 
     var azureServiceBusCredentials = new AzureServiceBusCredentials(config, "AzureServiceBus");
@@ -37,6 +37,7 @@ async Task SetupAsync()
 
         var eventsTypes = eventsAssembly
             .Where(t => typeof(IEvent).IsAssignableFrom(t))
+            .Where(t => !t.IsGenericType)
             .ToList();
 
         x.UsingAzureServiceBus((context, cfg) =>
@@ -55,13 +56,16 @@ async Task SetupAsync()
                 {
                     configureEndpoint.ConfigureConsumeTopology = false;
                 });
+
+                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/consumed/{command.Name}", configure =>
+                {
+                });
             }
 
-            foreach (var events in commandsTypes)
+            foreach (var events in eventsTypes)
             {
-                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{events.Name.ToLower()}", _ =>
+                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{events.Name}", _ =>
                 {
-
                 });
             }
 
