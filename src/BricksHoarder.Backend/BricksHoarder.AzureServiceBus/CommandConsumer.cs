@@ -40,8 +40,7 @@ namespace BricksHoarder.AzureServiceBus
                     await context.Publish(@event, @event.GetType(), x => x.CorrelationId = context.CorrelationId);
                 }
 
-                await context.Publish(new CommandConsumed<TCommand>(context.CorrelationId!.Value),
-                    x => x.CorrelationId = context.CorrelationId);
+                await context.Publish(new CommandConsumed<TCommand>(context.Message, typeof(TCommand).FullName!), x => x.CorrelationId = context.CorrelationId);
             }
             catch (Exception e)
             {

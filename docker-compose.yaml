@@ -3,15 +3,6 @@
 version: "3.9"
 
 services:
-  postgresql:
-    image: "ionx/postgres-plv8:12.2"
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: brickshoarder
-      NAMEDATALEN: 100
   pgadmin:
     image: "dpage/pgadmin4:latest"
     ports:
@@ -19,18 +10,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: postgres@postgres.pl
       PGADMIN_DEFAULT_PASSWORD: postgres
-  rabbitmq:
-    image: rabbitmq:3-management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
-    environment:
-      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
-      RABBITMQ_DEFAULT_USER: "guest"
-      RABBITMQ_DEFAULT_PASS: "guest"
-      RABBITMQ_DEFAULT_VHOST: "/"
     volumes:
-      - BricksHoarder-data-rabbitmq:/var/lib/rabbitmq
+      - BricksHoarder-data-pgadmin:/var/lib/pgadmin
   redis:
     image: redis:alpine
     ports:
@@ -43,5 +24,5 @@ services:
       - "8005:8001"
 
 volumes:
-  BricksHoarder-data-rabbitmq:
   BricksHoarder-data-redis:
+  BricksHoarder-data-pgadmin:

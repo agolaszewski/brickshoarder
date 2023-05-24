@@ -1,0 +1,3 @@
+name: BricksHoarder.Cloud.Azure.Infrastructure.Generator
+runtime: dotnet
+description: A minimal Azure Native C# Pulumi program

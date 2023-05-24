@@ -34,7 +34,7 @@ namespace BricksHoarder.Redis
         public async Task<T?> GetAsync<T>(string key) where T : class
         {
             RedisValue value = await _cache.StringGetAsync(key);
-            return value.IsNullOrEmpty ? null : JsonSerializer.Deserialize<T>(value, SerializeOptions);
+            return value.IsNullOrEmpty ? null : JsonSerializer.Deserialize<T>(value!, SerializeOptions);
         }
     }
 }

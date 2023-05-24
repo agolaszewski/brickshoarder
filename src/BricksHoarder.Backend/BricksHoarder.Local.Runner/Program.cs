@@ -15,6 +15,8 @@ using RebrickableApi;
 using System.CommandLine;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Events;
+using BricksHoarder.Domain.Sets;
 using Environment = BricksHoarder.Local.Runner.Environment;
 
 var rootCommand = new RootCommand("Local runner");
@@ -81,6 +83,6 @@ async Task SetupAsync(Environment env)
     var bus = provider.GetRequiredService<IBusControl>();
     await bus.StartAsync();
 
-    var dispatcher = provider.GetRequiredService<ICommandDispatcher>();
-    await dispatcher.DispatchAsync(new SyncThemesCommand());
+    var dispatcher = provider.GetRequiredService<IEventDispatcher>();
+    //await dispatcher.DispatchAsync(new SyncSetsSaga(DateTime.Today.ToString("yyyyMMdd")));
 }

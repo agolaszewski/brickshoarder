@@ -2,7 +2,5 @@
 
 namespace BricksHoarder.Events
 {
-    public class SyncSagaStarted : IEvent
-    {
-    }
+    public record SyncSagaStarted(string Id) : IEvent;
 }

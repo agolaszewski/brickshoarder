@@ -45,11 +45,13 @@ namespace BricksHoarder.AzureServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                foreach (var sagaType in sagas)
-                {
-                    x.AddSagaStateMachine(sagaType);
-                }
-                x.SetInMemorySagaRepositoryProvider();
+                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsState>().InMemoryRepository();
+
+                //foreach (var sagaType in sagas)
+                //{
+                //    x.AddSagaStateMachine(sagaType);
+                //}
+                //x.SetInMemorySagaRepositoryProvider();
 
                 var events = eventsAssembly
                     .Where(t => t.GetInterface(nameof(IEvent)) is not null)
@@ -72,13 +74,10 @@ namespace BricksHoarder.AzureServiceBus
                     cfg.Publish<IEvent>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
-
-                    foreach (var eventType in events)
+                    cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
                     {
-                        cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{eventType.Name.ToLower()}", _ =>
-                        {
-                        });
-                    }
+                        x.SetEntityName("brickshoarder.events/consumed/syncthemescommand");
+                    });
 
                     cfg.UseServiceBusMessageScheduler();
                 });
@@ -147,7 +146,7 @@ namespace BricksHoarder.AzureServiceBus
 
                     cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
                     {
-                        x.SetEntityName("brickshoarder.events/consumed/syncthemescommand");
+                        x.SetEntityName("brickshoarder.events/consumed/SyncThemesCommand");
                     });
 
                     cfg.UseServiceBusMessageScheduler();

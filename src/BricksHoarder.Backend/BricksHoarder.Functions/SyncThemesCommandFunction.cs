@@ -8,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace BricksHoarder.Functions;
 
-public class CommandFunctions
+public class SyncThemesCommandFunction
 {
     private readonly IMessageReceiver _receiver;
 
-    public CommandFunctions(IMessageReceiver receiver)
+    public SyncThemesCommandFunction(IMessageReceiver receiver)
     {
         _receiver = receiver;
     }
 
     [FunctionName($"{nameof(SyncThemesCommand)}Consumer")]
-    public async Task Run([ServiceBusTrigger("syncthemescommand", Connection = "ServiceBusConnectionString")] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
+    public async Task Run([ServiceBusTrigger(nameof(SyncThemesCommand), Connection = "ServiceBusConnectionString")] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
     {
         try
         {
-            await _receiver.HandleConsumer<CommandConsumer<SyncThemesCommand>>("syncthemescommand", command, cancellationToken);
+            await _receiver.HandleConsumer<CommandConsumer<SyncThemesCommand>>(nameof(SyncThemesCommand), command, cancellationToken);
         }
         catch (Exception e)
         {
