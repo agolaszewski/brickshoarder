@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using BricksHoarder.Commands.Sets;
-using BricksHoarder.Events;
 
 namespace BricksHoarder.Domain.Sets
 {
@@ -8,7 +6,6 @@ namespace BricksHoarder.Domain.Sets
     {
         public Mapping()
         {
-            CreateMap<CreateSetCommand, SetCreated>();
         }
     }
 }

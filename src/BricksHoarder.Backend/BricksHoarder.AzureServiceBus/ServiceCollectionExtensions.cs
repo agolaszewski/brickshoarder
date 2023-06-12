@@ -45,7 +45,7 @@ namespace BricksHoarder.AzureServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsState>().InMemoryRepository();
+                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsSagaState>().InMemoryRepository();
 
                 //foreach (var sagaType in sagas)
                 //{
@@ -115,7 +115,7 @@ namespace BricksHoarder.AzureServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsState>().InMemoryRepository();
+                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsSagaState>().InMemoryRepository();
 
                 //foreach (var sagaType in sagas)
                 //{

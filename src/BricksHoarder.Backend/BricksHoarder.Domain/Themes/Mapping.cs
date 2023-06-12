@@ -8,7 +8,7 @@ namespace BricksHoarder.Domain.Themes
     {
         public Mapping()
         {
-            CreateMap<AddThemeCommand, ThemeAdded>();
+           
         }
     }
 }

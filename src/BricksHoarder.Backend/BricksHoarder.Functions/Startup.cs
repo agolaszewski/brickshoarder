@@ -2,6 +2,7 @@
 using BricksHoarder.Cache.NoCache;
 using BricksHoarder.Common;
 using BricksHoarder.Credentials;
+using BricksHoarder.DateTime;
 using BricksHoarder.Domain;
 using BricksHoarder.Marten;
 using BricksHoarder.Rebrickable;
@@ -40,6 +41,7 @@ namespace BricksHoarder.Functions
             services.AddMartenEventStore(martenCredentials);
             services.CommonServices();
             services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), martenCredentials);
+            services.AddDateTimeProvider();
         }
     }
 }

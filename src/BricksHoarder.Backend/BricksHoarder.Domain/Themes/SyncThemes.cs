@@ -21,13 +21,13 @@ public class SyncThemes
 
         public async Task<IAggregateRoot> HandleAsync(SyncThemesCommand command)
         {
-            //var themesFromApi = await GetAllThemes();
+            var themesFromApi = await GetAllThemes();
             var themes = await _aggregateStore.GetByIdOrDefaultAsync<ThemesCollectionAggregate>();
 
-            //foreach (var themeApi in themesFromApi)
-            //{
-            //    themes.Add(themeApi);
-            //}
+            foreach (var themeApi in themesFromApi)
+            {
+                themes.Add(themeApi);
+            }
 
             return themes;
         }

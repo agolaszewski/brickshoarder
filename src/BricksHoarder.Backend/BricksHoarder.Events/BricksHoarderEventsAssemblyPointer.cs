@@ -1,4 +1,4 @@
-﻿namespace BricksHoarder.Commands
+﻿namespace BricksHoarder.Events
 {
     public class BricksHoarderEventsAssemblyPointer
     {

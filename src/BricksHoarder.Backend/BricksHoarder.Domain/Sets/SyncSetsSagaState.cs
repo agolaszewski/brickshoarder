@@ -2,7 +2,7 @@
 
 namespace BricksHoarder.Domain.Sets;
 
-public class SyncSetsState : SagaStateMachineInstance
+public class SyncSetsSagaState : SagaStateMachineInstance
 {
     public string Id { get; set; }
 

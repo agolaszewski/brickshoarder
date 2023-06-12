@@ -18,6 +18,7 @@
     <ProjectReference Include="..\BricksHoarder.Cache.NoCache\BricksHoarder.Cache.NoCache.csproj" />
     <ProjectReference Include="..\BricksHoarder.Common\BricksHoarder.Common.csproj" />
     <ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
+    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.csproj" />
     <ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
     <ProjectReference Include="..\BricksHoarder.Marten\BricksHoarder.Marten.csproj" />
     <ProjectReference Include="..\BricksHoarder.Rebrickable\BricksHoarder.Rebrickable.csproj" />

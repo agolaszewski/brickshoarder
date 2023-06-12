@@ -1,0 +1,21 @@
+﻿using MassTransit;
+using Microsoft.Azure.WebJobs;
+using System.Threading;
+using System.Threading.Tasks;
+using BricksHoarder.Events.Metadata;
+using {{sagaNamespace}};
+
+namespace BricksHoarder.Functions;
+
+public class {{event}}Function : BaseFunction
+{
+    public {{event}}Function(IMessageReceiver receiver) : base(receiver)
+    {
+    }
+
+    [FunctionName({{event}}Metadata.Consumer)]
+    public async Task Run([ServiceBusTrigger({{event}}Metadata.TopicPath, Default, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
+    {
+        {{eventHandler}}
+    }
+}

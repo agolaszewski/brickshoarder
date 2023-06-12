@@ -2,6 +2,7 @@
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
+using BricksHoarder.Events;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
