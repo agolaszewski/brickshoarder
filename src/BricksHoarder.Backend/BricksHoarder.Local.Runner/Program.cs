@@ -1,11 +1,10 @@
 ﻿using BricksHoarder.AzureServiceBus;
 using BricksHoarder.Cache.NoCache;
 using BricksHoarder.Common;
+using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
-using BricksHoarder.Events;
 using BricksHoarder.Marten;
-using BricksHoarder.RabbitMq;
 using BricksHoarder.Redis;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -13,10 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RebrickableApi;
 using System.CommandLine;
-using BricksHoarder.Commands.Themes;
-using BricksHoarder.Core.Commands;
-using BricksHoarder.Core.Events;
-using BricksHoarder.Domain.Sets;
 using Environment = BricksHoarder.Local.Runner.Environment;
 
 var rootCommand = new RootCommand("Local runner");
@@ -72,7 +67,6 @@ async Task SetupAsync(Environment env)
 
         default:
             services.AddRedis(new RedisCredentials(new RedisLocalCredentialsBase(config)));
-            services.AddRabbitMq(new RabbitMqCredentials(config));
             services.AddMartenEventStore(new PostgresCredentials(config, "Marten"));
             break;
     }

@@ -1,9 +1,6 @@
-﻿using BricksHoarder.Commands;
-using BricksHoarder.Core.Commands;
-using BricksHoarder.Core.Events;
+﻿using BricksHoarder.Core.Events;
 using BricksHoarder.Domain;
 using BricksHoarder.Events;
-using MassTransit;
 
 namespace BricksHoarder.Functions.Generator.Generators
 {
@@ -11,7 +8,6 @@ namespace BricksHoarder.Functions.Generator.Generators
     {
         private readonly IReadOnlyList<Type> _events;
         private readonly IReadOnlyList<Type> _sagas;
-        private readonly IReadOnlyList<Type> _commands;
 
         public EventGenerator()
         {
@@ -20,31 +16,6 @@ namespace BricksHoarder.Functions.Generator.Generators
 
             var domainAssembly = typeof(BricksHoarderDomainAssemblyPointer).Assembly.GetTypes();
             _sagas = domainAssembly.Where(IsSaga).ToList();
-
-            var commandsAssembly = typeof(BricksHoarderCommandsAssemblyPointer).Assembly.GetTypes();
-            _commands = commandsAssembly.Where(t => t.GetInterface(nameof(ICommand)) is not null).ToList();
-        }
-
-        private bool IsSaga(Type type)
-        {
-            return type.Name.EndsWith("Saga");
-        }
-
-        private bool IsEventUsedBySaga(Type saga, Type @event)
-        {
-            var properties = saga.GetProperties();
-            return properties.Any(p => IsEventInSaga(p.PropertyType, @event));
-        }
-
-        private bool IsEventInSaga(Type property, Type @event)
-        {
-            if (!property.IsGenericType)
-            {
-                return false;
-            }
-
-            var @args = property.GetGenericArguments();
-            return @args.Any(a => a == @event);
         }
 
         public void GenerateMetadata()
@@ -75,22 +46,5 @@ namespace BricksHoarder.Functions.Generator.Generators
                 File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{@event.Name}Function.cs", compiled);
             }
         }
-    }
-
-    internal abstract class BaseGenerator
-    {
-    }
-
-    public static class Catalogs
-    {
-        public const string EventsMetadataCatalog = "BricksHoarder.Events\\Metadata";
-        public const string FunctionsCatalog = "BricksHoarder.Functions";
-    }
-
-    public static class Templates
-    {
-        private const string TemplateCatalogPath = "BricksHoarder.Functions.Generator\\Templates";
-        public static string EventMetadataTemplate = File.ReadAllText($"{TemplateCatalogPath}\\EventMetadata.tmpl");
-        public static string EventFunctionTemplate = File.ReadAllText($"{TemplateCatalogPath}\\EventFunction.tmpl");
     }
 }

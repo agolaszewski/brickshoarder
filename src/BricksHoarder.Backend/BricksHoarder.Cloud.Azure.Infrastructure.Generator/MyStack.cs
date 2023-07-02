@@ -69,8 +69,6 @@ internal class MyStack : Stack
         });
         DBforPostgreSQLAdminPassword = Output.Unsecret(dBforPostgreSQLAdministratorLoginPassword.Result);
 
-       
-
         var dBforPostgreSQLServer = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Server("DBforPostgreSQL.Server", new()
         {
             ResourceGroupName = resourceGroup.Name,

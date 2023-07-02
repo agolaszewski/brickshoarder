@@ -26,7 +26,6 @@
     <ProjectReference Include="..\BricksHoarder.Common\BricksHoarder.Common.csproj" />
     <ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
     <ProjectReference Include="..\BricksHoarder.Marten\BricksHoarder.Marten.csproj" />
-    <ProjectReference Include="..\BricksHoarder.RabbitMQ\BricksHoarder.RabbitMq.csproj" />
     <ProjectReference Include="..\BricksHoarder.Redis\BricksHoarder.Redis.csproj" />
   </ItemGroup>
 
