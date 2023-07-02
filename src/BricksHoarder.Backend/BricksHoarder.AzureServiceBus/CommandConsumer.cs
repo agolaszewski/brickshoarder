@@ -35,6 +35,11 @@ namespace BricksHoarder.AzureServiceBus
                 IAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
                 await _aggregateStore.SaveAsync(aggregateRoot);
 
+                foreach (var @event in aggregateRoot.Events)
+                {
+                    await context.Publish(@event.Event, @event.Event.GetType(), x => x.CorrelationId = context.CorrelationId);
+                }
+
                 foreach (var @event in _integrationEventsQueue.Events)
                 {
                     await context.Publish(@event, @event.GetType(), x => x.CorrelationId = context.CorrelationId);

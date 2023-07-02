@@ -1,4 +1,6 @@
-﻿using BricksHoarder.Commands;
+﻿//dotnet run --project ./BricksHoarder.AzureServiceBus.Setup/BricksHoarder.AzureServiceBus.Setup.csproj
+
+using BricksHoarder.Commands;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;

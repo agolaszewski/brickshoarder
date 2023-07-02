@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using BricksHoarder.Domain.Themes;
+using MassTransit;
 
 namespace BricksHoarder.Domain.Sets;
 
@@ -9,4 +10,64 @@ public class SyncSetsSagaState : SagaStateMachineInstance
     public Guid CorrelationId { get; set; }
 
     public int CurrentState { get; set; }
+
+    public List<ProcessingItem> ThemesToProcess { get; set; } = new List<ProcessingItem>();
+
+    public bool SyncingThemesFinished { get; set; }
+
+    public bool AnyThemeProcessing()
+    {
+        return ThemesToProcess.Any(x => x.State == ProcessingState.Processing);
+    }
+
+    public void AddThemeToProcessing(int id)
+    {
+        ThemesToProcess.Add(new ProcessingItem(id, ProcessingState.NotStarted));
+    }
+
+    internal void FinishProcessingTheme(int themeId)
+    {
+        var theme = ThemesToProcess.First(x => x.Id == themeId);
+        theme.State = ProcessingState.Finished;
+    }
+
+    internal bool HasUnfinishedThemes()
+    {
+        return ThemesToProcess.All(x => x.State == ProcessingState.Finished);
+    }
+
+    internal ProcessingItem GetUnprocessedTheme()
+    {
+        return ThemesToProcess.First(x => x.State == ProcessingState.NotStarted);
+    }
+
+    public void StartThemeProcessing(int themeId)
+    {
+        var theme = ThemesToProcess.First(x => x.Id == themeId);
+        theme.State = ProcessingState.Processing;
+    }
+}
+
+public class ProcessingItem
+{
+    public ProcessingItem()
+    {
+    }
+
+    public ProcessingItem(int id, ProcessingState state)
+    {
+        Id = id;
+        State = state;
+    }
+
+    public int Id { get; set; }
+
+    public ProcessingState State { get; set; }
+}
+
+public enum ProcessingState
+{
+    NotStarted = 1,
+    Processing = 2,
+    Finished = 3
 }

@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Commands.Themes;
+﻿using BricksHoarder.Commands.Sets;
+using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
@@ -147,6 +148,11 @@ namespace BricksHoarder.AzureServiceBus
                     cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
                     {
                         x.SetEntityName("brickshoarder.events/consumed/SyncThemesCommand");
+                    });
+
+                    cfg.Message<CommandConsumed<SyncSetsByThemeCommand>>(x =>
+                    {
+                        x.SetEntityName("brickshoarder.events/consumed/SyncSetsByThemeCommand");
                     });
 
                     cfg.UseServiceBusMessageScheduler();

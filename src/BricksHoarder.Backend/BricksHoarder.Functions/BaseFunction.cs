@@ -24,7 +24,7 @@ public abstract class BaseFunction
     {
         try
         {
-            await _receiver.HandleConsumer<CommandConsumer<TCommand>>(nameof(TCommand), command, cancellationToken);
+            await _receiver.HandleConsumer<CommandConsumer<TCommand>>(typeof(TCommand).Name, command, cancellationToken);
         }
         catch (Exception e)
         {

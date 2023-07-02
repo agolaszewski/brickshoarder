@@ -50,20 +50,19 @@ namespace BricksHoarder.Functions.Generator.Generators
 
         private void CreateFunctionForSaga(Type command)
         {
-            var @event = _commandConsumedGenericType.MakeGenericType(new Type[] { command });
-            var saga = _sagas.FirstOrDefault(s => IsEventUsedBySaga(s, @event));
+            var saga = _sagas.FirstOrDefault(s => IsEventUsedBySaga(s, command));
             if (saga is null)
             {
                 return;
             }
 
-            var eventHandler = $"await HandleSaga<{saga.Name}State>(@event, {@event.Name}Metadata.TopicPath, Default, cancellationToken);";
+            var eventHandler = $"await HandleSaga<{saga.Name}State>(@event, {command.Name}ConsumedMetadata.TopicPath, Default, cancellationToken);";
 
-            var compiled = Templates.EventFunctionTemplate.Replace("{{event}}", @event.Name);
+            var compiled = Templates.EventFunctionTemplate.Replace("{{event}}", $"{command.Name}Consumed");
             compiled = compiled.Replace("{{eventHandler}}", eventHandler);
             compiled = compiled.Replace("{{sagaNamespace}}", saga.Namespace);
 
-            File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{@event.Name}Function.cs", compiled);
+            File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{command.Name}ConsumedFunction.cs", compiled);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace BricksHoarder.Domain.Themes
             _collection.Add(newTheme);
         }
 
-        public bool Exists(int id) => _collection.Any(item => item.Id == id);
+        public bool Exists(int id) => id > 10;
 
         public void Add(LegoThemesListAsyncResponse.Result theme)
         {
