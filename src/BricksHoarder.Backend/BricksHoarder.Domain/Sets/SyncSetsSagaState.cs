@@ -1,5 +1,4 @@
-﻿using BricksHoarder.Domain.Themes;
-using MassTransit;
+﻿using MassTransit;
 
 namespace BricksHoarder.Domain.Sets;
 
@@ -31,20 +30,25 @@ public class SyncSetsSagaState : SagaStateMachineInstance
         theme.State = ProcessingState.Finished;
     }
 
+    public void StartThemeProcessing(int themeId)
+    {
+        var theme = ThemesToProcess.First(x => x.Id == themeId);
+        theme.State = ProcessingState.Processing;
+    }
+
+    internal bool AllFinished()
+    {
+        return SyncingThemesFinished && ThemesToProcess.All(x => x.State == ProcessingState.Finished);
+    }
+
     internal bool HasUnfinishedThemes()
     {
-        return ThemesToProcess.All(x => x.State == ProcessingState.Finished);
+        return ThemesToProcess.Any(x => x.State != ProcessingState.Finished);
     }
 
     internal ProcessingItem GetUnprocessedTheme()
     {
         return ThemesToProcess.First(x => x.State == ProcessingState.NotStarted);
-    }
-
-    public void StartThemeProcessing(int themeId)
-    {
-        var theme = ThemesToProcess.First(x => x.Id == themeId);
-        theme.State = ProcessingState.Processing;
     }
 }
 

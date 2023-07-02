@@ -17,7 +17,6 @@ namespace BricksHoarder.Domain.Sets
             Event(() => SyncThemesCommandConsumed, x => { x.CorrelateBy(state => state.CorrelationId, context => context.CorrelationId); });
             Event(() => SyncSetsByThemeCommandConsumed, x => { x.CorrelateBy(state => state.CorrelationId, context => context.CorrelationId); });
 
-
             Initially(When(SyncSagaStarted)
                 .TransitionTo(SyncingThemesState)
                 .Then(SendSyncThemesCommand));
@@ -42,10 +41,9 @@ namespace BricksHoarder.Domain.Sets
 
         public State SyncingThemesState { get; }
         public Event<SyncSagaStarted> SyncSagaStarted { get; }
-        public Event<ThemeAdded> ThemeAdded { get; }
-        public Event<CommandConsumed<SyncThemesCommand>> SyncThemesCommandConsumed { get; }
-
         public Event<CommandConsumed<SyncSetsByThemeCommand>> SyncSetsByThemeCommandConsumed { get; }
+        public Event<CommandConsumed<SyncThemesCommand>> SyncThemesCommandConsumed { get; }
+        public Event<ThemeAdded> ThemeAdded { get; }
 
         private void ProcessSyncSetsByThemeCommandConsumed(BehaviorContext<SyncSetsSagaState, CommandConsumed<SyncSetsByThemeCommand>> context)
         {
@@ -53,13 +51,22 @@ namespace BricksHoarder.Domain.Sets
             if (context.Saga.HasUnfinishedThemes())
             {
                 var theme = context.Saga.GetUnprocessedTheme();
+                context.Saga.StartThemeProcessing(theme.Id);
                 context.Send(SyncSetsByThemeCommandMetadata.QueuePathUri, new SyncSetsByThemeCommand(theme.Id), x => x.CorrelationId = context.Saga.CorrelationId);
+                return;
+            }
+
+            if (context.Saga.AllFinished())
+            {
             }
         }
 
         private void ProcessSyncThemesCommandConsumed(BehaviorContext<SyncSetsSagaState, CommandConsumed<SyncThemesCommand>> context)
         {
             context.Saga.SyncingThemesFinished = true;
+            if (context.Saga.AllFinished())
+            {
+            }
         }
 
         private void ProcessTheme(BehaviorContext<SyncSetsSagaState, ThemeAdded> context)

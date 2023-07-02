@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BricksHoarder.Commands.Sets;
-using BricksHoarder.Commands.Themes;
+﻿using BricksHoarder.Commands.Sets;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Domain.Themes;
@@ -12,7 +6,7 @@ using RebrickableApi;
 
 namespace BricksHoarder.Domain.Sets
 {
-    public  class SyncSetsByTheme
+    public class SyncSetsByTheme
     {
         public class Handler : ICommandHandler<SyncSetsByThemeCommand>
         {
