@@ -72,9 +72,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Cloud.Azure.I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.DateTime", "BricksHoarder.DateTime\BricksHoarder.DateTime.csproj", "{559B0679-AF55-432E-91FF-1CF4F9C583C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.MsSql.Database.Snapshots", "BricksHoarder.MsSql.Database.Snapshots\BricksHoarder.MsSql.Database.Snapshots.csproj", "{616BAFDF-116D-4638-888E-299C2A3A8E87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricksHoarder.Snapshots.MsSql", "BricksHoarder.Snapshots.MsSql\BricksHoarder.Snapshots.MsSql.csproj", "{A6C4962A-0854-425F-A444-8D8F3A4D4DA1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Snapshots.MsSql", "BricksHoarder.Snapshots.MsSql\BricksHoarder.Snapshots.MsSql.csproj", "{DC7D243C-EB9A-43B1-81AD-09D12E18E077}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricksHoarder.MsSql.Database.Snapshots", "BricksHoarder.MsSql.Database.Snapshots\BricksHoarder.MsSql.Database.Snapshots.csproj", "{616BAFDF-116D-4638-888E-299C2A3A8E87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -296,6 +296,14 @@ Global
 		{559B0679-AF55-432E-91FF-1CF4F9C583C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{559B0679-AF55-432E-91FF-1CF4F9C583C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{559B0679-AF55-432E-91FF-1CF4F9C583C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6C4962A-0854-425F-A444-8D8F3A4D4DA1}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6C4962A-0854-425F-A444-8D8F3A4D4DA1}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{A6C4962A-0854-425F-A444-8D8F3A4D4DA1}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6C4962A-0854-425F-A444-8D8F3A4D4DA1}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{A6C4962A-0854-425F-A444-8D8F3A4D4DA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6C4962A-0854-425F-A444-8D8F3A4D4DA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6C4962A-0854-425F-A444-8D8F3A4D4DA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6C4962A-0854-425F-A444-8D8F3A4D4DA1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{616BAFDF-116D-4638-888E-299C2A3A8E87}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
 		{616BAFDF-116D-4638-888E-299C2A3A8E87}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
 		{616BAFDF-116D-4638-888E-299C2A3A8E87}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
@@ -304,14 +312,6 @@ Global
 		{616BAFDF-116D-4638-888E-299C2A3A8E87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{616BAFDF-116D-4638-888E-299C2A3A8E87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{616BAFDF-116D-4638-888E-299C2A3A8E87}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC7D243C-EB9A-43B1-81AD-09D12E18E077}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC7D243C-EB9A-43B1-81AD-09D12E18E077}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
-		{DC7D243C-EB9A-43B1-81AD-09D12E18E077}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC7D243C-EB9A-43B1-81AD-09D12E18E077}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
-		{DC7D243C-EB9A-43B1-81AD-09D12E18E077}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC7D243C-EB9A-43B1-81AD-09D12E18E077}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC7D243C-EB9A-43B1-81AD-09D12E18E077}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC7D243C-EB9A-43B1-81AD-09D12E18E077}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -337,8 +337,8 @@ Global
 		{598D069F-FE55-492A-8D47-7365EDF2525C} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
 		{2D8B3A93-E1FB-4551-A553-F90DF0938BF5} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
 		{559B0679-AF55-432E-91FF-1CF4F9C583C6} = {11B2C7BC-7DA5-4CF7-9E27-3B38D05357FC}
+		{A6C4962A-0854-425F-A444-8D8F3A4D4DA1} = {11B2C7BC-7DA5-4CF7-9E27-3B38D05357FC}
 		{616BAFDF-116D-4638-888E-299C2A3A8E87} = {E81904F8-3F54-4FF7-8542-96A51096BBEE}
-		{DC7D243C-EB9A-43B1-81AD-09D12E18E077} = {11B2C7BC-7DA5-4CF7-9E27-3B38D05357FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E820C2F3-08C8-491E-84A1-4E46C6D0C013}

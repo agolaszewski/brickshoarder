@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="C:\Users\Andrzej\source\repos\agolaszewski\brickshoarder\src\BricksHoarder.Backend\BricksHoarder.MsSql.Database.Snapshots\ServiceCollectionExtensions.cs" Link="ServiceCollectionExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.143" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
+    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.csproj" />
+    <ProjectReference Include="..\BricksHoarder.MsSql.Database.Snapshots\BricksHoarder.MsSql.Database.Snapshots.csproj" />
+  </ItemGroup>
+
+</Project>

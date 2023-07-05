@@ -1,9 +1,9 @@
 ﻿namespace BricksHoarder.Core.Aggregates
 {
-    public interface IAggragateSnapshot<TAggragate> where TAggragate : IAggregateRoot
+    public interface IAggregateSnapshot<TAggregate> where TAggregate : IAggregateRoot
     {
-        Task<TAggragate?> LoadAsync(string key);
+        Task<TAggregate?> LoadAsync(string key);
 
-        Task SaveAsync(string streamName, TAggragate aggregate, TimeSpan timeSpan);
+        Task SaveAsync(string streamName, TAggregate aggregate, TimeSpan timeSpan);
     }
 }

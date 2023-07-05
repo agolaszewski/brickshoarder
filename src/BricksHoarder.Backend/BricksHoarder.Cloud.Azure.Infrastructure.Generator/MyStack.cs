@@ -20,7 +20,7 @@ internal class MyStack : Stack
 
         #region Service Bus
 
-        var serviceBusNamespace = new Namespace("ServiceBus.Namespace", new NamespaceArgs
+        var serviceBusNamespace = new Pulumi.AzureNative.ServiceBus.Namespace("ServiceBus.Namespace", new NamespaceArgs
         {
             ResourceGroupName = resourceGroup.Name,
             Sku = new SBSkuArgs()
@@ -31,7 +31,7 @@ internal class MyStack : Stack
             NamespaceName = "sb-brickshoarder-dev"
         });
 
-        var serviceBusNamespaceNamespaceAuthorizationRule = new NamespaceAuthorizationRule("ServiceBus.Namespace.NamespaceAuthorizationRule", new NamespaceAuthorizationRuleArgs()
+        var serviceBusNamespaceNamespaceAuthorizationRule = new Pulumi.AzureNative.ServiceBus.NamespaceAuthorizationRule("ServiceBus.Namespace.NamespaceAuthorizationRule", new NamespaceAuthorizationRuleArgs()
         {
             NamespaceName = serviceBusNamespace.Name,
             AuthorizationRuleName = "DefaultSharedAccessPolicy",
@@ -63,18 +63,18 @@ internal class MyStack : Stack
 
         #region PostgreSQL
 
-        var dBforPostgreSQLAdministratorLoginPassword = new Pulumi.Random.RandomPassword("DBforPostgreSQL.AdministratorLoginPassword", new()
+        var dBForPostgreSqlAdministratorLoginPassword = new Pulumi.Random.RandomPassword("DBforPostgreSQL.AdministratorLoginPassword", new()
         {
             Length = 20,
         });
-        DBforPostgreSQLAdminPassword = Output.Unsecret(dBforPostgreSQLAdministratorLoginPassword.Result);
+        DbForPostgreSqlAdminPassword = Output.Unsecret(dBForPostgreSqlAdministratorLoginPassword.Result);
 
-        var dBforPostgreSQLServer = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Server("DBforPostgreSQL.Server", new()
+        var dBForPostgreSqlServer = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Server("DBforPostgreSQL.Server", new()
         {
             ResourceGroupName = resourceGroup.Name,
             ServerName = "psql-brickshoarder-dev",
             AdministratorLogin = "brickshoarder_admin",
-            AdministratorLoginPassword = dBforPostgreSQLAdministratorLoginPassword.Result,
+            AdministratorLoginPassword = dBForPostgreSqlAdministratorLoginPassword.Result,
             CreateMode = Pulumi.AzureNative.DBforPostgreSQL.V20221201.CreateMode.Default,
             Version = Pulumi.AzureNative.DBforPostgreSQL.V20221201.ServerVersion.ServerVersion_14,
             Sku = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Inputs.SkuArgs()
@@ -92,20 +92,58 @@ internal class MyStack : Stack
         {
             EndIpAddress = "255.255.255.255",
             ResourceGroupName = resourceGroup.Name,
-            ServerName = dBforPostgreSQLServer.Name,
+            ServerName = dBForPostgreSqlServer.Name,
             StartIpAddress = "0.0.0.0",
             FirewallRuleName = "DevAllAccess"
         });
 
-        var dBforPostgreSQLDatabase = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Database("DBforPostgreSQL.Server.Database", new()
+        var dBForPostgreSqlDatabase = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Database("DBforPostgreSQL.Server.Database", new()
         {
-            ServerName = dBforPostgreSQLServer.Name,
+            ServerName = dBForPostgreSqlServer.Name,
             ResourceGroupName = resourceGroup.Name,
             DatabaseName = "brickshoarder"
         });
 
 
         #endregion PostgreSQL
+
+        #region Sql Server
+        var dBForMsSqlAdministratorLoginPassword = new Pulumi.Random.RandomPassword("DbForMsSQL.AdministratorLoginPassword", new()
+        {
+            Length = 20,
+        });
+        DbForMsSqlAdminPassword = Output.Unsecret(dBForMsSqlAdministratorLoginPassword.Result);
+
+        var dbForMsSqlServer = new Pulumi.AzureNative.Sql.Server("DbForMsSqlServer.Server", new Pulumi.AzureNative.Sql.ServerArgs
+        {
+            ResourceGroupName = resourceGroup.Name,
+            ServerName = "sql-brickshoarder-dev",
+            AdministratorLogin = "brickshoarder_admin",
+            AdministratorLoginPassword = dBForMsSqlAdministratorLoginPassword.Result
+        });
+
+        new Pulumi.AzureNative.Sql.FirewallRule("DBforPostgreSQL.Server.FirewallRule", new Pulumi.AzureNative.Sql.FirewallRuleArgs
+        {
+            EndIpAddress = "255.255.255.255",
+            ResourceGroupName = resourceGroup.Name,
+            ServerName = dbForMsSqlServer.Name,
+            StartIpAddress = "0.0.0.0",
+            FirewallRuleName = "DevAllAccess"
+        });
+
+        var sqlDatabase = new Pulumi.AzureNative.Sql.Database("DbForMsSqlServer.Server.Database", new Pulumi.AzureNative.Sql.DatabaseArgs
+        {
+            ResourceGroupName = resourceGroup.Name,
+            ServerName = dbForMsSqlServer.Name,
+            DatabaseName = "brickshoarder",
+            Sku = new Pulumi.AzureNative.Sql.Inputs.SkuArgs()
+            {
+                Name = "S0",
+                Tier = "Standard"
+            }
+        });
+
+        #endregion
     }
 
     [Output]
@@ -121,5 +159,8 @@ internal class MyStack : Stack
     public Output<string> Endpoint { get; set; }
 
     [Output]
-    public Output<string> DBforPostgreSQLAdminPassword { get; set; }
+    public Output<string> DbForPostgreSqlAdminPassword { get; set; }
+
+    [Output]
+    public Output<string> DbForMsSqlAdminPassword { get; set; }
 }

@@ -4,7 +4,7 @@ using BricksHoarder.Core.Commands;
 using BricksHoarder.Helpers;
 using RebrickableApi;
 
-namespace BricksHoarder.Domain.Themes;
+namespace BricksHoarder.Domain.Themes.Handlers;
 
 public class SyncThemes
 {

@@ -71,7 +71,7 @@ namespace BricksHoarder.Domain.Sets
 
         private void ProcessTheme(BehaviorContext<SyncSetsSagaState, ThemeAdded> context)
         {
-            context.Saga.AddThemeToProcessing(context.Message.Id);
+            context.Saga.AddThemeForProcessing(context.Message.Id);
             if (context.Saga.AnyThemeProcessing())
             {
                 return;

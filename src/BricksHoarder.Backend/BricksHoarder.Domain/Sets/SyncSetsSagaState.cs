@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using BricksHoarder.Events;
+using MassTransit;
 
 namespace BricksHoarder.Domain.Sets;
 
@@ -19,7 +20,7 @@ public class SyncSetsSagaState : SagaStateMachineInstance
         return ThemesToProcess.Any(x => x.State == ProcessingState.Processing);
     }
 
-    public void AddThemeToProcessing(int id)
+    public void AddThemeForProcessing(int id)
     {
         ThemesToProcess.Add(new ProcessingItem(id, ProcessingState.NotStarted));
     }
@@ -50,28 +51,4 @@ public class SyncSetsSagaState : SagaStateMachineInstance
     {
         return ThemesToProcess.First(x => x.State == ProcessingState.NotStarted);
     }
-}
-
-public class ProcessingItem
-{
-    public ProcessingItem()
-    {
-    }
-
-    public ProcessingItem(int id, ProcessingState state)
-    {
-        Id = id;
-        State = state;
-    }
-
-    public int Id { get; set; }
-
-    public ProcessingState State { get; set; }
-}
-
-public enum ProcessingState
-{
-    NotStarted = 1,
-    Processing = 2,
-    Finished = 3
 }

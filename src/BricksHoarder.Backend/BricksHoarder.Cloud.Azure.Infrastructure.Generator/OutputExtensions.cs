@@ -12,6 +12,6 @@ public static class OutputExtensions
             value = x;
             return x;
         });
-        return value;
+        return value!;
     }
 }

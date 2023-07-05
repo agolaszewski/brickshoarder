@@ -3,7 +3,7 @@ using BricksHoarder.Core.Services;
 
 namespace BricksHoarder.Common.DDD.Aggregates
 {
-    public class DefaultAggregateSnapshot<TAggragate> : IAggragateSnapshot<TAggragate> where TAggragate : class, IAggregateRoot
+    public class DefaultAggregateSnapshot<TAggregate> : IAggregateSnapshot<TAggregate> where TAggregate : class, IAggregateRoot
     {
         private ICacheService _cacheService;
 
@@ -12,12 +12,12 @@ namespace BricksHoarder.Common.DDD.Aggregates
             _cacheService = cacheService;
         }
 
-        public async Task<TAggragate?> LoadAsync(string key)
+        public async Task<TAggregate?> LoadAsync(string key)
         {
-            return await _cacheService.GetAsync<TAggragate>(key);
+            return await _cacheService.GetAsync<TAggregate>(key);
         }
 
-        public async Task SaveAsync(string streamName, TAggragate aggregate, TimeSpan timeSpan)
+        public async Task SaveAsync(string streamName, TAggregate aggregate, TimeSpan timeSpan)
         {
             await _cacheService.SetAsync(streamName, aggregate, timeSpan);
         }

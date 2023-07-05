@@ -84,7 +84,7 @@ namespace BricksHoarder.Marten
             {
                 aggregate.Version += aggregate.Events.Count() + 1;
 
-                var aggregateSnapshot = _context.GetRequiredService<IAggragateSnapshot<TAggregate>>();
+                var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
                 await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromHours(1));
                 return;
             }
@@ -139,7 +139,7 @@ namespace BricksHoarder.Marten
                 Version = 0
             };
 
-            var aggregateSnapshot = _context.GetRequiredService<IAggragateSnapshot<TAggregate>>();
+            var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
 
             var aggregateFromCache = await aggregateSnapshot.LoadAsync(streamName);
             if (aggregateFromCache is not null)

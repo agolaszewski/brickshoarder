@@ -74,8 +74,8 @@ namespace BricksHoarder.Domain
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
 
-            services.AddScoped(typeof(IAggragateSnapshot<>), typeof(DefaultAggregateSnapshot<>));
-            services.AddScoped<IAggragateSnapshot<ThemesCollectionAggregate>, ThemesCollectionAggragateSnapshot>();
+            services.AddScoped(typeof(IAggregateSnapshot<>), typeof(DefaultAggregateSnapshot<>));
+            services.AddScoped<IAggregateSnapshot<ThemesCollectionAggregate>, ThemesCollectionAggregateSnapshot>();
         }
 
         public static IMapperConfigurationExpression AddDomainProfiles(this IMapperConfigurationExpression @that)

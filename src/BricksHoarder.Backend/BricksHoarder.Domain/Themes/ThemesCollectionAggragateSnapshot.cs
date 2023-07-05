@@ -3,11 +3,11 @@ using BricksHoarder.Core.Services;
 
 namespace BricksHoarder.Domain.Themes;
 
-public class ThemesCollectionAggragateSnapshot : IAggragateSnapshot<ThemesCollectionAggregate>
+public class ThemesCollectionAggregateSnapshot : IAggregateSnapshot<ThemesCollectionAggregate>
 {
-    private ICacheService _cacheService;
+    private readonly ICacheService _cacheService;
 
-    public ThemesCollectionAggragateSnapshot(ICacheService cacheService)
+    public ThemesCollectionAggregateSnapshot(ICacheService cacheService)
     {
         _cacheService = cacheService;
     }
