@@ -23,6 +23,7 @@
     <ProjectReference Include="..\BricksHoarder.Marten\BricksHoarder.Marten.csproj" />
     <ProjectReference Include="..\BricksHoarder.Rebrickable\BricksHoarder.Rebrickable.csproj" />
     <ProjectReference Include="..\BricksHoarder.Redis\BricksHoarder.Redis.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Snapshots.MsSql\BricksHoarder.Snapshots.MsSql.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

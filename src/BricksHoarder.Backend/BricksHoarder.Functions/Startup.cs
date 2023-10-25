@@ -1,4 +1,5 @@
 ﻿using BricksHoarder.AzureServiceBus;
+using BricksHoarder.Cache.InMemory;
 using BricksHoarder.Cache.NoCache;
 using BricksHoarder.Common;
 using BricksHoarder.Credentials;
@@ -29,7 +30,7 @@ namespace BricksHoarder.Functions
             var config = builder.GetContext().Configuration;
 
             services.AddRebrickable(new RebrickableCredentials(config));
-            services.AddNoCache();
+            services.AddMsSqlMemoryCache(new SqlServerDatabaseCredentials(config, "SnapshotsDb"));
             services.AddDomain();
 
             services.AddAutoMapper(mapper =>
