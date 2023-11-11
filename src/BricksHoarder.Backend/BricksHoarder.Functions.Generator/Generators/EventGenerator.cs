@@ -9,6 +9,13 @@ namespace BricksHoarder.Functions.Generator.Generators
         private readonly IReadOnlyList<Type> _events;
         private readonly IReadOnlyList<Type> _sagas;
 
+        private readonly List<string> _requiredEventsNamespaces = new()
+        {
+            "BricksHoarder.Events.Metadata",
+            "MassTransit",
+            "Microsoft.Azure.Functions.Worker"
+        };
+
         public EventGenerator()
         {
             var eventsAssembly = typeof(BricksHoarderEventsAssemblyPointer).Assembly.GetTypes();
@@ -41,7 +48,12 @@ namespace BricksHoarder.Functions.Generator.Generators
 
                 var compiled = Templates.EventFunctionTemplate.Replace("{{event}}", @event.Name);
                 compiled = compiled.Replace("{{eventHandler}}", eventHandler);
-                compiled = compiled.Replace("{{sagaNamespace}}", saga.Namespace);
+
+                var namespaces = _requiredEventsNamespaces.ToList();
+                namespaces.Add(saga.Namespace!);
+                namespaces = namespaces.OrderBy(x => x, new NamespaceComparer()).Select(x => $"using {x};").ToList();
+
+                compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
 
                 File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{@event.Name}Function.cs", compiled);
             }

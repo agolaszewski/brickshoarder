@@ -6,7 +6,7 @@ using RebrickableApi;
 namespace BricksHoarder.Domain.Themes
 {
     public class ThemesCollectionAggregate : AggregateRoot<ThemesCollectionAggregate>,
-        IApply<ThemeAdded>
+        IApply<ThemeReleased>
     {
         private readonly List<Theme> _collection = new();
 
@@ -35,7 +35,7 @@ namespace BricksHoarder.Domain.Themes
             Version = snapshot.Version;
         }
 
-        public void Apply(ThemeAdded @event)
+        public void Apply(ThemeReleased @event)
         {
             var parent = _collection.FirstOrDefault(item => item.Id == @event.ParentId);
             var newTheme = new Theme()
@@ -49,7 +49,7 @@ namespace BricksHoarder.Domain.Themes
             _collection.Add(newTheme);
         }
 
-        public bool Exists(int id) => id > 10;
+        public bool Exists(int id) => _collection.Any(item => item.Id == id);
 
         public void Add(LegoThemesListAsyncResponse.Result theme)
         {
@@ -58,7 +58,7 @@ namespace BricksHoarder.Domain.Themes
                 return;
             }
 
-            AddEvent(new ThemeAdded(theme.Id, theme.ParentId, theme.Name));
+            AddEvent(new ThemeReleased(theme.Id, theme.ParentId, theme.Name));
         }
     }
 }

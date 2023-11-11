@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
     <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.csproj" />
-    <ProjectReference Include="..\BricksHoarder.MsSql.Database.Snapshots\BricksHoarder.MsSql.Database.Snapshots.csproj" />
+    <ProjectReference Include="..\BricksHoarder.MsSql.Database.Snapshots\BricksHoarder.MsSql.Database.csproj" />
   </ItemGroup>
 
 </Project>

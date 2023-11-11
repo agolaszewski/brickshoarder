@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
+    <ProjectReference Include="..\BricksHoarder.MsSql.Database.Sql\BricksHoarder.MsSql.Database.csproj" />
+  </ItemGroup>
+
+
+</Project>

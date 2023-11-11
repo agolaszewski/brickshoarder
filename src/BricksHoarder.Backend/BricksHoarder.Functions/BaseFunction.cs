@@ -3,9 +3,6 @@ using BricksHoarder.AzureServiceBus;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using MassTransit;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace BricksHoarder.Functions;
 

@@ -1,3 +1,5 @@
+namespace BricksHoarder.Commands.Metadata;
+
 public static class SyncThemesCommandMetadata
 {
     public const string Consumer = "SyncThemesCommandConsumer";

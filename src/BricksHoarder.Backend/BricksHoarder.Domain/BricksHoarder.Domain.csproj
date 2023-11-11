@@ -8,8 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="EventsHandlers\**" />
+    <EmbeddedResource Remove="EventsHandlers\**" />
+    <None Remove="EventsHandlers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Rebrickable.Api" Version="3.0.20" />
-    <PackageReference Include="Scrutor" Version="4.2.0" />
+    <PackageReference Include="Scrutor" Version="4.2.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,10 +25,6 @@
     <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
     <ProjectReference Include="..\BricksHoarder.Events\BricksHoarder.Events.csproj" />
     <ProjectReference Include="..\BricksHoarder.Helpers\BricksHoarder.Helpers.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="EventsHandlers\" />
   </ItemGroup>
 
 </Project>

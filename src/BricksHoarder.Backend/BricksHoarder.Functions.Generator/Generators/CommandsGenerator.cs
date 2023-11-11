@@ -1,7 +1,6 @@
 ﻿using BricksHoarder.Commands;
-using BricksHoarder.Core.Commands;
 using BricksHoarder.Domain;
-using BricksHoarder.Events;
+using ICommand = BricksHoarder.Core.Commands.ICommand;
 
 namespace BricksHoarder.Functions.Generator.Generators
 {
@@ -9,7 +8,20 @@ namespace BricksHoarder.Functions.Generator.Generators
     {
         private readonly IReadOnlyList<Type> _sagas;
         private readonly List<Type> _commands;
-        private readonly Type _commandConsumedGenericType = typeof(CommandConsumed<>);
+
+        private readonly List<string> _requiredCommandsNamespaces = new()
+        {
+            "BricksHoarder.Commands.Metadata",
+            "MassTransit",
+            "Microsoft.Azure.Functions.Worker"
+        };
+
+        private readonly List<string> _requiredCommandsConsumedNamespaces = new()
+        {
+            "BricksHoarder.Events.Metadata",
+            "MassTransit",
+            "Microsoft.Azure.Functions.Worker"
+        };
 
         public CommandsGenerator()
         {
@@ -44,7 +56,12 @@ namespace BricksHoarder.Functions.Generator.Generators
         private void CreateFunction(Type command)
         {
             var compiled = Templates.CommandFunctionTemplate.Replace("{{command}}", command.Name);
-            compiled = compiled.Replace("{{commandNamespace}}", command.Namespace);
+
+            var namespaces = _requiredCommandsNamespaces.ToList();
+            namespaces.Add(command.Namespace!);
+            namespaces = namespaces.OrderBy(x => x, new NamespaceComparer()).Select(x => $"using {x};").ToList();
+
+            compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
             File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{command.Name}Function.cs", compiled);
         }
 
@@ -60,7 +77,12 @@ namespace BricksHoarder.Functions.Generator.Generators
 
             var compiled = Templates.EventFunctionTemplate.Replace("{{event}}", $"{command.Name}Consumed");
             compiled = compiled.Replace("{{eventHandler}}", eventHandler);
-            compiled = compiled.Replace("{{sagaNamespace}}", saga.Namespace);
+
+            var namespaces = _requiredCommandsConsumedNamespaces.ToList();
+            namespaces.Add(saga.Namespace!);
+            namespaces = namespaces.OrderBy(x => x, new NamespaceComparer()).Select(x => $"using {x};").ToList();
+
+            compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
 
             File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{command.Name}ConsumedFunction.cs", compiled);
         }

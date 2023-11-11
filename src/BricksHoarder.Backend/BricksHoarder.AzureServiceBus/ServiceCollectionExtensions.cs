@@ -150,11 +150,6 @@ namespace BricksHoarder.AzureServiceBus
                         x.SetEntityName("brickshoarder.events/consumed/SyncThemesCommand");
                     });
 
-                    cfg.Message<CommandConsumed<SyncSetsByThemeCommand>>(x =>
-                    {
-                        x.SetEntityName("brickshoarder.events/consumed/SyncSetsByThemeCommand");
-                    });
-
                     cfg.UseServiceBusMessageScheduler();
                 });
             });

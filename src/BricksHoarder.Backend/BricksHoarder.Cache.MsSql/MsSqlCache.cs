@@ -1,29 +1,31 @@
 ﻿using System.Text.Json;
 using BricksHoarder.Core.Services;
-using BricksHoarder.DateTime;
-using BricksHoarder.MsSql.Database.Snapshots.Queries.SnapshotInsert;
+using BricksHoarder.MsSql.Database.Queries.CacheGet;
+using BricksHoarder.MsSql.Database.Queries.CacheInsert;
 
 namespace BricksHoarder.Cache.MsSql
 {
     public class MsSqlCache : ICacheService
     {
-        private readonly SnapshotInsertQuery _snapshotInsertQuery;
+        private readonly CacheInsertQuery _cacheInsertQuery;
+        private readonly CacheGetQuery _cacheGetQuery;
 
-        public MsSqlCache(CacheInsertQuery cacheInsertQuery, IDateTimeProvider dateTimeProvider)
+        public MsSqlCache(CacheInsertQuery cacheInsertQuery, CacheGetQuery cacheGetQuery)
         {
-            _snapshotInsertQuery = cacheInsertQuery;
-            _dateTimeProvider = dateTimeProvider;
+            _cacheInsertQuery = cacheInsertQuery;
+            _cacheGetQuery = cacheGetQuery;
         }
 
         public async Task SetAsync<T>(string key, T value, TimeSpan? expire) where T : class
         {
             var jsonValue = JsonSerializer.Serialize(value);
-            await _cacheInsertQuery.ExecuteAsync(new BricksHoarder.MsSql.Database.BricksHoarder.Tables.Cache(key, jsonValue, null));
+            await _cacheInsertQuery.ExecuteAsync(key, jsonValue, expire);
         }
 
-        public Task<T?> GetAsync<T>(string key) where T : class
+        public async Task<T?> GetAsync<T>(string key) where T : class
         {
-            return null;
+            var cache = await _cacheGetQuery.ExecuteAsync(key);
+            return cache != null ? JsonSerializer.Deserialize<T>(cache.Value) : null;
         }
     }
 }

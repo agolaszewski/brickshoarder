@@ -1,58 +1,49 @@
-﻿//using BricksHoarder.Commands.Themes;
-//using BricksHoarder.Common.CQRS;
-//using BricksHoarder.Core.Aggregates;
-//using BricksHoarder.Core.Commands;
-//using BricksHoarder.Core.Events;
-//using BricksHoarder.Domain.Themes;
-//using BricksHoarder.Helpers;
-//using RebrickableApi;
+﻿using BricksHoarder.Commands.Sets;
+using BricksHoarder.Core.Aggregates;
+using BricksHoarder.Core.Commands;
+using RebrickableApi;
 
-//namespace BricksHoarder.Domain.Sets
-//{
-//    public class SyncSets
-//    {
-//        public class Handler : ICommandHandler<SyncThemesCommand>
-//        {
-//            private readonly IRebrickableClient _rebrickableClient;
-//            private readonly IAggregateStore _aggregateStore;
-//            private readonly IIntegrationEventsQueue _integrationEventsQueue;
+namespace BricksHoarder.Domain.Sets;
 
-//            public Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore, IIntegrationEventsQueue integrationEventsQueue)
-//            {
-//                _rebrickableClient = rebrickableClient;
-//                _aggregateStore = aggregateStore;
-//                _integrationEventsQueue = integrationEventsQueue;
-//            }
+public class SyncSets
+{
+    public class Handler : ICommandHandler<SyncSetsCommand>
+    {
+        private readonly IRebrickableClient _rebrickableClient;
+        private readonly IAggregateStore _aggregateStore;
 
-//            public async Task<IAggregateRoot> HandleAsync(SyncThemesCommand command)
-//            {
-//                var themes = await _aggregateStore.GetByIdOrDefaultAsync<ThemesCollectionAggregate>();
-//                foreach (var theme in themes.Collection)
-//                {
-//                    var sets = GetAllSetsForTheme(theme.Id);
-//                }
+        public Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore)
+        {
+            _rebrickableClient = rebrickableClient;
+            _aggregateStore = aggregateStore;
+        }
 
-//                return themes;
-//            }
+        public async Task<IAggregateRoot> HandleAsync(SyncSetsCommand command)
+        {
+            var sets = await _aggregateStore.GetByIdOrDefaultAsync<SetsCollectionAggregate>();
+            int page = 0;
+            
+            while (true)
+            {
+                page += 1;
 
-//            private async Task<IReadOnlyList<LegoSetsListAsyncResponse.Result>> GetAllSetsForTheme(int themeId)
-//            {
-//                List<LegoSetsListAsyncResponse.Result> collection = new();
-//                int pageNumber = 1;
-//                bool hasMore;
+                IReadOnlyList<LegoSetsListAsyncResponse.Result> setsFromApi = await GetSetsAsync(page);
+                foreach (var apiSet in setsFromApi)
+                {
+                    if (sets.HasChanged(apiSet))
+                    {
+                        continue;
+                    }
 
-//                do
-//                {
-//                    var response = await _rebrickableClient.LegoSetsListAsync(page: pageNumber, page_size: 1000, ordering: "id", theme_id: themeId.ToString());
-//                    collection.AddRange(response.Results);
+                    return sets;
+                }
+            }
+        }
 
-//                    hasMore = !response.Next.IsNullOrWhiteSpace();
-//                    pageNumber++;
-//                }
-//                while (hasMore);
-
-//                return collection;
-//            }
-//        }
-//    }
-//}
+        private async Task<IReadOnlyList<LegoSetsListAsyncResponse.Result>> GetSetsAsync(int pageNumber)
+        {
+            LegoSetsListAsyncResponse? response = await _rebrickableClient.LegoSetsListAsync(page: pageNumber, page_size: 50, ordering: "-year");
+            return response.Results;
+        }
+    }
+}

@@ -1,8 +1,4 @@
-﻿using {{commandNamespace}};
-using MassTransit;
-using Microsoft.Azure.WebJobs;
-using System.Threading;
-using System.Threading.Tasks;
+﻿{{namespaces}}
 
 namespace BricksHoarder.Functions;
 
@@ -12,7 +8,7 @@ public class {{command}}Function : BaseFunction
     {
     }
 
-    [FunctionName({{command}}Metadata.Consumer)]
+    [Function({{command}}Metadata.Consumer)]
     public async Task Run([ServiceBusTrigger({{command}}Metadata.QueuePath, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
     {
         await HandleCommand<{{command}}>(command, cancellationToken);

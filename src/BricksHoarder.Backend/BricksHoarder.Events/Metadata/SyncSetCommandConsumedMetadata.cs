@@ -1,3 +1,5 @@
+namespace BricksHoarder.Events.Metadata;
+
 public static class SyncSetCommandConsumedMetadata
 {
     public const string Consumer = "SyncSetCommandConsumedConsumer";

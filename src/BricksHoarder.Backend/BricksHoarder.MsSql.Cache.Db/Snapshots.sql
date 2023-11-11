@@ -1,5 +1,0 @@
-﻿CREATE TABLE [dbo].[Cache]
-(
-	[Key] NVARCHAR(255) NOT NULL PRIMARY KEY,
-	[Value] NVARCHAR(MAX) NOT NULL
-)
