@@ -1,5 +1,7 @@
 ﻿using BricksHoarder.Commands.Metadata;
+using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
+using BricksHoarder.Domain.Themes;
 using BricksHoarder.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -10,40 +12,47 @@ namespace BricksHoarder.Domain.Sets
     {
         public SyncSetsSaga(ILogger<SyncSetsSaga> logger)
         {
-            InstanceState(x => x.CurrentState, SyncingThemesState);
+            InstanceState(x => x.CurrentState, SyncingState);
 
             Event(() => SyncSagaStarted, x => { x.CorrelateBy(state => state.Id, context => context.Message.Id); });
             Event(() => SyncThemesCommandConsumed, x => { x.CorrelateBy(state => state.CorrelationId, context => context.CorrelationId); });
+            Event(() => SyncSetsCommandConsumed, x => { x.CorrelateBy(state => state.CorrelationId, context => context.CorrelationId); });
+
 
             Initially(When(SyncSagaStarted)
-                .TransitionTo(SyncingThemesState)
+                .TransitionTo(SyncingState)
                 .ThenAsync(SendSyncThemesCommand));
 
             DuringAny(When(SyncSagaStarted)
                 .Then(context => logger.LogError("SyncSetsSaga is already running {id}", context.Saga.Id)));
 
-            During(SyncingThemesState, When(SyncThemesCommandConsumed)
+            During(SyncingState, When(SyncThemesCommandConsumed)
                 .Then(_ => logger.LogDebug("SyncThemesCommandConsumed"))
                 .Then(ProcessSyncThemesCommandConsumed));
+
+            During(SyncingState, When(SyncSetsCommandConsumed)
+                .Then(_ => logger.LogDebug("SyncSetsCommandConsumed")));
 
             SetCompletedWhenFinalized();
         }
 
-        public State SyncingThemesState { get; }
+        public State SyncingState { get; }
 
         public Event<SyncSagaStarted> SyncSagaStarted { get; }
 
         public Event<CommandConsumed<SyncThemesCommand>> SyncThemesCommandConsumed { get; }
 
-        private void ProcessSyncThemesCommandConsumed(BehaviorContext<SyncSetsSagaState, CommandConsumed<SyncThemesCommand>> obj)
+        public Event<CommandConsumed<SyncSetsCommand>> SyncSetsCommandConsumed { get; }
+
+        private void ProcessSyncThemesCommandConsumed(BehaviorContext<SyncSetsSagaState, CommandConsumed<SyncThemesCommand>> context)
         {
-            throw new NotImplementedException();
+            context.Send(SyncSetsCommandMetadata.QueuePathUri, new SyncSetsCommand(), x => x.CorrelationId = context.Saga.CorrelationId);
         }
 
         private async Task SendSyncThemesCommand(BehaviorContext<SyncSetsSagaState, SyncSagaStarted> action)
         {
             action.Saga.Id = action.Message.Id;
-            await action.Send(SyncThemesCommandMetadata.QueuePathUri, new SyncThemesCommand(action.Saga.Id), x => x.CorrelationId = action.Saga.CorrelationId);
+            await action.Send(SyncThemesCommandMetadata.QueuePathUri, new SyncThemesCommand(), x => x.CorrelationId = action.Saga.CorrelationId);
         }
     }
 }

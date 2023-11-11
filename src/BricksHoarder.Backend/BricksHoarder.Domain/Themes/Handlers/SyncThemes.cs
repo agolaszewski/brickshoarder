@@ -8,7 +8,7 @@ namespace BricksHoarder.Domain.Themes.Handlers;
 
 public class SyncThemes
 {
-    public class Handler : ICommandHandler<SyncThemesCommand>
+    public class Handler : ICommandHandler<SyncThemesCommand, ThemesCollectionAggregate>
     {
         private readonly IRebrickableClient _rebrickableClient;
         private readonly IAggregateStore _aggregateStore;
@@ -19,7 +19,7 @@ public class SyncThemes
             _aggregateStore = aggregateStore;
         }
 
-        public async Task<IAggregateRoot> HandleAsync(SyncThemesCommand command)
+        public async Task<ThemesCollectionAggregate> HandleAsync(SyncThemesCommand command)
         {
             var themesFromApi = await GetAllThemes();
             var themes = await _aggregateStore.GetByIdOrDefaultAsync<ThemesCollectionAggregate>();

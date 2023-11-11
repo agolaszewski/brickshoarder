@@ -25,7 +25,7 @@ namespace BricksHoarder.Domain
 
             services.Scan(scan =>
                 scan.FromAssemblies(domainAssembly!)
-                    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)))
+                    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)))
                     .AsImplementedInterfaces().WithScopedLifetime()
             );
 

@@ -1,5 +1,6 @@
 using Azure.Messaging.ServiceBus;
 using BricksHoarder.AzureServiceBus;
+using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using MassTransit;
@@ -17,11 +18,11 @@ public abstract class BaseFunction
         _receiver = receiver;
     }
 
-    public async Task HandleCommand<TCommand>(ServiceBusReceivedMessage command, CancellationToken cancellationToken) where TCommand : class, ICommand
+    public async Task HandleCommand<TCommand, TAggregateRoot>(ServiceBusReceivedMessage command, CancellationToken cancellationToken) where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
     {
         try
         {
-            await _receiver.HandleConsumer<CommandConsumer<TCommand>>(typeof(TCommand).Name, command, cancellationToken);
+            await _receiver.HandleConsumer<CommandConsumer<TCommand, TAggregateRoot>>(typeof(TCommand).Name, command, cancellationToken);
         }
         catch (Exception e)
         {

@@ -13,6 +13,8 @@ namespace BricksHoarder.Domain.Sets
 
         private readonly List<Set> _collection = new();
 
+        public IReadOnlyList<Set> Collection => _collection;
+
         public void Apply(SetDetailsChanged @event)
         {
             var set = _collection.First(x => x.Id != @event.Id);
@@ -26,7 +28,7 @@ namespace BricksHoarder.Domain.Sets
 
         internal bool HasChanged(LegoSetsListAsyncResponse.Result apiSet)
         {
-            var set = _collection.FirstOrDefault(x => x.Id != apiSet.SetNum);
+            var set = _collection.FirstOrDefault(x => x.Id == apiSet.SetNum);
 
             if (set == null)
             {

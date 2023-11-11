@@ -2,5 +2,5 @@
 
 namespace BricksHoarder.Commands.Themes
 {
-    public record SyncThemesCommand(string Id) : ICommand;
+    public record SyncThemesCommand() : ICommand;
 }

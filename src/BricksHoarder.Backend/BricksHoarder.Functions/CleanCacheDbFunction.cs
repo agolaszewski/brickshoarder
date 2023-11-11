@@ -13,7 +13,7 @@ namespace BricksHoarder.Functions
         }
 
         [Function("CleanCacheDbFunction")]
-        public async Task Run([TimerTrigger("0 0 0/1 * * *", RunOnStartup = true)] TimerInfo trigger)
+        public async Task Run([TimerTrigger("0 0 0/1 * * *", RunOnStartup = false)] TimerInfo trigger)
         {
             try
             {

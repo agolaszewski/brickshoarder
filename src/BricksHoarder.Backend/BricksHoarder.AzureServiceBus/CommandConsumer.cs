@@ -7,17 +7,17 @@ using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.AzureServiceBus
 {
-    public class CommandConsumer<TCommand> : IConsumer<TCommand> where TCommand : class, ICommand
+    public class CommandConsumer<TCommand, TAggregateRoot> : IConsumer<TCommand> where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
     {
-        private readonly ICommandHandler<TCommand> _handler;
+        private readonly ICommandHandler<TCommand, TAggregateRoot> _handler;
         private readonly IAggregateStore _aggregateStore;
-        private readonly ILogger<CommandConsumer<TCommand>> _logger;
+        private readonly ILogger<CommandConsumer<TCommand, TAggregateRoot>> _logger;
         private readonly IIntegrationEventsQueue _integrationEventsQueue;
 
         public CommandConsumer(
-            ICommandHandler<TCommand> handler,
+            ICommandHandler<TCommand, TAggregateRoot> handler,
             IAggregateStore aggregateStore,
-            ILogger<CommandConsumer<TCommand>> logger,
+            ILogger<CommandConsumer<TCommand, TAggregateRoot>> logger,
             IIntegrationEventsQueue integrationEventsQueue)
         {
             _handler = handler;
@@ -32,7 +32,7 @@ namespace BricksHoarder.AzureServiceBus
             {
                 _logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.CorrelationId}");
 
-                IAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
+                TAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
                 await _aggregateStore.SaveAsync(aggregateRoot);
 
                 foreach (var @event in aggregateRoot.Events)

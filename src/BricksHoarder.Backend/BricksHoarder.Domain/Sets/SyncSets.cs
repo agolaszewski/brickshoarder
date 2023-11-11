@@ -7,7 +7,7 @@ namespace BricksHoarder.Domain.Sets;
 
 public class SyncSets
 {
-    public class Handler : ICommandHandler<SyncSetsCommand>
+    public class Handler : ICommandHandler<SyncSetsCommand, SetsCollectionAggregate>
     {
         private readonly IRebrickableClient _rebrickableClient;
         private readonly IAggregateStore _aggregateStore;
@@ -18,7 +18,7 @@ public class SyncSets
             _aggregateStore = aggregateStore;
         }
 
-        public async Task<IAggregateRoot> HandleAsync(SyncSetsCommand command)
+        public async Task<SetsCollectionAggregate> HandleAsync(SyncSetsCommand command)
         {
             var sets = await _aggregateStore.GetByIdOrDefaultAsync<SetsCollectionAggregate>();
             int page = 0;
@@ -42,7 +42,7 @@ public class SyncSets
 
         private async Task<IReadOnlyList<LegoSetsListAsyncResponse.Result>> GetSetsAsync(int pageNumber)
         {
-            LegoSetsListAsyncResponse? response = await _rebrickableClient.LegoSetsListAsync(page: pageNumber, page_size: 50, ordering: "-year");
+            LegoSetsListAsyncResponse? response = await _rebrickableClient.LegoSetsListAsync(page: pageNumber, page_size: 50, ordering: "-last_modified_dt");
             return response.Results;
         }
     }

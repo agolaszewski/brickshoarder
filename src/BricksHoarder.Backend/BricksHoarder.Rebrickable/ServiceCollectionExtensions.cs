@@ -6,9 +6,9 @@ namespace BricksHoarder.Rebrickable
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddRebrickable(this IServiceCollection services, RebrickableCredentials configuration)
+        public static IHttpClientBuilder AddRebrickable(this IServiceCollection services, RebrickableCredentials configuration)
         {
-            services.AddHttpClient<IRebrickableClient, RebrickableClient>(httpClient =>
+            return services.AddHttpClient<IRebrickableClient, RebrickableClient>(httpClient =>
             {
                 httpClient.BaseAddress = configuration.Url;
                 httpClient.DefaultRequestHeaders.Add("Authorization", configuration.Key);
