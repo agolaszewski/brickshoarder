@@ -1,13 +1,15 @@
 ﻿using BricksHoarder.Commands;
+using BricksHoarder.Core.Commands;
 using BricksHoarder.Domain;
-using ICommand = BricksHoarder.Core.Commands.ICommand;
 
 namespace BricksHoarder.Functions.Generator.Generators
 {
     internal class CommandsGenerator : BaseGenerator
     {
+        public record CommandHandlerType(Type Command, Type Aggregate);
+
         private readonly IReadOnlyList<Type> _sagas;
-        private readonly List<Type> _commands;
+        private readonly List<CommandHandlerType> _commandHandlers;
 
         private readonly List<string> _requiredCommandsNamespaces = new()
         {
@@ -28,14 +30,21 @@ namespace BricksHoarder.Functions.Generator.Generators
             var domainAssembly = typeof(BricksHoarderDomainAssemblyPointer).Assembly.GetTypes();
             _sagas = domainAssembly.Where(IsSaga).ToList();
 
-            var commandsAssembly = typeof(BricksHoarderCommandsAssemblyPointer).Assembly.GetTypes();
-            _commands = commandsAssembly.Where(t => t.GetInterface(nameof(ICommand)) is not null).ToList();
+            _commandHandlers = domainAssembly
+                .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)))
+                .Select(h =>
+                {
+                    var commandHandler = h.GetInterfaces().First();
+                    var args = commandHandler.GetGenericArguments();
+                    return new CommandHandlerType(args[0], args[1]);
+                }).ToList();
         }
 
         public void GenerateMetadata()
         {
-            foreach (var command in _commands)
+            foreach (var handler in _commandHandlers)
             {
+                var command = handler.Command;
                 var compiled = Templates.CommandMetadataTemplate.Replace("{{command}}", command.Name);
                 File.WriteAllText($"{Catalogs.CommandMetadataCatalog}\\{command.Name}Metadata.cs", compiled);
 
@@ -46,27 +55,35 @@ namespace BricksHoarder.Functions.Generator.Generators
 
         public void GenerateFunctions()
         {
-            foreach (var command in _commands)
+            foreach (var handler in _commandHandlers)
             {
-                CreateFunctionForSaga(command);
-                CreateFunction(command);
+                CreateFunctionForSaga(handler);
+                CreateFunction(handler);
             }
         }
 
-        private void CreateFunction(Type command)
+        private void CreateFunction(CommandHandlerType handler)
         {
+            var command = handler.Command;
+            var aggregate = handler.Aggregate;
+
             var compiled = Templates.CommandFunctionTemplate.Replace("{{command}}", command.Name);
+            compiled = compiled.Replace("{{aggregate}}", handler.Aggregate.Name);
 
             var namespaces = _requiredCommandsNamespaces.ToList();
             namespaces.Add(command.Namespace!);
+            namespaces.Add(aggregate.Namespace!);
             namespaces = namespaces.OrderBy(x => x, new NamespaceComparer()).Select(x => $"using {x};").ToList();
 
             compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
+
             File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{command.Name}Function.cs", compiled);
         }
 
-        private void CreateFunctionForSaga(Type command)
+        private void CreateFunctionForSaga(CommandHandlerType handler)
         {
+            var command = handler.Command;
+
             var saga = _sagas.FirstOrDefault(s => IsEventUsedBySaga(s, command));
             if (saga is null)
             {

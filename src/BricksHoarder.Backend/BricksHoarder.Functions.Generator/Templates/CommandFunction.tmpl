@@ -11,6 +11,6 @@ public class {{command}}Function : BaseFunction
     [Function({{command}}Metadata.Consumer)]
     public async Task Run([ServiceBusTrigger({{command}}Metadata.QueuePath, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
     {
-        await HandleCommand<{{command}}>(command, cancellationToken);
+        await HandleCommand<{{command}},{{aggregate}}>(command, cancellationToken);
     }
 }

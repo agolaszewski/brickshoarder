@@ -20,15 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Queries\CacheClean\CacheClean.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Queries\CacheGet\CacheGet.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Queries\CacheInsert\CacheInsert.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Folder Include="Tables\" />
   </ItemGroup>
 
 </Project>

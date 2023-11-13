@@ -1,31 +1,37 @@
-﻿using System.Text.Json;
-using BricksHoarder.Core.Services;
-using BricksHoarder.MsSql.Database.Queries.CacheGet;
-using BricksHoarder.MsSql.Database.Queries.CacheInsert;
+﻿using BricksHoarder.Core.Services;
+using MessagePack;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace BricksHoarder.Cache.MsSql
 {
     public class MsSqlCache : ICacheService
     {
-        private readonly CacheInsertQuery _cacheInsertQuery;
-        private readonly CacheGetQuery _cacheGetQuery;
+        private readonly IDistributedCache _distributedCache;
 
-        public MsSqlCache(CacheInsertQuery cacheInsertQuery, CacheGetQuery cacheGetQuery)
+        public MsSqlCache(IDistributedCache distributedCache)
         {
-            _cacheInsertQuery = cacheInsertQuery;
-            _cacheGetQuery = cacheGetQuery;
+            _distributedCache = distributedCache;
         }
 
         public async Task SetAsync<T>(string key, T value, TimeSpan? expire) where T : class
         {
-            var jsonValue = JsonSerializer.Serialize(value);
-            await _cacheInsertQuery.ExecuteAsync(key, jsonValue, expire);
+            byte[] data = MessagePackSerializer.Typeless.Serialize(value);
+            await _distributedCache.SetAsync(key, data, new DistributedCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = expire
+            });
         }
 
         public async Task<T?> GetAsync<T>(string key) where T : class
         {
-            var cache = await _cacheGetQuery.ExecuteAsync(key);
-            return cache != null ? JsonSerializer.Deserialize<T>(cache.Value) : null;
+            var data = await _distributedCache.GetAsync(key);
+            if (data != null)
+            {
+                T obj = MessagePackSerializer.Typeless.Deserialize(data) as T;
+                return obj;
+            }
+
+            return null;
         }
     }
 }

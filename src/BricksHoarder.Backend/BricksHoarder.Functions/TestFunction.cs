@@ -1,8 +1,5 @@
-using System.Diagnostics;
-using BricksHoarder.MsSql.Database.Queries.CacheClean;
 using Marten;
 using Microsoft.Azure.Functions.Worker;
-using RebrickableApi;
 
 namespace BricksHoarder.Functions
 {
@@ -20,7 +17,7 @@ namespace BricksHoarder.Functions
         {
             try
             {
-                //await _client.Advanced.ResetAllData();
+                await _client.Advanced.ResetAllData();
             }
             catch (Exception e)
             {

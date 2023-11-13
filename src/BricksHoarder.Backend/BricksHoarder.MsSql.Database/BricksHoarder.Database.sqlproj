@@ -58,6 +58,6 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Cache.sql" />
+    <Build Include="_Cache.sql" />
   </ItemGroup>
 </Project>

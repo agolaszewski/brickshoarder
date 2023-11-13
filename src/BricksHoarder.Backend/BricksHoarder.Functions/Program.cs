@@ -23,7 +23,6 @@ var host = new HostBuilder()
         var config = builder.Configuration;
 
         services.AddMsSqlDb(new SqlServerDatabaseCredentials(config, "BrickshoarderDb"));
-
         services.AddRebrickable(new RebrickableCredentials(config)).AddThrottlingTrollMessageHandler(options =>
         {
             options.Config = new ThrottlingTrollEgressConfig()
@@ -35,7 +34,7 @@ var host = new HostBuilder()
                         LimitMethod = new FixedWindowRateLimitMethod
                         {
                             PermitLimit = 1,
-                            IntervalInSeconds = 5
+                            IntervalInSeconds = 2
                         },
                         MaxDelayInSeconds = 60,
                     }
@@ -44,7 +43,7 @@ var host = new HostBuilder()
             };
         });
 
-        services.AddMsSqlAsCache();
+        services.AddMsSqlAsCache(new SqlServerDatabaseCredentials(config, "BrickshoarderDb"));
         services.AddDomain();
 
         services.AddAutoMapper(mapper =>
