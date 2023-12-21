@@ -15,7 +15,7 @@ namespace BricksHoarder.Cache.MsSql
 
         public async Task SetAsync<T>(string key, T value, TimeSpan? expire) where T : class
         {
-            byte[] data = MessagePackSerializer.Typeless.Serialize(value);
+            byte[] data = MessagePackSerializer.Serialize(value);
             await _distributedCache.SetAsync(key, data, new DistributedCacheEntryOptions()
             {
                 AbsoluteExpirationRelativeToNow = expire
@@ -27,7 +27,7 @@ namespace BricksHoarder.Cache.MsSql
             var data = await _distributedCache.GetAsync(key);
             if (data != null)
             {
-                T obj = MessagePackSerializer.Typeless.Deserialize(data) as T;
+                T obj = MessagePackSerializer.Deserialize<T>(data);
                 return obj;
             }
 

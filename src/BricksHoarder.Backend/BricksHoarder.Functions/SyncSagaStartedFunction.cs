@@ -1,4 +1,4 @@
-using BricksHoarder.Domain.Sets;
+using BricksHoarder.Domain.SetsCollection;
 using BricksHoarder.Events.Metadata;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
@@ -12,8 +12,8 @@ public class SyncSagaStartedFunction : BaseFunction
     }
 
     [Function(SyncSagaStartedMetadata.Consumer)]
-    public async Task Run([ServiceBusTrigger(SyncSagaStartedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
+    public async Task RunAsync([ServiceBusTrigger(SyncSagaStartedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
     {
-        await HandleSaga<SyncSetsSagaState>(@event, SyncSagaStartedMetadata.TopicPath, Default, cancellationToken);
+        await HandleSagaAsync<SyncSetsSagaState>(@event, SyncSagaStartedMetadata.TopicPath, Default, cancellationToken);
     }
 }

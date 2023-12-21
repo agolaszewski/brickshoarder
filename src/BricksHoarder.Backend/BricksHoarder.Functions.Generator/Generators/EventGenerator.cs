@@ -44,7 +44,7 @@ namespace BricksHoarder.Functions.Generator.Generators
                     continue;
                 }
 
-                var eventHandler = $"await HandleSaga<{saga.Name}State>(@event, {@event.Name}Metadata.TopicPath, Default, cancellationToken);";
+                var eventHandler = $"await HandleSagaAsync<{saga.Name}State>(@event, {@event.Name}Metadata.TopicPath, Default, cancellationToken);";
 
                 var compiled = Templates.EventFunctionTemplate.Replace("{{event}}", @event.Name);
                 compiled = compiled.Replace("{{eventHandler}}", eventHandler);

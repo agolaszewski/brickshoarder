@@ -9,7 +9,7 @@ public class {{event}}Function : BaseFunction
     }
 
     [Function({{event}}Metadata.Consumer)]
-    public async Task Run([ServiceBusTrigger({{event}}Metadata.TopicPath, Default, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
+    public async Task RunAsync([ServiceBusTrigger({{event}}Metadata.TopicPath, Default, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
     {
         {{eventHandler}}
     }

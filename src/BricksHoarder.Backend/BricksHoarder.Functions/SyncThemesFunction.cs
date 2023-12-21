@@ -17,7 +17,7 @@ namespace BricksHoarder.Functions
         }
 
         [Function("SyncSagaFunction")]
-        public async Task Run([TimerTrigger("0 */15 * * * *", RunOnStartup = true)] TimerInfo trigger)
+        public async Task RunAsync([TimerTrigger("0 */15 * * * *", RunOnStartup = true)] TimerInfo trigger)
         {
             await _eventDispatcher.DispatchAsync(new SyncSagaStarted(_dataTimeProvider.UtcNow().ToString("yyyyMMdd")));
         }

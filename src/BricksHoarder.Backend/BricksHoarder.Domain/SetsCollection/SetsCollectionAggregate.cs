@@ -1,15 +1,17 @@
 ﻿using BricksHoarder.Common.DDD.Aggregates;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Events;
+using MessagePack;
 using RebrickableApi;
 
-namespace BricksHoarder.Domain.Sets
+namespace BricksHoarder.Domain.SetsCollection
 {
+    [MessagePackObject(true)]
     public class SetsCollectionAggregate : AggregateRoot<SetsCollectionAggregate>,
     IApply<SetReleased>,
     IApply<SetDetailsChanged>
     {
-        public record Set(string Id, DateTime LastModifiedDate);
+     
 
         private readonly List<Set> _collection = new();
 

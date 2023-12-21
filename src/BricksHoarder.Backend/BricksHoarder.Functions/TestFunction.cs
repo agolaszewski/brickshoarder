@@ -13,7 +13,7 @@ namespace BricksHoarder.Functions
         }
 
         [Function("Test")]
-        public async Task Run([TimerTrigger("0 0 0/1 * * *", RunOnStartup = true)] TimerInfo trigger)
+        public async Task RunAsync([TimerTrigger("10 0 0/1 * * *", RunOnStartup = true)] TimerInfo trigger)
         {
             try
             {

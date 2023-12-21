@@ -4,7 +4,7 @@ using BricksHoarder.Core.Commands;
 using BricksHoarder.Helpers;
 using RebrickableApi;
 
-namespace BricksHoarder.Domain.Themes.Handlers;
+namespace BricksHoarder.Domain.ThemesCollection.Handlers;
 
 public class SyncThemes
 {
@@ -21,7 +21,7 @@ public class SyncThemes
 
         public async Task<ThemesCollectionAggregate> HandleAsync(SyncThemesCommand command)
         {
-            var themesFromApi = await GetAllThemes();
+            var themesFromApi = await GetAllThemesAsync();
             var themes = await _aggregateStore.GetByIdOrDefaultAsync<ThemesCollectionAggregate>();
 
             foreach (var themeApi in themesFromApi)
@@ -32,7 +32,7 @@ public class SyncThemes
             return themes;
         }
 
-        private async Task<IReadOnlyList<LegoThemesListAsyncResponse.Result>> GetAllThemes()
+        private async Task<IReadOnlyList<LegoThemesListAsyncResponse.Result>> GetAllThemesAsync()
         {
             List<LegoThemesListAsyncResponse.Result> collection = new();
             int pageNumber = 1;

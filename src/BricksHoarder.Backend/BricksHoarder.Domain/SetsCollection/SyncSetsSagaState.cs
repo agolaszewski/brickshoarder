@@ -1,7 +1,6 @@
-﻿using BricksHoarder.Events;
-using MassTransit;
+﻿using MassTransit;
 
-namespace BricksHoarder.Domain.Sets;
+namespace BricksHoarder.Domain.SetsCollection;
 
 public class SyncSetsSagaState : SagaStateMachineInstance
 {

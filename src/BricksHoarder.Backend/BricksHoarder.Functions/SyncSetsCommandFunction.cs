@@ -1,6 +1,6 @@
 using BricksHoarder.Commands.Metadata;
 using BricksHoarder.Commands.Sets;
-using BricksHoarder.Domain.Sets;
+using BricksHoarder.Domain.SetsCollection;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
 
@@ -13,8 +13,8 @@ public class SyncSetsCommandFunction : BaseFunction
     }
 
     [Function(SyncSetsCommandMetadata.Consumer)]
-    public async Task Run([ServiceBusTrigger(SyncSetsCommandMetadata.QueuePath, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
+    public async Task RunAsync([ServiceBusTrigger(SyncSetsCommandMetadata.QueuePath, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
     {
-        await HandleCommand<SyncSetsCommand,SetsCollectionAggregate>(command, cancellationToken);
+        await HandleCommandAsync<SyncSetsCommand,SetsCollectionAggregate>(command, cancellationToken);
     }
 }

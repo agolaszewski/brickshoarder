@@ -18,7 +18,7 @@ public abstract class BaseFunction
         _receiver = receiver;
     }
 
-    public async Task HandleCommand<TCommand, TAggregateRoot>(ServiceBusReceivedMessage command, CancellationToken cancellationToken) where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
+    public async Task HandleCommandAsync<TCommand, TAggregateRoot>(ServiceBusReceivedMessage command, CancellationToken cancellationToken) where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
     {
         try
         {
@@ -31,7 +31,7 @@ public abstract class BaseFunction
         }
     }
 
-    public async Task HandleEvent<TEvent>(ServiceBusReceivedMessage @event, CancellationToken cancellationToken) where TEvent : class, IEvent
+    public async Task HandleEventAsync<TEvent>(ServiceBusReceivedMessage @event, CancellationToken cancellationToken) where TEvent : class, IEvent
     {
         try
         {
@@ -44,7 +44,7 @@ public abstract class BaseFunction
         }
     }
 
-    public async Task HandleSaga<TSaga>(ServiceBusReceivedMessage @event, string topic, string subscription, CancellationToken cancellationToken) where TSaga : class, ISaga
+    public async Task HandleSagaAsync<TSaga>(ServiceBusReceivedMessage @event, string topic, string subscription, CancellationToken cancellationToken) where TSaga : class, ISaga
     {
         try
         {

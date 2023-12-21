@@ -5,7 +5,7 @@ namespace BricksHoarder.Common.DDD.Aggregates
 {
     public class DefaultAggregateSnapshot<TAggregate> : IAggregateSnapshot<TAggregate> where TAggregate : class, IAggregateRoot
     {
-        private ICacheService _cacheService;
+        private readonly ICacheService _cacheService;
 
         public DefaultAggregateSnapshot(ICacheService cacheService)
         {

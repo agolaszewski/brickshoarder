@@ -4,7 +4,7 @@ using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
-using BricksHoarder.Domain.Sets;
+using BricksHoarder.Domain.SetsCollection;
 using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
 using MassTransit;

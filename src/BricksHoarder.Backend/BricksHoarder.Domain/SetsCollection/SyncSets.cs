@@ -3,7 +3,7 @@ using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using RebrickableApi;
 
-namespace BricksHoarder.Domain.Sets;
+namespace BricksHoarder.Domain.SetsCollection;
 
 public class SyncSets
 {
@@ -42,7 +42,7 @@ public class SyncSets
 
         private async Task<IReadOnlyList<LegoSetsListAsyncResponse.Result>> GetSetsAsync(int pageNumber)
         {
-            LegoSetsListAsyncResponse? response = await _rebrickableClient.LegoSetsListAsync(page: pageNumber, page_size: 50, ordering: "-last_modified_dt");
+            LegoSetsListAsyncResponse? response = await _rebrickableClient.LegoSetsListAsync(page: pageNumber, page_size: 1000, ordering: "-last_modified_dt");
             return response.Results;
         }
     }

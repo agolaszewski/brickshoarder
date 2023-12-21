@@ -10,7 +10,6 @@ using BricksHoarder.Rebrickable;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ThrottlingTroll;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -23,25 +22,7 @@ var host = new HostBuilder()
         var config = builder.Configuration;
 
         services.AddMsSqlDb(new SqlServerDatabaseCredentials(config, "BrickshoarderDb"));
-        services.AddRebrickable(new RebrickableCredentials(config)).AddThrottlingTrollMessageHandler(options =>
-        {
-            options.Config = new ThrottlingTrollEgressConfig()
-            {
-                Rules = new List<ThrottlingTrollRule>()
-                {
-                    new()
-                    {
-                        LimitMethod = new FixedWindowRateLimitMethod
-                        {
-                            PermitLimit = 1,
-                            IntervalInSeconds = 2
-                        },
-                        MaxDelayInSeconds = 60,
-                    }
-                },
-                UniqueName = "Rebrickable"
-            };
-        });
+        services.AddRebrickable(new RebrickableCredentials(config));
 
         services.AddMsSqlAsCache(new SqlServerDatabaseCredentials(config, "BrickshoarderDb"));
         services.AddDomain();

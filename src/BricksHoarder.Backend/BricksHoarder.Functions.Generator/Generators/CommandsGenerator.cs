@@ -90,7 +90,7 @@ namespace BricksHoarder.Functions.Generator.Generators
                 return;
             }
 
-            var eventHandler = $"await HandleSaga<{saga.Name}State>(@event, {command.Name}ConsumedMetadata.TopicPath, Default, cancellationToken);";
+            var eventHandler = $"await HandleSagaAsync<{saga.Name}State>(@event, {command.Name}ConsumedMetadata.TopicPath, Default, cancellationToken);";
 
             var compiled = Templates.EventFunctionTemplate.Replace("{{event}}", $"{command.Name}Consumed");
             compiled = compiled.Replace("{{eventHandler}}", eventHandler);

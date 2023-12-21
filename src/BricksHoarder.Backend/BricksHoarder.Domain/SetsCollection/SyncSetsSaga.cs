@@ -1,12 +1,11 @@
 ﻿using BricksHoarder.Commands.Metadata;
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
-using BricksHoarder.Domain.Themes;
 using BricksHoarder.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace BricksHoarder.Domain.Sets
+namespace BricksHoarder.Domain.SetsCollection
 {
     public class SyncSetsSaga : MassTransitStateMachine<SyncSetsSagaState>
     {
@@ -21,7 +20,8 @@ namespace BricksHoarder.Domain.Sets
 
             Initially(When(SyncSagaStarted)
                 .TransitionTo(SyncingState)
-                .ThenAsync(SendSyncThemesCommand));
+                .Then(_ => logger.LogDebug("SyncSagaStarted"))
+                .ThenAsync(SendSyncThemesCommandAsync));
 
             DuringAny(When(SyncSagaStarted)
                 .Then(context => logger.LogError("SyncSetsSaga is already running {id}", context.Saga.Id)));
@@ -49,7 +49,7 @@ namespace BricksHoarder.Domain.Sets
             context.Send(SyncSetsCommandMetadata.QueuePathUri, new SyncSetsCommand(), x => x.CorrelationId = context.Saga.CorrelationId);
         }
 
-        private async Task SendSyncThemesCommand(BehaviorContext<SyncSetsSagaState, SyncSagaStarted> action)
+        private async Task SendSyncThemesCommandAsync(BehaviorContext<SyncSetsSagaState, SyncSagaStarted> action)
         {
             action.Saga.Id = action.Message.Id;
             await action.Send(SyncThemesCommandMetadata.QueuePathUri, new SyncThemesCommand(), x => x.CorrelationId = action.Saga.CorrelationId);

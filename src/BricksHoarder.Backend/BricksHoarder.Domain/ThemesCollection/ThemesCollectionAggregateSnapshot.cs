@@ -1,7 +1,7 @@
 ﻿using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Services;
 
-namespace BricksHoarder.Domain.Themes;
+namespace BricksHoarder.Domain.ThemesCollection;
 
 public class ThemesCollectionAggregateSnapshot : IAggregateSnapshot<ThemesCollectionAggregate>
 {

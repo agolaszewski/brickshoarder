@@ -1,4 +1,4 @@
-﻿namespace BricksHoarder.Domain.Sets
+﻿namespace BricksHoarder.Domain.SetsCollection
 {
     public class ProcessingItem
     {

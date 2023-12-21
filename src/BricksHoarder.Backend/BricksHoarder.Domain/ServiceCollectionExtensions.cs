@@ -5,7 +5,7 @@ using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Core.Queries;
 using BricksHoarder.Core.Specification;
-using BricksHoarder.Domain.Themes;
+using BricksHoarder.Domain.ThemesCollection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
