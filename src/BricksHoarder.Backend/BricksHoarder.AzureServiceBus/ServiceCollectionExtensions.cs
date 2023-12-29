@@ -7,8 +7,10 @@ using BricksHoarder.Credentials;
 using BricksHoarder.Domain.SetsCollection;
 using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
+using BricksHoarder.MassTransit;
 using MassTransit;
-using MassTransit.ServiceBusIntegration;
+using MassTransit.AzureServiceBusTransport;
+using MassTransit.Configuration;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -17,13 +19,14 @@ namespace BricksHoarder.AzureServiceBus
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, PostgresAzureCredentials postgresAzureCredentials)
+        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, SqlServerDatabaseCredentials sqlServerDatabaseCredentials)
         {
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
+            services.AddOutbox(sqlServerDatabaseCredentials);
 
             services.AddMassTransit(x =>
             {
@@ -48,7 +51,12 @@ namespace BricksHoarder.AzureServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsSagaState>().InMemoryRepository();
+                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsSagaState>()
+                    .EntityFrameworkRepository(r =>
+                    {
+                        r.ExistingDbContext<MassTransitDbContext>();
+                        r.UseSqlServer();
+                    });
 
                 //foreach (var sagaType in sagas)
                 //{
@@ -87,9 +95,16 @@ namespace BricksHoarder.AzureServiceBus
                         x.SetEntityName(SyncSetsCommandConsumedMetadata.TopicPath);
                     });
 
-
                     cfg.UseServiceBusMessageScheduler();
                 });
+
+                //x.AddEntityFrameworkOutbox<MassTransitDbContext>(o =>
+                //{
+                //    o.QueryDelay = TimeSpan.FromSeconds(1);
+
+                //    o.UseSqlServer();
+                //    o.UseBusOutbox();
+                //});
             });
 
             services.RemoveMassTransitHostedService();

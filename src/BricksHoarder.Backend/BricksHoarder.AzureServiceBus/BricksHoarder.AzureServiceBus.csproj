@@ -1,21 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MassTransit" Version="8.0.7" />
-		<PackageReference Include="MassTransit.Abstractions" Version="8.0.7" />
-		<PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.0.7" />
-		<PackageReference Include="MassTransit.Marten" Version="8.0.7" />
-		<PackageReference Include="MassTransit.WebJobs.ServiceBus" Version="8.0.7" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-		<PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
+		<PackageReference Include="MassTransit" Version="8.1.3" />
+		<PackageReference Include="MassTransit.Abstractions" Version="8.1.3" />
+		<PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.1.3" />
+		<PackageReference Include="MassTransit.Marten" Version="8.1.3" />
+		<PackageReference Include="MassTransit.WebJobs.ServiceBus" Version="8.1.3" />
+		<PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.1.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -23,6 +21,7 @@
 		<ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
+		<ProjectReference Include="..\BricksHoarder.MassTransit\BricksHoarder.MassTransit.csproj" />
 	</ItemGroup>
 
 </Project>

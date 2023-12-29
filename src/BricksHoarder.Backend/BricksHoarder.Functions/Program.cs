@@ -21,10 +21,12 @@ var host = new HostBuilder()
     {
         var config = builder.Configuration;
 
-        services.AddMsSqlDb(new SqlServerDatabaseCredentials(config, "BrickshoarderDb"));
+        var sqlServerDatabaseCredentials = new SqlServerDatabaseCredentials(config, "BrickshoarderDb");
+
+        services.AddMsSqlDb(sqlServerDatabaseCredentials);
         services.AddRebrickable(new RebrickableCredentials(config));
 
-        services.AddMsSqlAsCache(new SqlServerDatabaseCredentials(config, "BrickshoarderDb"));
+        services.AddMsSqlAsCache(sqlServerDatabaseCredentials);
         services.AddDomain();
 
         services.AddAutoMapper(mapper =>
@@ -35,7 +37,7 @@ var host = new HostBuilder()
         var martenCredentials = new PostgresAzureCredentials(config, "MartenAzure");
         services.AddMartenEventStore(martenCredentials);
         services.CommonServices();
-        services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), martenCredentials);
+        services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), sqlServerDatabaseCredentials);
         services.AddDateTimeProvider();
     })
     .Build();
