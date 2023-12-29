@@ -30,7 +30,7 @@
             {
                 if (type.IsGenericType)
                 {
-                    return CheckGeneric(type.GetGenericArguments(),@event);
+                    return CheckGeneric(type.GetGenericArguments(), @event);
                 }
 
                 return type == @event;

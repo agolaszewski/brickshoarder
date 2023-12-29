@@ -1,8 +1,5 @@
-﻿using MessagePack;
-
-namespace BricksHoarder.Domain.ThemesCollection
+﻿namespace BricksHoarder.Domain.ThemesCollection
 {
-    [MessagePackObject(true)]
     public record ThemesCollectionSnapshot
     {
         public ThemesCollectionSnapshot()

@@ -1,5 +1,5 @@
-﻿using System.Net;
-using FluentValidation;
+﻿using FluentValidation;
+using System.Net;
 
 namespace BricksHoarder.Common.CQRS.Responses;
 

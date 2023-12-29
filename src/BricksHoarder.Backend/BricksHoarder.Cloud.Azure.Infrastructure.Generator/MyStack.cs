@@ -104,10 +104,10 @@ internal class MyStack : Stack
             DatabaseName = "brickshoarder"
         });
 
-
         #endregion PostgreSQL
 
         #region Sql Server
+
         var dBForMsSqlAdministratorLoginPassword = new Pulumi.Random.RandomPassword("DbForMsSQL.AdministratorLoginPassword", new()
         {
             Length = 20,
@@ -143,7 +143,7 @@ internal class MyStack : Stack
             }
         });
 
-        #endregion
+        #endregion Sql Server
     }
 
     [Output]

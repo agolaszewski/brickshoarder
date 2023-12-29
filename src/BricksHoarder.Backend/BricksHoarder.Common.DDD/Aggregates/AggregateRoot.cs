@@ -8,7 +8,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using MessagePack;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json.Serialization;
 
 namespace BricksHoarder.Common.DDD.Aggregates
 {

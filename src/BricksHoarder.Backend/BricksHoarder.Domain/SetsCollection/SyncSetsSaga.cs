@@ -17,7 +17,6 @@ namespace BricksHoarder.Domain.SetsCollection
             Event(() => SyncThemesCommandConsumed, x => { x.CorrelateBy(state => state.CorrelationId, context => context.CorrelationId); });
             Event(() => SyncSetsCommandConsumed, x => { x.CorrelateBy(state => state.CorrelationId, context => context.CorrelationId); });
 
-
             Initially(When(SyncSagaStarted)
                 .TransitionTo(SyncingState)
                 .Then(_ => logger.LogDebug("SyncSagaStarted"))

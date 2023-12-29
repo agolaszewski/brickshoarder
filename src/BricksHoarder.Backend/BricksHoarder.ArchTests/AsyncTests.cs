@@ -2,14 +2,12 @@ using ArchUnitNET.Domain;
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnit;
 using BricksHoarder.Functions;
-using MessagePack;
 using System.Threading.Tasks;
 using Xunit;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
 namespace BricksHoarder.ArchTests
 {
-    [MessagePackObject]
     public class AsyncTests
     {
         private static readonly Architecture Architecture =

@@ -1,5 +1,4 @@
-﻿using BricksHoarder.Commands;
-using BricksHoarder.Core.Commands;
+﻿using BricksHoarder.Core.Commands;
 using BricksHoarder.Domain;
 
 namespace BricksHoarder.Functions.Generator.Generators

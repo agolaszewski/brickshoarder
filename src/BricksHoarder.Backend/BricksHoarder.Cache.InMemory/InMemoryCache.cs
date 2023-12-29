@@ -1,5 +1,4 @@
-﻿using BricksHoarder.Core.Aggregates;
-using BricksHoarder.Core.Services;
+﻿using BricksHoarder.Core.Services;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace BricksHoarder.Cache.InMemory

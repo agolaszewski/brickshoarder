@@ -10,7 +10,6 @@ using BricksHoarder.Events.Metadata;
 using BricksHoarder.MassTransit;
 using MassTransit;
 using MassTransit.AzureServiceBusTransport;
-using MassTransit.Configuration;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -51,12 +50,12 @@ namespace BricksHoarder.AzureServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsSagaState>()
-                    .EntityFrameworkRepository(r =>
-                    {
-                        r.ExistingDbContext<MassTransitDbContext>();
-                        r.UseSqlServer();
-                    });
+                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsSagaState>().InMemoryRepository();
+                //.EntityFrameworkRepository(r =>
+                //{
+                //    r.ExistingDbContext<MassTransitDbContext>();
+                //    r.UseSqlServer();
+                //});
 
                 //foreach (var sagaType in sagas)
                 //{
@@ -96,12 +95,12 @@ namespace BricksHoarder.AzureServiceBus
                     });
 
                     cfg.UseServiceBusMessageScheduler();
+
+                    cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10)));
                 });
 
                 //x.AddEntityFrameworkOutbox<MassTransitDbContext>(o =>
                 //{
-                //    o.QueryDelay = TimeSpan.FromSeconds(1);
-
                 //    o.UseSqlServer();
                 //    o.UseBusOutbox();
                 //});

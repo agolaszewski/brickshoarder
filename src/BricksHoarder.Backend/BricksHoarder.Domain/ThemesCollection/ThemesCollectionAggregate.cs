@@ -1,16 +1,13 @@
 ﻿using BricksHoarder.Common.DDD.Aggregates;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Events;
-using MessagePack;
 using RebrickableApi;
 
 namespace BricksHoarder.Domain.ThemesCollection
 {
-    [MessagePackObject(true)]
     public class ThemesCollectionAggregate : AggregateRoot<ThemesCollectionAggregate>,
         IApply<ThemeReleased>
     {
-
         private readonly List<Theme> _collection = new();
 
         public IReadOnlyList<Theme> Collection => _collection;

@@ -22,7 +22,7 @@ public class SyncSets
         {
             var sets = await _aggregateStore.GetByIdOrDefaultAsync<SetsCollectionAggregate>();
             int page = 0;
-            
+
             while (true)
             {
                 page += 1;
