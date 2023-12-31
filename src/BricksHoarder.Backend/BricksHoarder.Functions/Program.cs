@@ -1,4 +1,4 @@
-using BricksHoarder.AzureServiceBus;
+using BricksHoarder.AzureCloud.ServiceBus;
 using BricksHoarder.Cache.MsSql;
 using BricksHoarder.Common;
 using BricksHoarder.Credentials;

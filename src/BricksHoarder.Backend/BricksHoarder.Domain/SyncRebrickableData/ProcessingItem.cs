@@ -1,4 +1,4 @@
-﻿namespace BricksHoarder.Domain.SetsCollection
+﻿namespace BricksHoarder.Domain.SyncRebrickableData
 {
     public class ProcessingItem
     {
@@ -6,13 +6,13 @@
         {
         }
 
-        public ProcessingItem(int id, ProcessingState state)
+        public ProcessingItem(string id, ProcessingState state)
         {
             Id = id;
             State = state;
         }
 
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public ProcessingState State { get; set; }
     }

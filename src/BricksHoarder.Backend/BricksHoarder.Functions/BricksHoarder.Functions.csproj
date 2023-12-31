@@ -20,7 +20,7 @@
     <PackageReference Include="ThrottlingTroll.AzureFunctions" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-  	<ProjectReference Include="..\BricksHoarder.AzureServiceBus\BricksHoarder.AzureServiceBus.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.AzureServiceBus\BricksHoarder.AzureCloud.ServiceBus.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Cache.InMemory\BricksHoarder.Cache.InMemory.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Cache.MsSql\BricksHoarder.Cache.MsSql.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Cache.NoCache\BricksHoarder.Cache.NoCache.csproj" />

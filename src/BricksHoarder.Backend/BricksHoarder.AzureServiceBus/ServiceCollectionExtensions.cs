@@ -4,7 +4,7 @@ using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
-using BricksHoarder.Domain.SetsCollection;
+using BricksHoarder.Domain.SyncRebrickableData;
 using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
 using BricksHoarder.MassTransit;
@@ -14,7 +14,7 @@ using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace BricksHoarder.AzureServiceBus
+namespace BricksHoarder.AzureCloud.ServiceBus
 {
     public static class ServiceCollectionExtensions
     {
@@ -50,7 +50,7 @@ namespace BricksHoarder.AzureServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                x.AddSagaStateMachine<SyncSetsSaga, SyncSetsSagaState>().InMemoryRepository();
+                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().InMemoryRepository();
                 //.EntityFrameworkRepository(r =>
                 //{
                 //    r.ExistingDbContext<MassTransitDbContext>();

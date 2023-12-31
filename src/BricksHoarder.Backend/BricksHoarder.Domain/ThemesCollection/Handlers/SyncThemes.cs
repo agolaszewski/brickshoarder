@@ -2,7 +2,7 @@
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Helpers;
-using RebrickableApi;
+using Rebrickable.Api;
 
 namespace BricksHoarder.Domain.ThemesCollection.Handlers;
 

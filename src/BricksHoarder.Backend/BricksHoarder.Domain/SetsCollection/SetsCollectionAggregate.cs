@@ -1,7 +1,7 @@
 ﻿using BricksHoarder.Common.DDD.Aggregates;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Events;
-using RebrickableApi;
+using Rebrickable.Api;
 
 namespace BricksHoarder.Domain.SetsCollection
 {

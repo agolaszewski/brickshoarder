@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Cache.InMemor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Common.CQRS", "BricksHoarder.Common.CQRS\BricksHoarder.Common.CQRS.csproj", "{8AD2706C-4162-4C89-98B6-41B4D14F3534}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.AzureServiceBus", "BricksHoarder.AzureServiceBus\BricksHoarder.AzureServiceBus.csproj", "{09C404C8-3AB4-46F0-A257-67A0B1AA2457}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.AzureCloud.ServiceBus", "BricksHoarder.AzureServiceBus\BricksHoarder.AzureCloud.ServiceBus.csproj", "{09C404C8-3AB4-46F0-A257-67A0B1AA2457}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8CEE1C12-60B2-4CEE-B55A-15BA600F5CA4}"
 EndProject

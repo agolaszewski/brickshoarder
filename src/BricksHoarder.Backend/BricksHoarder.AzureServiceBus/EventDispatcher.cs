@@ -2,7 +2,7 @@
 using BricksHoarder.Core.Services;
 using MassTransit;
 
-namespace BricksHoarder.AzureServiceBus
+namespace BricksHoarder.AzureCloud.ServiceBus
 {
     public class EventDispatcher : IEventDispatcher
     {

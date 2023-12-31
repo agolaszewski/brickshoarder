@@ -5,7 +5,7 @@ using BricksHoarder.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace BricksHoarder.AzureServiceBus
+namespace BricksHoarder.AzureCloud.ServiceBus
 {
     public class CommandConsumer<TCommand, TAggregateRoot> : IConsumer<TCommand> where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
     {
@@ -17,13 +17,11 @@ namespace BricksHoarder.AzureServiceBus
         public CommandConsumer(
             ICommandHandler<TCommand, TAggregateRoot> handler,
             IAggregateStore aggregateStore,
-            ILogger<CommandConsumer<TCommand, TAggregateRoot>> logger,
-            IIntegrationEventsQueue integrationEventsQueue)
+            ILogger<CommandConsumer<TCommand, TAggregateRoot>> logger)
         {
             _handler = handler;
             _aggregateStore = aggregateStore;
             _logger = logger;
-            _integrationEventsQueue = integrationEventsQueue;
         }
 
         public async Task Consume(ConsumeContext<TCommand> context)
@@ -35,15 +33,12 @@ namespace BricksHoarder.AzureServiceBus
                 TAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
                 await _aggregateStore.SaveAsync(aggregateRoot);
 
+                var tasks = new List<Task>();
                 foreach (var @event in aggregateRoot.Events)
                 {
-                    await context.Publish(@event.Event, @event.Event.GetType(), x => x.CorrelationId = context.CorrelationId);
+                    tasks.Add(context.Publish(@event.Event, @event.Event.GetType(), x => x.CorrelationId = context.CorrelationId));
                 }
-
-                foreach (var @event in _integrationEventsQueue.Events)
-                {
-                    await context.Publish(@event, @event.GetType(), x => x.CorrelationId = context.CorrelationId);
-                }
+                await Task.WhenAll(tasks);
 
                 await context.Publish(new CommandConsumed<TCommand>(context.Message, typeof(TCommand).FullName!), x => x.CorrelationId = context.CorrelationId);
             }

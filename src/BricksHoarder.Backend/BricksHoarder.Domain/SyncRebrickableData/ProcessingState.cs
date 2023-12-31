@@ -1,4 +1,4 @@
-﻿namespace BricksHoarder.Domain.SetsCollection
+﻿namespace BricksHoarder.Domain.SyncRebrickableData
 {
     public enum ProcessingState
     {

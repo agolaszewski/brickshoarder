@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
-using RebrickableApi;
+using Rebrickable.Api;
 using ThrottlingTroll;
 
 namespace BricksHoarder.Rebrickable

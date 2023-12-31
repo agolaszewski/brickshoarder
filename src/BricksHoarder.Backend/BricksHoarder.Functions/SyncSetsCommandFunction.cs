@@ -15,6 +15,6 @@ public class SyncSetsCommandFunction : BaseFunction
     [Function(SyncSetsCommandMetadata.Consumer)]
     public async Task RunAsync([ServiceBusTrigger(SyncSetsCommandMetadata.QueuePath, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
     {
-        await HandleCommandAsync<SyncSetsCommand, SetsCollectionAggregate>(command, cancellationToken);
+        await HandleCommandAsync<SyncSetsCommand,SetsCollectionAggregate>(command, cancellationToken);
     }
 }

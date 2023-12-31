@@ -1,5 +1,5 @@
 using Azure.Messaging.ServiceBus;
-using BricksHoarder.AzureServiceBus;
+using BricksHoarder.AzureCloud.ServiceBus;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
