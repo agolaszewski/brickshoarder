@@ -1,5 +1,6 @@
 using BricksHoarder.AzureCloud.ServiceBus;
 using BricksHoarder.Cache.MsSql;
+using BricksHoarder.Cache.NoCache;
 using BricksHoarder.Common;
 using BricksHoarder.Credentials;
 using BricksHoarder.DateTime;
@@ -27,6 +28,7 @@ var host = new HostBuilder()
         services.AddRebrickable(new RebrickableCredentials(config));
 
         services.AddMsSqlAsCache(sqlServerDatabaseCredentials);
+        services.AddNoCache();
         services.AddDomain();
 
         services.AddAutoMapper(mapper =>
@@ -42,4 +44,5 @@ var host = new HostBuilder()
     })
     .Build();
 
+host.Services.GetRequiredService<>()
 host.Run();

@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Commands.Sets;
+﻿using BricksHoarder.Commands.Metadata;
+using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
@@ -92,6 +93,11 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     cfg.Message<CommandConsumed<SyncSetsCommand>>(x =>
                     {
                         x.SetEntityName(SyncSetsCommandConsumedMetadata.TopicPath);
+                    });
+
+                    cfg.Message<CommandConsumed<FetchSetRebrickableDataCommand>>(x =>
+                    {
+                        x.SetEntityName(FetchSetRebrickableDataCommandConsumedMetadata.TopicPath);
                     });
 
                     cfg.UseServiceBusMessageScheduler();

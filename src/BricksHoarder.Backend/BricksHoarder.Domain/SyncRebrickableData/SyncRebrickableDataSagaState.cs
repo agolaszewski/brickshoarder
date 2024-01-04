@@ -1,5 +1,4 @@
 ﻿using MassTransit;
-using System.Diagnostics;
 
 namespace BricksHoarder.Domain.SyncRebrickableData;
 
@@ -11,25 +10,45 @@ public class SyncRebrickableDataSagaState : SagaStateMachineInstance
 
     public int CurrentState { get; set; }
 
-    public List<ProcessingItem> ThemesToProcess { get; set; } = new List<ProcessingItem>();
+    public List<ProcessingItem> SetsToProcess { get; set; } = new List<ProcessingItem>();
+
+    public bool SyncingSetsFinished { get;  set; }
 
     internal void AddSetToBeProcessed(string id)
     {
-        if (ThemesToProcess.Any(x => x.Id == id))
+        if (SetsToProcess.Any(x => x.Id == id))
         {
             return;
         }
 
-        ThemesToProcess.Add(new ProcessingItem(id,ProcessingState.NotStarted));
+        SetsToProcess.Add(new ProcessingItem(id, ProcessingState.NotStarted));
+    }
+
+    internal void FinishProcessing(string id)
+    {
+        var set = SetsToProcess.First(x => x.Id == id);
+        set.State = ProcessingState.Finished;
     }
 
     internal bool AnySetIsCurrentlyProcessing()
     {
-        return ThemesToProcess.Any(x => x.State == ProcessingState.Processing);
+        return SetsToProcess.Any(x => x.State == ProcessingState.Processing);
     }
 
-    internal void ProcessSet(string id)
+    internal bool AllSetsProcessed()
     {
-        throw new NotImplementedException();
+        return SyncingSetsFinished && SetsToProcess.All(x => x.State == ProcessingState.Finished);
+    }
+
+    internal void MarkSetAsCurrentlyProcessing(string id)
+    {
+        var set = SetsToProcess.First(x => x.Id == id);
+        set.State = ProcessingState.Processing;
+    }
+
+    internal string GetNextUnprocessedSet()
+    {
+        var set = SetsToProcess.First(x => x.State == ProcessingState.NotStarted);
+        return set.Id;
     }
 }

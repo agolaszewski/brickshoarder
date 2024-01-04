@@ -17,7 +17,7 @@ namespace BricksHoarder.Functions
         {
             try
             {
-                await _client.Advanced.ResetAllData();
+                //await _client.Advanced.ResetAllData();
             }
             catch (Exception e)
             {
