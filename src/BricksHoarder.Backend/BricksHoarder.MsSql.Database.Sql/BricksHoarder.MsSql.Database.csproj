@@ -23,4 +23,10 @@
     <Folder Include="Tables\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Queries\CleanCache\CleanCache.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

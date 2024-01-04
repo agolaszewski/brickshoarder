@@ -6,14 +6,14 @@ namespace BricksHoarder.Domain.Set
 {
     public class RebrickableSetAggregate : AggregateRoot<RebrickableSetAggregate>
     {
-        internal void SetValuesOfMinifigure(LegoSetsMinifigsListAsyncResponse.Result minifigureApi)
+        internal void SetMinifigureData(LegoSetsMinifigsListAsyncResponse.Result minifigureApi)
         {
-            AddEvent(new RebrickableMinifigureDataFetched(Id, minifigureApi.SetNum, minifigureApi.SetName, minifigureApi.Quantity, minifigureApi.SetImgUrl));
+            AddEvent(new RebrickableMinifigureDataSynced(Id, minifigureApi.SetNum, minifigureApi.SetName, minifigureApi.Quantity, minifigureApi.SetImgUrl));
         }
 
-        internal void SetValues(LegoSetsReadAsyncResponse apiSet)
+        internal void SetData(LegoSetsReadAsyncResponse apiSet)
         {
-            AddEvent(new RebrickableSetDataFetched(Id, apiSet.Name, apiSet.ThemeId, apiSet.Year, apiSet.NumParts, apiSet.SetImgUrl));
+            AddEvent(new RebrickableSetDataSynced(Id, apiSet.Name, apiSet.ThemeId, apiSet.Year, apiSet.NumParts, apiSet.SetImgUrl));
         }
     }
 }

@@ -58,5 +58,30 @@ namespace BricksHoarder.Functions.Generator.Generators
                 File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{@event.Name}Function.cs", compiled);
             }
         }
+
+        public void Initialize()
+        {
+            var commandsMetadata = Directory.GetFiles(Catalogs.CommandMetadataCatalog, "*.cs");
+            foreach (var file in commandsMetadata)
+            {
+                File.Delete(file);
+            }
+
+            var eventsMetadata = Directory.GetFiles(Catalogs.EventsMetadataCatalog, "*.cs");
+            foreach (var file in eventsMetadata)
+            {
+                File.Delete(file);
+            }
+
+            var files = Directory.GetFiles(Catalogs.FunctionsCatalog, "*.cs");
+            foreach (var file in files)
+            {
+                var text = File.ReadAllText(file);
+                if (text.Contains(": BaseFunction"))
+                {
+                    File.Delete(file);
+                }
+            }
+        }
     }
 }

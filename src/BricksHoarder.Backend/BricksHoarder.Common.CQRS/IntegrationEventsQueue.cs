@@ -4,7 +4,7 @@ namespace BricksHoarder.Common.CQRS
 {
     public class IntegrationEventsQueue : IIntegrationEventsQueue
     {
-        private Queue<IEvent> _queue = new Queue<IEvent>();
+        private readonly Queue<IEvent> _queue = new();
 
         public IReadOnlyCollection<IEvent> Events => _queue;
 

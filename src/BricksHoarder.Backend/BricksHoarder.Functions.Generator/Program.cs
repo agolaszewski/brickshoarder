@@ -3,6 +3,9 @@
 using BricksHoarder.Functions.Generator.Generators;
 
 var eventsGenerator = new EventGenerator();
+
+eventsGenerator.Initialize();
+
 eventsGenerator.GenerateMetadata();
 eventsGenerator.GenerateFunctionsForSagas();
 

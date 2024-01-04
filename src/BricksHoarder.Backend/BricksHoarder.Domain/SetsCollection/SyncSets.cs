@@ -1,6 +1,9 @@
 ﻿using BricksHoarder.Commands.Sets;
+using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Events;
+using BricksHoarder.Events;
 using Rebrickable.Api;
 
 namespace BricksHoarder.Domain.SetsCollection;
@@ -11,11 +14,13 @@ public class SyncSets
     {
         private readonly IRebrickableClient _rebrickableClient;
         private readonly IAggregateStore _aggregateStore;
+        private readonly IIntegrationEventsQueue _integrationEventsQueue;
 
-        public Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore)
+        public Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore, IIntegrationEventsQueue integrationEventsQueue)
         {
             _rebrickableClient = rebrickableClient;
             _aggregateStore = aggregateStore;
+            _integrationEventsQueue = integrationEventsQueue;
         }
 
         public async Task<SetsCollectionAggregate> HandleAsync(SyncSetsCommand command)
@@ -33,6 +38,11 @@ public class SyncSets
                     if (sets.HasChanged(apiSet))
                     {
                         continue;
+                    }
+
+                    if (!sets.Events.Any())
+                    {
+                        _integrationEventsQueue.Queue(new NoChangesToSets());
                     }
 
                     return sets;

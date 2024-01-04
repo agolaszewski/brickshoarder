@@ -7,7 +7,10 @@ using BricksHoarder.DateTime;
 using BricksHoarder.Domain;
 using BricksHoarder.Marten;
 using BricksHoarder.MsSql.Database;
+using BricksHoarder.MsSql.Database.Queries.CacheClean;
 using BricksHoarder.Rebrickable;
+using Marten;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -40,9 +43,15 @@ var host = new HostBuilder()
         services.AddMartenEventStore(martenCredentials);
         services.CommonServices();
         services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), sqlServerDatabaseCredentials);
+
         services.AddDateTimeProvider();
     })
     .Build();
 
-host.Services.GetRequiredService<>()
+var cacheClean = host.Services.GetRequiredService<CleanCache>();
+await cacheClean.ExecuteAsync();
+
+var ds = host.Services.GetRequiredService<IDocumentStore>();
+await ds.Advanced.ResetAllData();
+
 host.Run();

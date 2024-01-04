@@ -11,6 +11,7 @@ using BricksHoarder.Events.Metadata;
 using BricksHoarder.MassTransit;
 using MassTransit;
 using MassTransit.AzureServiceBusTransport;
+using MassTransit.Configuration;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -56,6 +57,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                 //{
                 //    r.ExistingDbContext<MassTransitDbContext>();
                 //    r.UseSqlServer();
+                //    r.
                 //});
 
                 //foreach (var sagaType in sagas)
@@ -95,9 +97,9 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                         x.SetEntityName(SyncSetsCommandConsumedMetadata.TopicPath);
                     });
 
-                    cfg.Message<CommandConsumed<FetchSetRebrickableDataCommand>>(x =>
+                    cfg.Message<CommandConsumed<SyncSetRebrickableDataCommand>>(x =>
                     {
-                        x.SetEntityName(FetchSetRebrickableDataCommandConsumedMetadata.TopicPath);
+                        x.SetEntityName(SyncSetRebrickableDataCommandConsumedMetadata.TopicPath);
                     });
 
                     cfg.UseServiceBusMessageScheduler();
@@ -109,6 +111,11 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                 //{
                 //    o.UseSqlServer();
                 //    o.UseBusOutbox();
+                //});
+
+                //x.AddConfigureEndpointsCallback((context, name, cfg) =>
+                //{
+                //    cfg.UseEntityFrameworkOutbox<MassTransitDbContext>(context);
                 //});
             });
 
