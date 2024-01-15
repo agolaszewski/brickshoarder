@@ -1,7 +1,14 @@
 ﻿using Pulumi;
+using Pulumi.AzureNative.Insights;
+using Pulumi.AzureNative.OperationalInsights.Inputs;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.ServiceBus;
 using Pulumi.AzureNative.ServiceBus.Inputs;
+using Pulumi.AzureNative.Storage;
+using Pulumi.AzureNative.Storage.Inputs;
+using Pulumi.AzureNative.Web;
+using Pulumi.AzureNative.Web.Inputs;
+using StorageAccountArgs = Pulumi.AzureNative.Storage.StorageAccountArgs;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator;
 
@@ -25,18 +32,18 @@ internal class MyStack : Stack
             ResourceGroupName = resourceGroup.Name,
             Sku = new SBSkuArgs()
             {
-                Name = SkuName.Standard,
+                Name = Pulumi.AzureNative.ServiceBus.SkuName.Standard,
                 Tier = SkuTier.Standard
             },
             NamespaceName = "sb-brickshoarder-dev"
         });
 
-        var serviceBusNamespaceNamespaceAuthorizationRule = new Pulumi.AzureNative.ServiceBus.NamespaceAuthorizationRule("ServiceBus.Namespace.NamespaceAuthorizationRule", new NamespaceAuthorizationRuleArgs()
+        var serviceBusNamespaceNamespaceAuthorizationRule = new NamespaceAuthorizationRule("ServiceBus.Namespace.NamespaceAuthorizationRule", new NamespaceAuthorizationRuleArgs()
         {
             NamespaceName = serviceBusNamespace.Name,
             AuthorizationRuleName = "DefaultSharedAccessPolicy",
             ResourceGroupName = resourceGroup.Name,
-            Rights = new InputList<AccessRights>()
+            Rights =
             {
                 AccessRights.Listen,
                 AccessRights.Send
@@ -144,6 +151,120 @@ internal class MyStack : Stack
         });
 
         #endregion Sql Server
+
+        #region Linux Azure Function
+
+        var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
+        {
+            Name = "asp-func-linux-brickshoarder-dev",
+            ResourceGroupName = resourceGroup.Name,
+            Location = resourceGroup.Location,
+            Kind = "Linux",
+            Reserved = true,
+            Sku = new SkuDescriptionArgs
+            {
+                Name = "Y1",
+                Tier = "Dynamic"
+            },
+        });
+
+        #endregion Linux Azure Function
+
+        #region Storage Account
+
+        var storageAccountFunctions = new StorageAccount("StorageAccount", new StorageAccountArgs
+        {
+            AccountName = "stbrickshoarderdev",
+            ResourceGroupName = resourceGroup.Name,
+            Location = resourceGroup.Location,
+            Sku = new SkuArgs
+            {
+                Name = "Standard_LRS"
+            },
+            Kind = Pulumi.AzureNative.Storage.Kind.StorageV2
+        });
+
+        Output<string> listStorageAccountKeysOutput = Output.All(storageAccountFunctions.Name).Apply(async x =>
+        {
+            var keys = await ListStorageAccountKeys.InvokeAsync(new ListStorageAccountKeysArgs()
+            {
+                ResourceGroupName = resourceGroup.Name.Convert(),
+                AccountName = storageAccountFunctions.Name.Convert(),
+            });
+            return keys.Keys[0].Value;
+        });
+
+        StorageAccountConnectionString = Output.Format($"DefaultEndpointsProtocol=https;AccountName={storageAccountFunctions.Name};AccountKey={listStorageAccountKeysOutput.Apply(x => x)};EndpointSuffix=core.windows.net");
+
+        #endregion Storage Account
+
+        #region Application Insight
+
+        var workspace = new Pulumi.AzureNative.OperationalInsights.Workspace("Workspace", new()
+        {
+            WorkspaceName = "log-appi-brickshoarder-dev",
+            ResourceGroupName = resourceGroup.Name,
+            Sku = new WorkspaceSkuArgs
+            {
+                Name = Pulumi.AzureNative.OperationalInsights.WorkspaceSkuNameEnum.PerGB2018
+            },
+            WorkspaceCapping = new WorkspaceCappingArgs()
+            {
+                DailyQuotaGb = 0.5
+            }
+        });
+
+        var appInsights = new Component("AppInsights", new ComponentArgs
+        {
+            ResourceName = "appi-brickshoarder-dev",
+            ResourceGroupName = resourceGroup.Name,
+            ApplicationType = "web",
+            FlowType = "Bluefield",
+            Kind = "web",
+            RequestSource = "rest",
+            WorkspaceResourceId = workspace.Id
+        });
+
+        #endregion Application Insight
+
+        #region Functions Linux
+
+        var functionApp = new WebApp("WebApp.Functions.Linux", new WebAppArgs
+        {
+            Name = "func-linux-brickshoarder-dev",
+            ResourceGroupName = resourceGroup.Name,
+            ServerFarmId = appServicePlanFunctionsLinux.Id,
+            SiteConfig = new SiteConfigArgs
+            {
+                AppSettings = new[]
+                {
+                    new NameValuePairArgs
+                    {
+                        Name = "FUNCTIONS_WORKER_RUNTIME",
+                        Value = "dotnet-isolated"
+                    },
+                    new NameValuePairArgs
+                    {
+                        Name = "AzureWebJobsStorage",
+                        Value = StorageAccountConnectionString
+                    },
+                    new NameValuePairArgs
+                    {
+                        Name = "FUNCTIONS_EXTENSION_VERSION",
+                        Value = "~4"
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "APPINSIGHTS_INSTRUMENTATIONKEY",
+                        Value = appInsights.InstrumentationKey
+                    }
+                }
+            },
+            Kind = "functionapp",
+            HttpsOnly = true
+        });
+
+        #endregion Functions Linux
     }
 
     [Output]
@@ -163,4 +284,7 @@ internal class MyStack : Stack
 
     [Output]
     public Output<string> DbForMsSqlAdminPassword { get; set; }
+
+    [Output]
+    public Output<string> StorageAccountConnectionString { get; set; }
 }
