@@ -13,11 +13,11 @@ namespace FunctionApp4
         }
 
         [Function("Function2")]
-        public async Task Run([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = true)] TimerInfo myTimer)
         {
             try
             {
-                _logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+                _logger.LogInformation($"C# DEPLOY {DateTime.Now}");
             }
             catch (Exception a)
             {
