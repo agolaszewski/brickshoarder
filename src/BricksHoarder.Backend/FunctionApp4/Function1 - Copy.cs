@@ -1,7 +1,5 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using Microsoft.Playwright;
-using System.Net;
 
 namespace FunctionApp4
 {
