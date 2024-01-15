@@ -68,22 +68,24 @@ namespace BricksHoarder.Marten
                 }
             }
 
-            if (!aggregate.Events.Any())
-            {
-                return;
-            }
+            PolicyResult eventStoreOutcome = PolicyResult.Successful(null);
 
-            var eventStoreOutcome = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(async () =>
+            if (aggregate.Events.Any())
             {
-                await using var session = _eventStore.OpenSession();
-                session.Events.Append(streamName, aggregate.Version, aggregate.Events.Select(a => a.Event).ToList());
-                await session.SaveChangesAsync();
-            });
+                eventStoreOutcome = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(async () =>
+                {
+                    await using var session = _eventStore.OpenSession();
+                    session.Events.Append(streamName, aggregate.Version + aggregate.Events.Count(), aggregate.Events.Select(a => a.Event).ToList());
+                    await session.SaveChangesAsync();
+                });
+            }
 
             if (eventStoreOutcome.Outcome == OutcomeType.Successful)
             {
                 aggregate.Version += aggregate.Events.Count();
-                _cache.Set(streamName, aggregate, TimeSpan.FromHours(1));
+
+                var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
+                await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromHours(1));
                 return;
             }
 
@@ -134,10 +136,12 @@ namespace BricksHoarder.Marten
 
             TAggregate aggregate = new TAggregate
             {
-                Version = -1
+                Version = 0
             };
 
-            var aggregateFromCache = await _cache.GetAsync<TAggregate>(streamName);
+            var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
+
+            var aggregateFromCache = await aggregateSnapshot.LoadAsync(streamName);
             if (aggregateFromCache is not null)
             {
                 aggregate = aggregateFromCache;

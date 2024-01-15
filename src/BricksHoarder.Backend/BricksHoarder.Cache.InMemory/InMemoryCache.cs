@@ -12,15 +12,16 @@ namespace BricksHoarder.Cache.InMemory
             _memoryCache = memoryCache;
         }
 
-        public void Set<T>(string key, T value, TimeSpan? expire) where T : class
+        public Task SetAsync<T>(string key, T value, TimeSpan? expire) where T : class
         {
             if (expire.HasValue)
             {
                 _memoryCache.Set(key, value, expire.Value);
-                return;
+                return Task.CompletedTask;
             }
 
             _memoryCache.Set(key, value);
+            return Task.CompletedTask;
         }
 
         public Task<T?> GetAsync<T>(string key) where T : class

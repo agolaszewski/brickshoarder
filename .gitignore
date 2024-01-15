@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+/docker-compose.yaml.bak
+/src/BricksHoarder.Backend/BricksHoarder.Functions/local.settings.json

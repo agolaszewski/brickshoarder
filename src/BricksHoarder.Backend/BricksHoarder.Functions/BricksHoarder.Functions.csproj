@@ -1,10 +1,37 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.20.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.ServiceBus" Version="5.14.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.16.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ThrottlingTroll.AzureFunctions" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+  	<ProjectReference Include="..\BricksHoarder.AzureServiceBus\BricksHoarder.AzureCloud.ServiceBus.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Cache.InMemory\BricksHoarder.Cache.InMemory.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Cache.MsSql\BricksHoarder.Cache.MsSql.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Cache.NoCache\BricksHoarder.Cache.NoCache.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Common\BricksHoarder.Common.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Marten\BricksHoarder.Marten.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.MsSql.Database.Sql\BricksHoarder.MsSql.Database.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Rebrickable\BricksHoarder.Rebrickable.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Redis\BricksHoarder.Redis.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -14,5 +41,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext" />
   </ItemGroup>
 </Project>

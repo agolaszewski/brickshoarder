@@ -1,6 +1,4 @@
-﻿using BricksHoarder.Core.Commands;
-
-namespace BricksHoarder.Core.Aggregates
+﻿namespace BricksHoarder.Core.Aggregates
 {
     public interface IAggregateStore
     {

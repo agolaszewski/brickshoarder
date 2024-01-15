@@ -6,8 +6,8 @@ using BricksHoarder.Core.Exceptions;
 using BricksHoarder.Core.Specification;
 using FluentValidation;
 using FluentValidation.Results;
+using MessagePack;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json.Serialization;
 
 namespace BricksHoarder.Common.DDD.Aggregates
 {
@@ -16,10 +16,10 @@ namespace BricksHoarder.Common.DDD.Aggregates
     {
         private readonly List<EventComposite> _events = new List<EventComposite>();
 
-        [JsonIgnore]
+        [IgnoreMember]
         public IServiceProvider Context { get; set; }
 
-        [JsonIgnore]
+        [IgnoreMember]
         public IEnumerable<EventComposite> Events => _events;
 
         public long Version { get; set; }

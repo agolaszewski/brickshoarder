@@ -2,8 +2,13 @@
 
 namespace BricksHoarder.Core.Commands
 {
-    public interface ICommandHandler<in TCommand> where TCommand : ICommand
+    public interface ICommandHandler<in TCommand, TAggregateRoot> where TCommand : ICommand where TAggregateRoot : class, IAggregateRoot
     {
-        Task<IAggregateRoot> ExecuteAsync(TCommand command);
+        Task<TAggregateRoot> HandleAsync(TCommand command);
+    }
+
+    public interface ICommandHandler<in TCommand> where TCommand : ICommand 
+    {
+        Task HandleAsync(TCommand command);
     }
 }

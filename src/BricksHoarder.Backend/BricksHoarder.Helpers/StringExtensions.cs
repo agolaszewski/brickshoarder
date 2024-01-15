@@ -28,4 +28,9 @@ public static class StringExtensions
 
         return null;
     }
+
+    public static bool IsNullOrWhiteSpace(this string source)
+    {
+        return string.IsNullOrWhiteSpace(source);
+    }
 }

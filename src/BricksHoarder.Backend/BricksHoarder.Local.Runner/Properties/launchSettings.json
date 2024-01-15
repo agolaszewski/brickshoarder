@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "BricksHoarder.Local.Runner.Azure": {
+      "commandName": "Project",
+      "commandLineArgs": "--azure"
+    },
+    "BricksHoarder.Local.Runner.Local": {
+      "commandName": "Project"
+    }
+  }
+}

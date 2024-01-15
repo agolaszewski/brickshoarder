@@ -4,18 +4,28 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rebrickable.Api" Version="3.0.15" />
-    <PackageReference Include="Scrutor" Version="4.2.0" />
+    <Compile Remove="EventsHandlers\**" />
+    <EmbeddedResource Remove="EventsHandlers\**" />
+    <None Remove="EventsHandlers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MessagePack.Annotations" Version="2.5.129" />
+    <PackageReference Include="Rebrickable.Api" Version="3.2.0" />
+    <PackageReference Include="Scrutor" Version="4.2.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BricksHoarder.Commands\BricksHoarder.Commands.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Common.CQRS\BricksHoarder.Common.CQRS.csproj" />
     <ProjectReference Include="..\BricksHoarder.Common.DDD\BricksHoarder.Common.DDD.csproj" />
     <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
     <ProjectReference Include="..\BricksHoarder.Events\BricksHoarder.Events.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Helpers\BricksHoarder.Helpers.csproj" />
   </ItemGroup>
 
 </Project>
