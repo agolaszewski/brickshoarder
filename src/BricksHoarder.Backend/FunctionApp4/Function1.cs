@@ -15,7 +15,7 @@ namespace FunctionApp4
         }
 
         [Function("Function1")]
-        public async Task Run([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 0 0 * * *", RunOnStartup = true)] TimerInfo myTimer)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace FunctionApp4
                 var page = await browser.NewPageAsync();
                 await page.GotoAsync("https://www.lego.com/pl-pl/product/batcave-shadow-box-76252");
 
-                var text = await page.Locator("data-test=product-price").InnerTextAsync();
+                var text = await page.Locator("data-test=product-overview-container").Locator("data-test=product-price").InnerTextAsync();
                 _logger.LogInformation(text);
             }
             catch (Exception a)
