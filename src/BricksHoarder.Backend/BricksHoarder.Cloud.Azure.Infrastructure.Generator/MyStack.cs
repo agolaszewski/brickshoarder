@@ -257,6 +257,11 @@ internal class MyStack : Stack
                     {
                         Name = "APPINSIGHTS_INSTRUMENTATIONKEY",
                         Value = appInsights.InstrumentationKey
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "PLAYWRIGHT_BROWSERS_PATH",
+                        Value = "/home/site/wwwroot/.playwright/ms-playwright"
                     }
                 }
             },

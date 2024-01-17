@@ -36,7 +36,13 @@ jobs:
 
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration Release --no-build --output "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
-      
+
+    - name: Playwright install
+      shell: bash
+      run: |
+        dotnet tool install --global Microsoft.Playwright.CLI
+        playwright install chromium
+
     - name: Publish Artifacts
       uses: actions/upload-artifact@v3
       with:
