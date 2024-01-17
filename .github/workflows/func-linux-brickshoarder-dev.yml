@@ -47,7 +47,7 @@ jobs:
       shell: bash
       run: |
         dotnet tool install --global Microsoft.Playwright.CLI
-        playwright -p install chromium
+        playwright install chromium
 
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
