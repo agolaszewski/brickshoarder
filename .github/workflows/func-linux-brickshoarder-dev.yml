@@ -41,7 +41,7 @@ jobs:
       shell: bash
       run: |
         dotnet tool install --global Microsoft.Playwright.CLI
-        playwright install chromium -p "${{ env.WORKING_DIRECTORY }}"
+        playwright -p ${{ env.WORKING_DIRECTORY }} install chromium
 
     - name: Publish Artifacts
       uses: actions/upload-artifact@v3
