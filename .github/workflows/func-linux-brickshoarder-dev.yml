@@ -3,7 +3,8 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'src/BricksHoarder.Backend/FunctionApp4/**'      
+      - 'src/BricksHoarder.Backend/FunctionApp4/**'
+      - '.github/workflows/func-linux-brickshoarder-dev.yml' 
 env:
   AZURE_FUNCTIONAPP_NAME: 'func-linux-brickshoarder-dev'   
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './published'
