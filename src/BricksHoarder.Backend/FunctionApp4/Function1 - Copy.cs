@@ -13,7 +13,7 @@ namespace FunctionApp4
         }
 
         [Function("Function2")]
-        public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = true)] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 0 * * * *", RunOnStartup = true)] TimerInfo myTimer)
         {
             try
             {

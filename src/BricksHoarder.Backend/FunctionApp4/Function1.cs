@@ -25,7 +25,10 @@ namespace FunctionApp4
                 using var playwright = await Playwright.CreateAsync();
                 await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = true });
                 var page = await browser.NewPageAsync();
-                await page.GotoAsync("https://playwright.dev/dotnet");
+                await page.GotoAsync("https://www.lego.com/pl-pl/product/batcave-shadow-box-76252");
+
+                var text = await page.Locator("data-test=product-price").InnerTextAsync();
+                _logger.LogInformation(text);
             }
             catch (Exception a)
             {
