@@ -41,6 +41,7 @@ jobs:
       shell: bash
       run: |
         dotnet tool install --global Microsoft.Playwright.CLI
+        PLAYWRIGHT_BROWSERS_PATH=$HOME/pw-browsers
         playwright -p ${{ env.WORKING_DIRECTORY }} install chromium
 
     - name: Publish Artifacts
