@@ -9,6 +9,7 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './published'
   WORKING_DIRECTORY: ./src/BricksHoarder.Backend/FunctionApp4
   DOTNET_VERSION: '7.0.x'
+  PLAYWRIGHT_BROWSERS_PATH: ./src/BricksHoarder.Backend/FunctionApp4/publish/.playwright/ms-playwright
 
 jobs:
   build-and-deploy:
@@ -41,7 +42,6 @@ jobs:
       shell: bash
       run: |
         dotnet tool install --global Microsoft.Playwright.CLI
-        PLAYWRIGHT_BROWSERS_PATH=$HOME/pw-browsers
         playwright -p ${{ env.WORKING_DIRECTORY }} install chromium
 
     - name: Publish Artifacts
