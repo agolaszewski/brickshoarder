@@ -23,7 +23,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }} # set up AZURE_RBAC_CREDENTIALS secrets in your repository
 
-    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+    - name: Setup DotNet Environment
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
@@ -41,7 +41,7 @@ jobs:
       shell: bash
       run: |
         dotnet tool install --global Microsoft.Playwright.CLI
-        playwright install chromium
+        playwright install chromium -p "${{ env.WORKING_DIRECTORY }}"
 
     - name: Publish Artifacts
       uses: actions/upload-artifact@v3
