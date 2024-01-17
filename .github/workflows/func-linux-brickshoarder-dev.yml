@@ -10,7 +10,7 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './published'
   WORKING_DIRECTORY: ./src/BricksHoarder.Backend/FunctionApp4
   DOTNET_VERSION: '7.0.x'
-  PLAYWRIGHT_BROWSERS_PATH: ./src/BricksHoarder.Backend/FunctionApp4/published/.playwright/ms-playwright
+  PLAYWRIGHT_BROWSERS_PATH: ./published/.playwright/ms-playwright
 
 jobs:
   build-and-deploy:
