@@ -7,7 +7,7 @@ on:
       - '.github/workflows/func-linux-brickshoarder-dev.yml' 
 env:
   AZURE_FUNCTIONAPP_NAME: 'func-linux-brickshoarder-dev'   
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '/published'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './published'
   WORKING_DIRECTORY: ./src/BricksHoarder.Backend/FunctionApp4
   DOTNET_VERSION: '7.0.x'
   PLAYWRIGHT_BROWSERS_PATH: ./published/.playwright/ms-playwright
