@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "FunctionApp4": {
+    "BricksHoarder.Scrappers": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7035",
+      "commandLineArgs": "--port 7115",
       "launchBrowser": false
     }
   }

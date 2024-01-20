@@ -20,15 +20,14 @@ namespace BricksHoarder.AzureCloud.ServiceBus
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, SqlServerDatabaseCredentials sqlServerDatabaseCredentials)
+        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials)
         {
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-            services.AddOutbox(sqlServerDatabaseCredentials);
-
+            
             services.AddMassTransit(x =>
             {
                 var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()

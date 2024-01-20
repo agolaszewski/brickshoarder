@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'src/BricksHoarder.Backend/FunctionApp4/**'
+      - 'src/BricksHoarder.Backend/BricksHoarder.Scrappers/**'
       - '.github/workflows/func-linux-brickshoarder-dev.yml' 
 env:
   AZURE_FUNCTIONAPP_NAME: 'func-linux-brickshoarder-dev'   
@@ -13,7 +13,7 @@ env:
 
 defaults:
  run:
-  working-directory: ./src/BricksHoarder.Backend/FunctionApp4
+  working-directory: ./src/BricksHoarder.Backend/BricksHoarder.Scrappers
 
 jobs:
   build-and-deploy:

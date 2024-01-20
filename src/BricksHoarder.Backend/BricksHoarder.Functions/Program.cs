@@ -42,7 +42,7 @@ var host = new HostBuilder()
         var martenCredentials = new PostgresAzureCredentials(config, "MartenAzure");
         services.AddMartenEventStore(martenCredentials);
         services.CommonServices();
-        services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), sqlServerDatabaseCredentials);
+        services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"));
 
         services.AddDateTimeProvider();
     })

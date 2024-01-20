@@ -19,11 +19,11 @@ public static class StringExtensions
         return null;
     }
 
-    public static T? ToN<T>(this string source) where T : struct
+    public static T? ToN<T>(this string? source, CultureInfo cultureInfo) where T : struct
     {
         if (!string.IsNullOrWhiteSpace(source))
         {
-            return (T)Convert.ChangeType(source, typeof(T), CultureInfo.InvariantCulture);
+            return (T)Convert.ChangeType(source, typeof(T), cultureInfo);
         }
 
         return null;
