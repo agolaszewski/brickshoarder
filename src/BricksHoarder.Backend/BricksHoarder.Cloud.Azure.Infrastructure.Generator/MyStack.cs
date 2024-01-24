@@ -165,24 +165,6 @@ internal class MyStack : Stack
 
         #endregion Sql Server
 
-        #region Linux Azure Function
-
-        var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
-        {
-            Name = "asp-func-linux-brickshoarder-dev",
-            ResourceGroupName = resourceGroup.Name,
-            Location = resourceGroup.Location,
-            Kind = "Linux",
-            Reserved = true,
-            Sku = new SkuDescriptionArgs
-            {
-                Name = "Y1",
-                Tier = "Dynamic"
-            },
-        });
-
-        #endregion Linux Azure Function
-
         #region Storage Account
 
         var storageAccountFunctions = new StorageAccount("StorageAccount", new StorageAccountArgs
@@ -242,6 +224,20 @@ internal class MyStack : Stack
 
         #region Functions Linux
 
+        var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
+        {
+            Name = "asp-func-linux-brickshoarder-dev",
+            ResourceGroupName = resourceGroup.Name,
+            Location = resourceGroup.Location,
+            Kind = "Linux",
+            Reserved = true,
+            Sku = new SkuDescriptionArgs
+            {
+                Name = "Y1",
+                Tier = "Dynamic"
+            },
+        });
+
         var functionApp = new WebApp("WebApp.Functions.Linux", new WebAppArgs
         {
             Name = "func-linux-brickshoarder-dev",
@@ -268,8 +264,18 @@ internal class MyStack : Stack
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "APPINSIGHTS_INSTRUMENTATIONKEY",
-                        Value = appInsights.InstrumentationKey
+                        Name = "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                        Value = StorageAccountConnectionString
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "WEBSITE_CONTENTSHARE",
+                        Value = "func-linux-brickshoarder-dev"
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED",
+                        Value = "1"
                     },
                     new NameValuePairArgs()
                     {
@@ -283,72 +289,72 @@ internal class MyStack : Stack
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "Rebrickable:Url",
-                        Value = "https://rebrickable.com"
+                        Name = "Rebrickable__Url",
+                        Value = "https__//rebrickable.com"
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "Rebrickable:Key",
+                        Name = "Rebrickable__Key",
                         Value = rebrickableKeyOutput
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "MartenAzure:Host",
+                        Name = "MartenAzure__Host",
                         Value = "psql-brickshoarder-dev.postgres.database.azure.com"
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "MartenAzure:Database",
+                        Name = "MartenAzure__Database",
                         Value = dBForPostgreSqlDatabase.Name
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "MartenAzure:Username",
+                        Name = "MartenAzure__Username",
                         Value = "brickshoarder_admin"
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "MartenAzure:Password",
+                        Name = "MartenAzure__Password",
                         Value = DbForPostgreSqlAdminPassword
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "AzureServiceBus:Endpoint",
+                        Name = "AzureServiceBus__Endpoint",
                         Value = Endpoint
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "AzureServiceBus:SharedAccessKeyName",
+                        Name = "AzureServiceBus__SharedAccessKeyName",
                         Value = SharedAccessKeyName
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "AzureServiceBus:SharedAccessKey",
+                        Name = "AzureServiceBus__SharedAccessKey",
                         Value = SharedAccessKey
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "BrickshoarderDb:Url",
+                        Name = "BrickshoarderDb__Url",
                         Value = "sql-brickshoarder-dev.database.windows.net,1433"
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "BrickshoarderDb:Catalog",
+                        Name = "BrickshoarderDb__Catalog",
                         Value = "brickshoarder"
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "BrickshoarderDb:User",
+                        Name = "BrickshoarderDb__User",
                         Value = "brickshoarder_admin"
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "BrickshoarderDb:Password",
+                        Name = "BrickshoarderDb__Password",
                         Value = DbForMsSqlAdminPassword
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "Redis:ConnectionString",
+                        Name = "Redis__ConnectionString",
                         Value = redisConnectionStringOutput
                     }
                 }
