@@ -351,3 +351,4 @@ MigrationBackup/
 
 /docker-compose.yaml.bak
 /src/BricksHoarder.Backend/BricksHoarder.Functions/local.settings.json
+/src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/secrets.json
