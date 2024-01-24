@@ -285,16 +285,6 @@ internal class MyStack : Stack
                     },
                     new NameValuePairArgs()
                     {
-                        Name = "ENABLE_ORYX_BUILD",
-                        Value = "true"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "SCM_DO_BUILD_DURING_DEPLOYMENT",
-                        Value = "true"
-                    },
-                    new NameValuePairArgs()
-                    {
                         Name = "PLAYWRIGHT_BROWSERS_PATH",
                         Value = "/home/site/wwwroot/.playwright/ms-playwright"
                     },
