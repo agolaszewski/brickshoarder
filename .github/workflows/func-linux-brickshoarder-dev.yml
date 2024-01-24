@@ -42,11 +42,11 @@ jobs:
     - name: Publish
       run: dotnet publish --configuration Release --no-build --output "./published"
 
-    - name: Playwright install
-      shell: bash
-      run: |
-        dotnet tool install --global Microsoft.Playwright.CLI
-        playwright install chromium
+    # - name: Playwright install
+    #   shell: bash
+    #   run: |
+    #     dotnet tool install --global Microsoft.Playwright.CLI
+    #     playwright install chromium
 
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
@@ -54,5 +54,4 @@ jobs:
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: ${{ env.WORKING_DIRECTORY }}/published
-        scm-do-build-during-deployment: true,
-        enable-oryx-build: true
+        enable-oryx-build: "true"
