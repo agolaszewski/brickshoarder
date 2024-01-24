@@ -223,153 +223,153 @@ internal class MyStack : Stack
 
         #endregion Application Insight
 
-        #region Functions Linux
+        //#region Functions Linux
 
-        var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
-        {
-            Name = "asp-func-linux-brickshoarder-dev",
-            ResourceGroupName = resourceGroup.Name,
-            Location = resourceGroup.Location,
-            Kind = "Linux",
-            Reserved = true,
-            Sku = new SkuDescriptionArgs
-            {
-                Name = "Y1",
-                Tier = "Dynamic"
-            },
-        });
+        //var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
+        //{
+        //    Name = "asp-func-linux-brickshoarder-dev",
+        //    ResourceGroupName = resourceGroup.Name,
+        //    Location = resourceGroup.Location,
+        //    Kind = "Linux",
+        //    Reserved = true,
+        //    Sku = new SkuDescriptionArgs
+        //    {
+        //        Name = "Y1",
+        //        Tier = "Dynamic"
+        //    },
+        //});
 
-        var functionApp = new WebApp("WebApp.Functions.Linux", new WebAppArgs
-        {
-            Name = "func-linux-brickshoarder-dev",
-            ResourceGroupName = resourceGroup.Name,
-            ServerFarmId = appServicePlanFunctionsLinux.Id,
-            SiteConfig = new SiteConfigArgs
-            {
-                AppSettings = new[]
-                {
-                    new NameValuePairArgs
-                    {
-                        Name = "FUNCTIONS_WORKER_RUNTIME",
-                        Value = "dotnet-isolated"
-                    },
-                    new NameValuePairArgs
-                    {
-                        Name = "AzureWebJobsStorage",
-                        Value = StorageAccountConnectionString
-                    },
-                    new NameValuePairArgs
-                    {
-                        Name = "FUNCTIONS_EXTENSION_VERSION",
-                        Value = "~4"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                        Value = StorageAccountConnectionString
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "WEBSITE_CONTENTSHARE",
-                        Value = "func-linux-brickshoarder-dev"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED",
-                        Value = "1"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                        Value = appInsights.ConnectionString
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "PLAYWRIGHT_BROWSERS_PATH",
-                        Value = "/home/site/wwwroot/.playwright/ms-playwright"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "ServiceBusConnectionString",
-                        Value = ServiceBusConnectionString
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "Rebrickable__Url",
-                        Value = "https://rebrickable.com"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "Rebrickable__Key",
-                        Value = rebrickableKeyOutput
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "MartenAzure__Host",
-                        Value = "psql-brickshoarder-dev.postgres.database.azure.com"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "MartenAzure__Database",
-                        Value = dBForPostgreSqlDatabase.Name
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "MartenAzure__Username",
-                        Value = "brickshoarder_admin"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "MartenAzure__Password",
-                        Value = DbForPostgreSqlAdminPassword
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "AzureServiceBus__Endpoint",
-                        Value = Endpoint
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "AzureServiceBus__SharedAccessKeyName",
-                        Value = SharedAccessKeyName
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "AzureServiceBus__SharedAccessKey",
-                        Value = SharedAccessKey
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "BrickshoarderDb__Url",
-                        Value = "sql-brickshoarder-dev.database.windows.net,1433"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "BrickshoarderDb__Catalog",
-                        Value = "brickshoarder"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "BrickshoarderDb__User",
-                        Value = "brickshoarder_admin"
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "BrickshoarderDb__Password",
-                        Value = DbForMsSqlAdminPassword
-                    },
-                    new NameValuePairArgs()
-                    {
-                        Name = "Redis__ConnectionString",
-                        Value = redisConnectionStringOutput
-                    }
-                }
-            },
-            Kind = "functionapp",
-            HttpsOnly = true
-        });
+        //var functionApp = new WebApp("WebApp.Functions.Linux", new WebAppArgs
+        //{
+        //    Name = "func-linux-brickshoarder-dev2",
+        //    ResourceGroupName = resourceGroup.Name,
+        //    ServerFarmId = appServicePlanFunctionsLinux.Id,
+        //    SiteConfig = new SiteConfigArgs
+        //    {
+        //        AppSettings = new[]
+        //        {
+        //            new NameValuePairArgs
+        //            {
+        //                Name = "FUNCTIONS_WORKER_RUNTIME",
+        //                Value = "dotnet-isolated"
+        //            },
+        //            new NameValuePairArgs
+        //            {
+        //                Name = "AzureWebJobsStorage",
+        //                Value = StorageAccountConnectionString
+        //            },
+        //            new NameValuePairArgs
+        //            {
+        //                Name = "FUNCTIONS_EXTENSION_VERSION",
+        //                Value = "~4"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+        //                Value = StorageAccountConnectionString
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "WEBSITE_CONTENTSHARE",
+        //                Value = "func-linux-brickshoarder-dev"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED",
+        //                Value = "1"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
+        //                Value = appInsights.ConnectionString
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "PLAYWRIGHT_BROWSERS_PATH",
+        //                Value = "/home/site/wwwroot/.playwright/ms-playwright"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "ServiceBusConnectionString",
+        //                Value = ServiceBusConnectionString
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "Rebrickable__Url",
+        //                Value = "https://rebrickable.com"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "Rebrickable__Key",
+        //                Value = rebrickableKeyOutput
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "MartenAzure__Host",
+        //                Value = "psql-brickshoarder-dev.postgres.database.azure.com"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "MartenAzure__Database",
+        //                Value = dBForPostgreSqlDatabase.Name
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "MartenAzure__Username",
+        //                Value = "brickshoarder_admin"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "MartenAzure__Password",
+        //                Value = DbForPostgreSqlAdminPassword
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "AzureServiceBus__Endpoint",
+        //                Value = Endpoint
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "AzureServiceBus__SharedAccessKeyName",
+        //                Value = SharedAccessKeyName
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "AzureServiceBus__SharedAccessKey",
+        //                Value = SharedAccessKey
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "BrickshoarderDb__Url",
+        //                Value = "sql-brickshoarder-dev.database.windows.net,1433"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "BrickshoarderDb__Catalog",
+        //                Value = "brickshoarder"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "BrickshoarderDb__User",
+        //                Value = "brickshoarder_admin"
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "BrickshoarderDb__Password",
+        //                Value = DbForMsSqlAdminPassword
+        //            },
+        //            new NameValuePairArgs()
+        //            {
+        //                Name = "Redis__ConnectionString",
+        //                Value = redisConnectionStringOutput
+        //            }
+        //        }
+        //    },
+        //    Kind = "functionapp",
+        //    HttpsOnly = true
+        //});
 
-        #endregion Functions Linux
+        //#endregion Functions Linux
     }
 
     [Output]
