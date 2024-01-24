@@ -48,7 +48,7 @@ var host = new HostBuilder()
 var cacheClean = host.Services.GetRequiredService<CleanCache>();
 await cacheClean.ExecuteAsync();
 
-var ds = host.Services.GetRequiredService<IDocumentStore>();
-await ds.Advanced.ResetAllData();
+//var ds = host.Services.GetRequiredService<IDocumentStore>();
+//await ds.Advanced.ResetAllData();
 
 host.Run();
