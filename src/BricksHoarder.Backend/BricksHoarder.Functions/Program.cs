@@ -9,6 +9,7 @@ using BricksHoarder.MsSql.Database.Queries.CacheClean;
 using BricksHoarder.Rebrickable;
 using BricksHoarder.Redis;
 using Marten;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,6 +23,9 @@ var host = new HostBuilder()
     .ConfigureServices((builder, services) =>
     {
         var config = builder.Configuration;
+
+        services.AddApplicationInsightsTelemetryWorkerService();
+        services.ConfigureFunctionsApplicationInsights();
 
         var sqlServerDatabaseCredentials = new SqlServerDatabaseCredentials(config, "BrickshoarderDb");
 
