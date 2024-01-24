@@ -1,6 +1,6 @@
 using BricksHoarder.Commands.Metadata;
 using BricksHoarder.Commands.Sets;
-using BricksHoarder.Domain.Set;
+using BricksHoarder.Domain.RebrickableSet;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
 

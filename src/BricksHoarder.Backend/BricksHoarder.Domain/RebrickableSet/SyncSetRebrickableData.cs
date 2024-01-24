@@ -3,7 +3,7 @@ using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using Rebrickable.Api;
 
-namespace BricksHoarder.Domain.Set
+namespace BricksHoarder.Domain.RebrickableSet
 {
     public class SyncSetRebrickableData
     {

@@ -9,6 +9,7 @@ using BricksHoarder.Domain.SyncRebrickableData;
 using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
 using BricksHoarder.MassTransit;
+using Marten;
 using MassTransit;
 using MassTransit.AzureServiceBusTransport;
 using MassTransit.Configuration;
@@ -51,7 +52,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().InMemoryRepository();
+                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().MartenRepository();
                 //.EntityFrameworkRepository(r =>
                 //{
                 //    r.ExistingDbContext<MassTransitDbContext>();

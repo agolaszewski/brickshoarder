@@ -1,8 +1,10 @@
 ﻿using BricksHoarder.Core.Services;
+using MessagePack;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using StackExchange.Redis;
 using System.Text.Json;
+using static MassTransit.ValidationResultExtensions;
 
 namespace BricksHoarder.Redis
 {
@@ -27,14 +29,21 @@ namespace BricksHoarder.Redis
 
         public async Task SetAsync<T>(string key, T value, TimeSpan? expire) where T : class
         {
-            string json = JsonSerializer.Serialize(value, SerializeOptions);
-            await _cache.StringSetAsync(key, json, expire);
+            byte[] data = MessagePackSerializer.Typeless.Serialize(value);
+            await _cache.StringSetAsync(key, data, expire);
         }
 
         public async Task<T?> GetAsync<T>(string key) where T : class
         {
-            RedisValue value = await _cache.StringGetAsync(key);
-            return value.IsNullOrEmpty ? null : JsonSerializer.Deserialize<T>(value!, SerializeOptions);
+            RedisValue result = await _cache.StringGetAsync(key);
+            if (result.HasValue)
+            {
+                byte[] bytes = result;
+                T? obj = MessagePackSerializer.Typeless.Deserialize(bytes) as T;
+                return obj;
+            }
+
+            return null;
         }
     }
 }

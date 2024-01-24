@@ -24,6 +24,12 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
             await page.GotoAsync($"https://www.lego.com/pl-pl/product/{id}");
 
+            var notFoundPage = await page.Locator("data-test=error-link-cta").IsVisibleAsync();
+            if (notFoundPage)
+            {
+                return new LegoScrapperResponse(id, Availability.Discontinued, null, null, _dateTimeProvider.UtcNow());
+            }
+
             var container = page.Locator("data-test=product-overview-container");
             var availabilityText = await container.Locator("data-test=product-overview-availability").TextContentAsync();
 

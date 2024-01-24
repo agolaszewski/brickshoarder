@@ -8,6 +8,8 @@ using Pulumi.AzureNative.Storage;
 using Pulumi.AzureNative.Storage.Inputs;
 using Pulumi.AzureNative.Web;
 using Pulumi.AzureNative.Web.Inputs;
+using System.IO;
+using System.Text.Json;
 using StorageAccountArgs = Pulumi.AzureNative.Storage.StorageAccountArgs;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator;
@@ -16,6 +18,17 @@ internal class MyStack : Stack
 {
     public MyStack()
     {
+        var config = new Config();
+        var secretsFile = File.ReadAllText("secrets.json");
+
+        var secrets = JsonDocument.Parse(secretsFile, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
+
+        var rebrickableKey = secrets.RootElement.GetProperty("Rebrickable").GetProperty("Key").GetString();
+        var rebrickableKeyOutput = Output.Create(rebrickableKey!);
+
+        var redisConnectionString = secrets.RootElement.GetProperty("Redis").GetProperty("ConnectionString").GetString();
+        var redisConnectionStringOutput = Output.Create(redisConnectionString!);
+
         #region Resource Group
 
         var resourceGroup = new ResourceGroup("ResourceGroup", new ResourceGroupArgs
@@ -262,6 +275,81 @@ internal class MyStack : Stack
                     {
                         Name = "PLAYWRIGHT_BROWSERS_PATH",
                         Value = "/home/site/wwwroot/.playwright/ms-playwright"
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "ServiceBusConnectionString",
+                        Value = ServiceBusConnectionString
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "Rebrickable:Url",
+                        Value = "https://rebrickable.com"
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "Rebrickable:Key",
+                        Value = rebrickableKeyOutput
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "MartenAzure:Host",
+                        Value = "psql-brickshoarder-dev.postgres.database.azure.com"
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "MartenAzure:Database",
+                        Value = dBForPostgreSqlDatabase.Name
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "MartenAzure:Username",
+                        Value = "brickshoarder_admin"
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "MartenAzure:Password",
+                        Value = DbForPostgreSqlAdminPassword
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "AzureServiceBus:Endpoint",
+                        Value = Endpoint
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "AzureServiceBus:SharedAccessKeyName",
+                        Value = SharedAccessKeyName
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "AzureServiceBus:SharedAccessKey",
+                        Value = SharedAccessKey
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "BrickshoarderDb:Url",
+                        Value = "sql-brickshoarder-dev.database.windows.net,1433"
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "BrickshoarderDb:Catalog",
+                        Value = "brickshoarder"
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "BrickshoarderDb:User",
+                        Value = "brickshoarder_admin"
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "BrickshoarderDb:Password",
+                        Value = DbForMsSqlAdminPassword
+                    },
+                    new NameValuePairArgs()
+                    {
+                        Name = "Redis:ConnectionString",
+                        Value = redisConnectionStringOutput
                     }
                 }
             },

@@ -29,4 +29,14 @@ namespace BricksHoarder.Credentials
         public string ConnectionString =>
             $"{_name}.redis.cache.windows.net:{_port},password={_password},ssl={_isSsl},abortConnect=False,allowAdmin={_allowAdmin}";
     }
+
+    public sealed record RedisLabCredentialsBase : IConnectionString
+    {
+        public RedisLabCredentialsBase(IConfiguration configuration)
+        {
+            ConnectionString = configuration.Get("Redis:ConnectionString");
+        }
+
+        public string ConnectionString { get; }
+    }
 }

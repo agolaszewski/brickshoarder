@@ -12,4 +12,10 @@
     <PackageReference Include="Pulumi.Random" Version="4.15.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="secrets.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

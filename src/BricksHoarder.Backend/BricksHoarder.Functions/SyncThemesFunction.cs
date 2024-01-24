@@ -10,22 +10,19 @@ namespace BricksHoarder.Functions
     {
         private readonly IEventDispatcher _eventDispatcher;
         private readonly IDateTimeProvider _dataTimeProvider;
-        private readonly MassTransitDbContext _context;
-
-        public SyncThemesFunction(IEventDispatcher eventDispatcher, IDateTimeProvider dataTimeProvider, MassTransitDbContext context)
+       
+        public SyncThemesFunction(IEventDispatcher eventDispatcher, IDateTimeProvider dataTimeProvider)
         {
             _eventDispatcher = eventDispatcher;
             _dataTimeProvider = dataTimeProvider;
-            _context = context;
         }
 
         [Function("SyncSagaFunction")]
-        public async Task RunAsync([TimerTrigger("0 */1 * * * *", RunOnStartup = true)] TimerInfo trigger)
+        public async Task RunAsync([TimerTrigger("0 0 1 * * *", RunOnStartup = true)] TimerInfo trigger)
         {
             try
             {
                 await _eventDispatcher.DispatchAsync(new SyncSagaStarted(_dataTimeProvider.UtcNow().ToString("yyyyMMdd")));
-                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {

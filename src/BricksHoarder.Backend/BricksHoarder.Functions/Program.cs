@@ -1,6 +1,4 @@
 using BricksHoarder.AzureCloud.ServiceBus;
-using BricksHoarder.Cache.MsSql;
-using BricksHoarder.Cache.NoCache;
 using BricksHoarder.Common;
 using BricksHoarder.Credentials;
 using BricksHoarder.DateTime;
@@ -9,8 +7,8 @@ using BricksHoarder.Marten;
 using BricksHoarder.MsSql.Database;
 using BricksHoarder.MsSql.Database.Queries.CacheClean;
 using BricksHoarder.Rebrickable;
+using BricksHoarder.Redis;
 using Marten;
-using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,8 +28,7 @@ var host = new HostBuilder()
         services.AddMsSqlDb(sqlServerDatabaseCredentials);
         services.AddRebrickable(new RebrickableCredentials(config));
 
-        services.AddMsSqlAsCache(sqlServerDatabaseCredentials);
-        services.AddNoCache();
+        services.AddRedis(new RedisCredentials(new RedisLabCredentialsBase(config)));
         services.AddDomain();
 
         services.AddAutoMapper(mapper =>

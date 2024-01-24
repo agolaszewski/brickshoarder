@@ -2,7 +2,7 @@
 using BricksHoarder.Events;
 using Rebrickable.Api;
 
-namespace BricksHoarder.Domain.Set
+namespace BricksHoarder.Domain.RebrickableSet
 {
     public class RebrickableSetAggregate : AggregateRoot<RebrickableSetAggregate>
     {
