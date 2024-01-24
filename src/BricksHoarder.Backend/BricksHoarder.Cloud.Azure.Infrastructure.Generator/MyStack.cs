@@ -58,6 +58,7 @@ internal class MyStack : Stack
             ResourceGroupName = resourceGroup.Name,
             Rights =
             {
+                AccessRights.Manage,
                 AccessRights.Listen,
                 AccessRights.Send
             }
@@ -279,6 +280,11 @@ internal class MyStack : Stack
                     },
                     new NameValuePairArgs()
                     {
+                        Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                        Value = appInsights.ConnectionString
+                    },
+                    new NameValuePairArgs()
+                    {
                         Name = "PLAYWRIGHT_BROWSERS_PATH",
                         Value = "/home/site/wwwroot/.playwright/ms-playwright"
                     },
@@ -290,7 +296,7 @@ internal class MyStack : Stack
                     new NameValuePairArgs()
                     {
                         Name = "Rebrickable__Url",
-                        Value = "https__//rebrickable.com"
+                        Value = "https://rebrickable.com"
                     },
                     new NameValuePairArgs()
                     {

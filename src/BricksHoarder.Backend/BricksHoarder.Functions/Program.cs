@@ -18,7 +18,7 @@ var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureAppConfiguration(builder =>
     {
-        //builder.AddJsonFile("local.settings.json", optional: false, reloadOnChange: false);
+        builder.AddJsonFile("local.settings.json", optional: true, reloadOnChange: false);
     })
     .ConfigureServices((builder, services) =>
     {
