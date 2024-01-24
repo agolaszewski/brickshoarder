@@ -152,24 +152,6 @@ internal class MyStack : Stack
 
         #endregion Sql Server
 
-        #region Linux Azure Function
-
-        var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
-        {
-            Name = "asp-func-linux-brickshoarder-dev",
-            ResourceGroupName = resourceGroup.Name,
-            Location = resourceGroup.Location,
-            Kind = "Linux",
-            Reserved = true,
-            Sku = new SkuDescriptionArgs
-            {
-                Name = "Y1",
-                Tier = "Dynamic"
-            },
-        });
-
-        #endregion Linux Azure Function
-
         #region Storage Account
 
         var storageAccountFunctions = new StorageAccount("StorageAccount", new StorageAccountArgs
@@ -204,6 +186,7 @@ internal class MyStack : Stack
         {
             WorkspaceName = "log-appi-brickshoarder-dev",
             ResourceGroupName = resourceGroup.Name,
+            Location = resourceGroup.Location,
             Sku = new WorkspaceSkuArgs
             {
                 Name = Pulumi.AzureNative.OperationalInsights.WorkspaceSkuNameEnum.PerGB2018
@@ -229,11 +212,26 @@ internal class MyStack : Stack
 
         #region Functions Linux
 
+        var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
+        {
+            Name = "asp-func-linux-brickshoarder-dev",
+            ResourceGroupName = resourceGroup.Name,
+            Location = resourceGroup.Location,
+            Kind = "Linux",
+            Reserved = true,
+            Sku = new SkuDescriptionArgs
+            {
+                Name = "Y1",
+                Tier = "Dynamic"
+            },
+        });
+
         var functionApp = new WebApp("WebApp.Functions.Linux", new WebAppArgs
         {
             Name = "func-linux-brickshoarder-dev",
             ResourceGroupName = resourceGroup.Name,
             ServerFarmId = appServicePlanFunctionsLinux.Id,
+            Location = resourceGroup.Location,
             SiteConfig = new SiteConfigArgs
             {
                 AppSettings = new[]

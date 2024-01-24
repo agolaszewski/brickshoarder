@@ -26,8 +26,8 @@ var host = new HostBuilder()
 
         services.AddDateTimeProvider();
 
-        services.AddPlaywright();
-        services.AddScrappers();
+        //services.AddPlaywright();
+        //services.AddScrappers();
     })
     .Build();
 

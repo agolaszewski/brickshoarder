@@ -20,9 +20,7 @@ namespace BricksHoarder.Scrappers
         [Function("Lego")]
         public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)
         {
-            var response = await _lego.RunAsync("10411");
-            _logger.LogWarning($"TEST {response.Price}");
-            _logger.LogWarning(JsonSerializer.Serialize(response));
+            _logger.LogWarning($"TEST");
         }
     }
 }
