@@ -115,20 +115,20 @@ namespace BricksHoarder.Marten
         public async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>()
             where TAggregate : class, IAggregateRoot, new()
         {
-            var streamName = typeof(TAggregate).Name + ":";
-            return await GetByIdOrDefaultAsync<TAggregate>(streamName, 0);
+            return await GetByIdOrDefaultAsync<TAggregate>(string.Empty, 0);
         }
 
         public async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId)
             where TAggregate : class, IAggregateRoot, new()
         {
-            var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
-            return await GetByIdOrDefaultAsync<TAggregate>(streamName, 0);
+            return await GetByIdOrDefaultAsync<TAggregate>(aggregateId, 0);
         }
 
-        private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string streamName, int version)
+        private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId, int version)
             where TAggregate : class, IAggregateRoot, new()
         {
+            var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
+
             if (version < 0)
             {
                 throw new InvalidOperationException("Cannot get version <= 0");
@@ -164,6 +164,7 @@ namespace BricksHoarder.Marten
                 aggregate.Version++;
             }
 
+            aggregate.Id = aggregateId;
             aggregate.Context = _context;
             return aggregate;
         }
