@@ -33,5 +33,10 @@ namespace BricksHoarder.Cache.MsSql
 
             return null;
         }
+
+        public Task ClearAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -29,5 +29,10 @@ namespace BricksHoarder.Cache.InMemory
             var result = _memoryCache.Get<T>(key);
             return Task.FromResult<T?>(result);
         }
+
+        public Task ClearAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

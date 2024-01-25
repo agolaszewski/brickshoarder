@@ -52,7 +52,8 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().MartenRepository();
+                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().MartenRepository(r => r.UseOptimisticConcurrency(false));
+
                 //.EntityFrameworkRepository(r =>
                 //{
                 //    r.ExistingDbContext<MassTransitDbContext>();

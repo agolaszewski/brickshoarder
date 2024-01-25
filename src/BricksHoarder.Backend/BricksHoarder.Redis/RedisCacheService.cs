@@ -3,6 +3,7 @@ using MessagePack;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using StackExchange.Redis;
+using System.Data.Common;
 using System.Text.Json;
 using static MassTransit.ValidationResultExtensions;
 
@@ -11,7 +12,8 @@ namespace BricksHoarder.Redis
     public class RedisCacheService : ICacheService
     {
         private readonly IDatabase _cache;
-
+        private readonly ConnectionMultiplexer _connection;
+        private readonly IServer _server;
         private static readonly JsonSerializerOptions SerializeOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -22,9 +24,10 @@ namespace BricksHoarder.Redis
             SerializeOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
         }
 
-        public RedisCacheService(IDatabase cache)
+        public RedisCacheService(IDatabase cache, ConnectionMultiplexer connection)
         {
             _cache = cache;
+            _connection = connection;
         }
 
         public async Task SetAsync<T>(string key, T value, TimeSpan? expire) where T : class
@@ -44,6 +47,15 @@ namespace BricksHoarder.Redis
             }
 
             return null;
+        }
+
+        public async Task ClearAsync()
+        {
+            var servers = _connection.GetServers();
+            foreach (var server in servers)
+            {
+                await server.FlushAllDatabasesAsync();
+            }
         }
     }
 }

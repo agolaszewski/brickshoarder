@@ -1,5 +1,6 @@
 using BricksHoarder.AzureCloud.ServiceBus;
 using BricksHoarder.Common;
+using BricksHoarder.Core.Services;
 using BricksHoarder.Credentials;
 using BricksHoarder.DateTime;
 using BricksHoarder.Domain;
@@ -49,10 +50,10 @@ var host = new HostBuilder()
     })
     .Build();
 
-var cacheClean = host.Services.GetRequiredService<CleanCache>();
-await cacheClean.ExecuteAsync();
+var cache = host.Services.GetRequiredService<ICacheService>();
+await cache.ClearAsync();
 
-//var ds = host.Services.GetRequiredService<IDocumentStore>();
-//await ds.Advanced.ResetAllData();
+var ds = host.Services.GetRequiredService<IDocumentStore>();
+await ds.Advanced.ResetAllData();
 
 host.Run();
