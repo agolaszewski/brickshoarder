@@ -2,10 +2,8 @@
 
 namespace BricksHoarder.Domain.SyncRebrickableData;
 
-public class SyncRebrickableDataSagaState : SagaStateMachineInstance
+public class SyncRebrickableDataSagaState : SagaStateMachineInstance, ISagaVersion
 {
-    public string Id { get; set; }
-
     public Guid CorrelationId { get; set; }
 
     public int CurrentState { get; set; }
@@ -13,6 +11,7 @@ public class SyncRebrickableDataSagaState : SagaStateMachineInstance
     public List<ProcessingItem> SetsToProcess { get; set; } = new List<ProcessingItem>();
 
     public bool SyncingSetsFinished { get;  set; }
+    public int Version { get; set; }
 
     internal void AddSetToBeProcessed(string id)
     {

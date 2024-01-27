@@ -22,14 +22,14 @@ namespace BricksHoarder.Domain.RebrickableSet
             {
                 var set = await _aggregateStore.GetByIdOrDefaultAsync<RebrickableSetAggregate>(command.Id);
 
-                //var apiSet = new LegoSetsReadAsyncResponse(command.Id, "test", 123, 111, 1, "1231", null, DateTime.UtcNow);
-                //set.SetData(apiSet);
+                var apiSet = await _rebrickableClient.LegoSetsReadAsync(command.Id);
+                set.SetData(apiSet);
 
-                //var minifigures = await _rebrickableClient.LegoSetsMinifigsListAsync(command.Id);
-                //foreach (var minifigure in minifigures.Results)
-                //{
-                //    set.SetMinifigureData(minifigure);
-                //}
+                var minifigures = await _rebrickableClient.LegoSetsMinifigsListAsync(command.Id);
+                foreach (var minifigure in minifigures.Results)
+                {
+                    set.SetMinifigureData(minifigure);
+                }
 
                 return set;
             }

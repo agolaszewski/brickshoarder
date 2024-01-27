@@ -33,7 +33,8 @@ var host = new HostBuilder()
         services.AddMsSqlDb(sqlServerDatabaseCredentials);
         services.AddRebrickable(new RebrickableCredentials(config));
 
-        services.AddRedis(new RedisCredentials(new RedisLabCredentialsBase(config)));
+        var redisCredentials = new RedisCredentials(new RedisLabCredentialsBase(config));
+        services.AddRedis(redisCredentials);
         services.AddDomain();
 
         services.AddAutoMapper(mapper =>
@@ -44,7 +45,7 @@ var host = new HostBuilder()
         var martenCredentials = new PostgresAzureCredentials(config, "MartenAzure");
         services.AddMartenEventStore(martenCredentials);
         services.CommonServices();
-        services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"));
+        services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 
         services.AddDateTimeProvider();
     })

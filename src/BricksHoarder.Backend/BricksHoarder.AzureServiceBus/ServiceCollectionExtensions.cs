@@ -21,7 +21,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials)
+        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, RedisCredentials redisCredentials)
         {
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
@@ -52,7 +52,11 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                 var sagas = domainAssembly
                     .Where(t => t.Name.EndsWith("Saga"));
 
-                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().MartenRepository(r => r.UseOptimisticConcurrency(false));
+                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().RedisRepository(opt =>
+                {
+                    opt.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+                    opt.DatabaseConfiguration(redisCredentials.ConnectionString);
+                });
 
                 //.EntityFrameworkRepository(r =>
                 //{

@@ -3,6 +3,7 @@ using BricksHoarder.DateTime;
 using BricksHoarder.Events;
 using BricksHoarder.MassTransit;
 using Microsoft.Azure.Functions.Worker;
+using BricksHoarder.DateTime;
 
 namespace BricksHoarder.Functions
 {
@@ -22,7 +23,7 @@ namespace BricksHoarder.Functions
         {
             try
             {
-                await _eventDispatcher.DispatchAsync(new SyncSagaStarted(_dataTimeProvider.UtcNow().ToString("yyyyMMdd")));
+                await _eventDispatcher.DispatchAsync(new SyncSagaStarted(_dataTimeProvider.UtcNow().Date.ToGuid()));
             }
             catch (Exception e)
             {
