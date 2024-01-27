@@ -125,45 +125,6 @@ internal class MyStack : Stack
 
         #endregion PostgreSQL
 
-        #region Sql Server
-
-        var dBForMsSqlAdministratorLoginPassword = new Pulumi.Random.RandomPassword("DbForMsSQL.AdministratorLoginPassword", new()
-        {
-            Length = 20,
-        });
-        DbForMsSqlAdminPassword = Output.Unsecret(dBForMsSqlAdministratorLoginPassword.Result);
-
-        var dbForMsSqlServer = new Pulumi.AzureNative.Sql.Server("DbForMsSqlServer.Server", new Pulumi.AzureNative.Sql.ServerArgs
-        {
-            ResourceGroupName = resourceGroup.Name,
-            ServerName = "sql-brickshoarder-dev",
-            AdministratorLogin = "brickshoarder_admin",
-            AdministratorLoginPassword = dBForMsSqlAdministratorLoginPassword.Result
-        });
-
-        new Pulumi.AzureNative.Sql.FirewallRule("DBforPostgreSQL.Server.FirewallRule", new Pulumi.AzureNative.Sql.FirewallRuleArgs
-        {
-            EndIpAddress = "255.255.255.255",
-            ResourceGroupName = resourceGroup.Name,
-            ServerName = dbForMsSqlServer.Name,
-            StartIpAddress = "0.0.0.0",
-            FirewallRuleName = "DevAllAccess"
-        });
-
-        var sqlDatabase = new Pulumi.AzureNative.Sql.Database("DbForMsSqlServer.Server.Database", new Pulumi.AzureNative.Sql.DatabaseArgs
-        {
-            ResourceGroupName = resourceGroup.Name,
-            ServerName = dbForMsSqlServer.Name,
-            DatabaseName = "brickshoarder",
-            Sku = new Pulumi.AzureNative.Sql.Inputs.SkuArgs()
-            {
-                Name = "S0",
-                Tier = "Standard"
-            }
-        });
-
-        #endregion Sql Server
-
         #region Storage Account
 
         var storageAccountFunctions = new StorageAccount("StorageAccount", new StorageAccountArgs
