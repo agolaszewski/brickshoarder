@@ -1,9 +1,8 @@
 ﻿using BricksHoarder.Core.Database;
-using BricksHoarder.MsSql.Database.Queries;
-using System.Data;
 using Dapper;
+using System.Data;
 
-namespace BricksHoarder.MsSql.Database.Queries.CacheClean
+namespace BricksHoarder.MsSql.Database.Queries.CleanCache
 {
     public class CleanCache : IDbQuery
     {

@@ -6,7 +6,6 @@ using BricksHoarder.DateTime;
 using BricksHoarder.Domain;
 using BricksHoarder.Marten;
 using BricksHoarder.MsSql.Database;
-using BricksHoarder.MsSql.Database.Queries.CacheClean;
 using BricksHoarder.Rebrickable;
 using BricksHoarder.Redis;
 using Marten;

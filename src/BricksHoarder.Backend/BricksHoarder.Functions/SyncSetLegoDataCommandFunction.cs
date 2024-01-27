@@ -15,6 +15,6 @@ public class SyncSetLegoDataCommandFunction : BaseFunction
     [Function(SyncSetLegoDataCommandMetadata.Consumer)]
     public async Task RunAsync([ServiceBusTrigger(SyncSetLegoDataCommandMetadata.QueuePath, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
     {
-        await HandleCommandAsync<SyncSetLegoDataCommand,LegoSetAggregate>(command, cancellationToken);
+        await HandleCommandAsync<SyncSetLegoDataCommand, LegoSetAggregate>(command, cancellationToken);
     }
 }

@@ -3,9 +3,7 @@ using MessagePack;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using StackExchange.Redis;
-using System.Data.Common;
 using System.Text.Json;
-using static MassTransit.ValidationResultExtensions;
 
 namespace BricksHoarder.Redis
 {
@@ -14,6 +12,7 @@ namespace BricksHoarder.Redis
         private readonly IDatabase _cache;
         private readonly ConnectionMultiplexer _connection;
         private readonly IServer _server;
+
         private static readonly JsonSerializerOptions SerializeOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase

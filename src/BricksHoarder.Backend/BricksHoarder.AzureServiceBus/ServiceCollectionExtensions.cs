@@ -1,5 +1,4 @@
-﻿using BricksHoarder.Commands.Metadata;
-using BricksHoarder.Commands.Sets;
+﻿using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
@@ -8,11 +7,8 @@ using BricksHoarder.Credentials;
 using BricksHoarder.Domain.SyncRebrickableData;
 using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
-using BricksHoarder.MassTransit;
-using Marten;
 using MassTransit;
 using MassTransit.AzureServiceBusTransport;
-using MassTransit.Configuration;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -28,7 +24,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-            
+
             services.AddMassTransit(x =>
             {
                 var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()

@@ -1,9 +1,7 @@
 ﻿using BricksHoarder.Core.Events;
 using BricksHoarder.DateTime;
 using BricksHoarder.Events;
-using BricksHoarder.MassTransit;
 using Microsoft.Azure.Functions.Worker;
-using BricksHoarder.DateTime;
 
 namespace BricksHoarder.Functions
 {
@@ -11,7 +9,7 @@ namespace BricksHoarder.Functions
     {
         private readonly IEventDispatcher _eventDispatcher;
         private readonly IDateTimeProvider _dataTimeProvider;
-       
+
         public SyncThemesFunction(IEventDispatcher eventDispatcher, IDateTimeProvider dataTimeProvider)
         {
             _eventDispatcher = eventDispatcher;

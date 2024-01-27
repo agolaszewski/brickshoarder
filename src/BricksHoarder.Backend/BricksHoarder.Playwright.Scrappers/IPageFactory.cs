@@ -2,7 +2,7 @@
 
 namespace BricksHoarder.Playwright
 {
-    public interface IPageFactory 
+    public interface IPageFactory
     {
         Task<IPage> CreatePageAsync();
     }

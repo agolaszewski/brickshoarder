@@ -8,7 +8,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
         public LegoScrapperResponse(string id, Availability availability, string? price, string? maxQuantity, System.DateTime scanDate)
         {
             var culture = new CultureInfo("pl-PL");
-            
+
             Id = id;
             Availability = availability;
             Price = price.ToN<decimal>(culture);

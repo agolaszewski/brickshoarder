@@ -1,5 +1,4 @@
 ﻿using BricksHoarder.Commands.Sets;
-using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;

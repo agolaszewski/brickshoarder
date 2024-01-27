@@ -1,7 +1,7 @@
 ﻿using BricksHoarder.Websites.Scrappers.Lego;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BricksHoarder.DateTime
+namespace BricksHoarder.Websites.Scrappers
 {
     public static class ServiceCollectionExtensions
     {

@@ -10,7 +10,7 @@ public class SyncRebrickableDataSagaState : SagaStateMachineInstance, ISagaVersi
 
     public List<ProcessingItem> SetsToProcess { get; set; } = new List<ProcessingItem>();
 
-    public bool SyncingSetsFinished { get;  set; }
+    public bool SyncingSetsFinished { get; set; }
     public int Version { get; set; }
 
     internal void AddSetToBeProcessed(string id)

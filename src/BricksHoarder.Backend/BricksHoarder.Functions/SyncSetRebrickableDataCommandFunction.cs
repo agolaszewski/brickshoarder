@@ -15,6 +15,6 @@ public class SyncSetRebrickableDataCommandFunction : BaseFunction
     [Function(SyncSetRebrickableDataCommandMetadata.Consumer)]
     public async Task RunAsync([ServiceBusTrigger(SyncSetRebrickableDataCommandMetadata.QueuePath, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
     {
-        await HandleCommandAsync<SyncSetRebrickableDataCommand,RebrickableSetAggregate>(command, cancellationToken);
+        await HandleCommandAsync<SyncSetRebrickableDataCommand, RebrickableSetAggregate>(command, cancellationToken);
     }
 }

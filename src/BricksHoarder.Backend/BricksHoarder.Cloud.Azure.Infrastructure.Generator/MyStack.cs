@@ -6,8 +6,6 @@ using Pulumi.AzureNative.ServiceBus;
 using Pulumi.AzureNative.ServiceBus.Inputs;
 using Pulumi.AzureNative.Storage;
 using Pulumi.AzureNative.Storage.Inputs;
-using Pulumi.AzureNative.Web;
-using Pulumi.AzureNative.Web.Inputs;
 using System.IO;
 using System.Text.Json;
 using StorageAccountArgs = Pulumi.AzureNative.Storage.StorageAccountArgs;
