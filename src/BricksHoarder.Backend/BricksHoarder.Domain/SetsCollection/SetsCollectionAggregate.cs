@@ -28,6 +28,11 @@ namespace BricksHoarder.Domain.SetsCollection
         {
             var set = _collection.FirstOrDefault(x => x.Id == apiSet.SetNum);
 
+            if (_collection.Count > 3)
+            {
+                return false;
+            }
+
             if (set == null)
             {
                 AddEvent(new SetReleased(apiSet.SetNum, apiSet.LastModifiedDt));

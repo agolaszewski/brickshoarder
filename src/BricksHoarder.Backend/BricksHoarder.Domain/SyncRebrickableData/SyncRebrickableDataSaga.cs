@@ -14,12 +14,12 @@ namespace BricksHoarder.Domain.SyncRebrickableData
             InstanceState(x => x.CurrentState, SyncingState);
 
             Event(() => SyncSagaStarted, x => x.CorrelateById(x => x.Message.Id));
-            Event(() => SyncThemesCommandConsumed, x => x.CorrelateById(x => x.CorrelationId.Value));
-            Event(() => SyncSetsCommandConsumed, x => x.CorrelateById(x => x.CorrelationId.Value));
-            Event(() => SetReleased, x => x.CorrelateById(x => x.CorrelationId.Value));
-            Event(() => SetDetailsChanged, x => x.CorrelateById(x => x.CorrelationId.Value));
-            Event(() => FetchSetRebrickableDataCommandConsumed, x => x.CorrelateById(x => x.CorrelationId.Value));
-            Event(() => NoChangesToSets, x => x.CorrelateById(x => x.CorrelationId.Value));
+            Event(() => SyncThemesCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
+            Event(() => SyncSetsCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
+            Event(() => SetReleased, x => x.CorrelateById(x => x.CorrelationId!.Value));
+            Event(() => SetDetailsChanged, x => x.CorrelateById(x => x.CorrelationId!.Value));
+            Event(() => FetchSetRebrickableDataCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
+            Event(() => NoChangesToSets, x => x.CorrelateById(x => x.CorrelationId!.Value));
 
             Initially(When(SyncSagaStarted)
                 .TransitionTo(SyncingState)

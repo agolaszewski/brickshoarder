@@ -107,7 +107,7 @@ namespace BricksHoarder.Marten
             }
         }
 
-        public async Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
+        public Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
         {
             throw new NotImplementedException();
         }

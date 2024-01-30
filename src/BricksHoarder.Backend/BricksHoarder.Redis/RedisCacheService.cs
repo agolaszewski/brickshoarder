@@ -40,7 +40,7 @@ namespace BricksHoarder.Redis
             RedisValue result = await _cache.StringGetAsync(key);
             if (result.HasValue)
             {
-                byte[] bytes = result;
+                byte[] bytes = result!;
                 T? obj = MessagePackSerializer.Typeless.Deserialize(bytes) as T;
                 return obj;
             }
