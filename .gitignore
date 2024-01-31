@@ -354,3 +354,5 @@ MigrationBackup/
 /src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/secrets.json
 /src/BricksHoarder.Backend/BricksHoarder.Functions/Properties/ServiceDependencies/brickstest - Zip Deploy
 /src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/Production/secrets.json
+/src/BricksHoarder.Backend/BricksHoarder.Functions/dev.settings.json
+/src/BricksHoarder.Backend/BricksHoarder.Functions/production.settings.json
