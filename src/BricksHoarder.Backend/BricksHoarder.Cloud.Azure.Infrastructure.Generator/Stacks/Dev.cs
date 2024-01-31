@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.IO;
+using System.Threading.Tasks;
+using BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 using Pulumi;
 using Pulumi.AzureNative.Resources;
-using Pulumi.AzureNative.ServiceBus;
-using Pulumi.AzureNative.ServiceBus.Inputs;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 {
@@ -15,65 +18,49 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 ResourceGroupName = "rg-brickshoarder-dev"
             });
 
-            var serviceBusNamespace = new StandardServiceBusNamespace("Default", resourceGroup);
+            var serviceBusNamespace = new StandardServiceBusNamespace("Default", "dev", resourceGroup);
             ServiceBusEndpoint = serviceBusNamespace.ServiceBusEndpoint;
+            SharedAccessKey = serviceBusNamespace.SharedAccessKey;
+            SharedAccessKeyName = serviceBusNamespace.SharedAccessKeyName;
+            ServiceBusConnectionString = serviceBusNamespace.ServiceBusConnectionString;
+
+            Output.All(ServiceBusEndpoint, SharedAccessKey, SharedAccessKeyName, ServiceBusConnectionString).Apply(_ =>
+            {
+                string json = File.ReadAllText("..//BricksHoarder.Functions//dev.settings.json");
+
+                JObject jObject = Newtonsoft.Json.JsonConvert.DeserializeObject(json) as JObject;
+
+                JToken serviceBusConnectionStringToken = jObject!.SelectToken("Values.ServiceBusConnectionString")!;
+                serviceBusConnectionStringToken.Replace(ServiceBusConnectionString.Convert());
+
+                JToken azureServiceBusEndpoint = jObject!.SelectToken("AzureServiceBus.Endpoint")!;
+                azureServiceBusEndpoint.Replace(ServiceBusEndpoint.Convert().Replace("https://",string.Empty));
+
+                JToken azureServiceBusSharedAccessKeyName = jObject!.SelectToken("AzureServiceBus.SharedAccessKeyName")!;
+                azureServiceBusSharedAccessKeyName.Replace(SharedAccessKeyName.Convert());
+
+                JToken azureServiceBusSharedAccessKey = jObject!.SelectToken("AzureServiceBus.SharedAccessKey")!;
+                azureServiceBusSharedAccessKey.Replace(SharedAccessKey.Convert());
+
+                string updatedJsonString = jObject.ToString();
+                File.WriteAllText("..//BricksHoarder.Functions//dev.settings.json", updatedJsonString);
+
+                return Task.CompletedTask;
+            });
+
+
         }
 
         [Output]
         public Output<string> ServiceBusEndpoint { get; set; }
-    }
 
-    public class StandardServiceBusNamespace : ComponentResource
-    {
         [Output]
-        public Output<string> ServiceBusEndpoint { get; private set; }
+        public Output<string> SharedAccessKey { get; set; }
 
-        public StandardServiceBusNamespace(string name, ResourceGroup resourceGroup) : base("Custom:ServiceBus:Namespace", name, null, null)
-        {
-            var serviceBusNamespace = new Namespace($"ServiceBus.Namespace.{name}", new NamespaceArgs
-            {
-                ResourceGroupName = resourceGroup.Name,
-                Sku = new SBSkuArgs()
-                {
-                    Name = SkuName.Standard,
-                    Tier = SkuTier.Standard
-                },
-                NamespaceName = "sb-brickshoarder-dev"
-            });
+        [Output]
+        public Output<string> SharedAccessKeyName { get; set; }
 
-            var serviceBusNamespaceNamespaceAuthorizationRule = new NamespaceAuthorizationRule($"ServiceBus.Namespace.NamespaceAuthorizationRule.{name}", new NamespaceAuthorizationRuleArgs()
-            {
-                NamespaceName = serviceBusNamespace.Name,
-                AuthorizationRuleName = "DefaultSharedAccessPolicy",
-                ResourceGroupName = resourceGroup.Name,
-                Rights =
-                {
-                    AccessRights.Manage,
-                    AccessRights.Listen,
-                    AccessRights.Send
-                }
-            });
-
-            ServiceBusEndpoint = serviceBusNamespace.ServiceBusEndpoint;
-            //SharedAccessKeyName = serviceBusNamespaceNamespaceAuthorizationRule.Name;
-
-            var output = Output.All(serviceBusNamespaceNamespaceAuthorizationRule.Name).Apply(async x =>
-            {
-                var namespaceKeys = await ListNamespaceKeys.InvokeAsync(new ListNamespaceKeysArgs()
-                {
-                    AuthorizationRuleName = serviceBusNamespaceNamespaceAuthorizationRule.Name.Convert(),
-                    NamespaceName = serviceBusNamespace.Name.Convert(),
-                    ResourceGroupName = resourceGroup.Name.Convert()
-                });
-                return (namespaceKeys.PrimaryConnectionString, namespaceKeys.PrimaryKey);
-            });
-            //ServiceBusConnectionString = output.Apply(x => x.PrimaryConnectionString);
-            //SharedAccessKey = output.Apply(x => x.PrimaryKey);
-
-            RegisterOutputs(new Dictionary<string, object?>
-            {
-                { "ServiceBusEndpoint", ServiceBusEndpoint }
-            });
-        }
+        [Output]
+        public Output<string> ServiceBusConnectionString { get; set; }
     }
 }

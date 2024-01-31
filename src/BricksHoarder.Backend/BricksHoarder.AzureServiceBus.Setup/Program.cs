@@ -15,8 +15,12 @@ await SetupAsync();
 async Task SetupAsync()
 {
     var services = new ServiceCollection();
+
+    var absolutePath = System.IO.Path.GetFullPath("..//..//..//..//BricksHoarder.Functions");
+
     var config = new ConfigurationBuilder()
-        .AddUserSecrets<Program>()
+        .SetBasePath(absolutePath)
+        .AddJsonFile("dev.settings.json", false)
         .Build();
 
     services.AddLogging(configure =>

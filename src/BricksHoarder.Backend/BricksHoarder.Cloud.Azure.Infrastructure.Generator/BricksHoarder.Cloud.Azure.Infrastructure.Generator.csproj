@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pulumi" Version="3.*" />
     <PackageReference Include="Pulumi.AzureNative" Version="2.25.0" />
     <PackageReference Include="Pulumi.Random" Version="4.15.0" />
