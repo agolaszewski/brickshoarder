@@ -7,11 +7,13 @@ using BricksHoarder.Domain;
 using BricksHoarder.Marten;
 using BricksHoarder.Rebrickable;
 using BricksHoarder.Redis;
+using BricksHoarder.Serilog;
 using Marten;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -48,6 +50,10 @@ void Production(IServiceCollection services, IConfiguration config)
 void Development(IServiceCollection services, IConfiguration config)
 {
     Common(services, config);
+
+    Log.Logger = Log.Logger.AddSerilog().AddSeq(new Uri("http://localhost:5341/")).CreateLogger();
+
+    services.AddLogging(lb => lb.AddSerilog(Log.Logger, true));
 
     var martenCredentials = new PostgresCredentials(config, "MartenAzure");
     services.AddMartenEventStore(martenCredentials);
