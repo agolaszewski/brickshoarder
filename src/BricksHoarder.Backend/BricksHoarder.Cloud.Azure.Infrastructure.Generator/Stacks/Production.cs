@@ -2,11 +2,14 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pulumi;
+using Pulumi.AzureNative.App;
+using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.Insights;
 using Pulumi.AzureNative.OperationalInsights.Inputs;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Storage;
-
+using Pulumi.AzureNative.ContainerService;
+using Pulumi.AzureNative.ContainerService.Inputs;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 {
@@ -131,6 +134,21 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
             });
 
             #endregion Application Insight
+
+            var containerAppEnv = new ManagedEnvironment("ContainerAppsEnvironment", new ManagedEnvironmentArgs
+            {
+                ResourceGroupName = resourceGroup.Name,
+                Location = resourceGroup.Location,
+                EnvironmentName = "cae-brickshoarder-prd",
+                Sku = new EnvironmentSkuPropertiesArgs()
+                {
+                    Name = "Consumption"
+                },
+                DaprAIInstrumentationKey = appInsights.InstrumentationKey
+            });
+
+            var containerImage = "myfunctionimage.azurecr.io/myfunction:v1.0.0";
+
 
             //#region Functions Linux
 

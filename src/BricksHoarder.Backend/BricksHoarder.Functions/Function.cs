@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
@@ -5,22 +7,18 @@ namespace BricksHoarder.Functions
 {
     public class Function
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<Function> _logger;
 
-        public Function(ILoggerFactory loggerFactory)
+        public Function(ILogger<Function> logger)
         {
-            _logger = loggerFactory.CreateLogger<Function>();
+            _logger = logger;
         }
 
         [Function("Function")]
-        public void Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
         {
-            _logger.LogWarning($"C# Timer trigger function executed at: {System.DateTime.Now}");
-
-            if (myTimer.ScheduleStatus is not null)
-            {
-                _logger.LogWarning($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
-            }
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
+            return new OkObjectResult("Welcome to Azure Functions!");
         }
     }
 }
