@@ -10,6 +10,9 @@ using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Storage;
 using Pulumi.AzureNative.ContainerService;
 using Pulumi.AzureNative.ContainerService.Inputs;
+using Pulumi.AzureNative.Web;
+using Pulumi.AzureNative.Web.Inputs;
+using System.Net.Sockets;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 {
@@ -147,10 +150,9 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 DaprAIInstrumentationKey = appInsights.InstrumentationKey
             });
 
-            var containerImage = "myfunctionimage.azurecr.io/myfunction:v1.0.0";
 
 
-            //#region Functions Linux
+            #region Functions Linux
 
             //var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
             //{
@@ -165,138 +167,117 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
             //        Tier = "Dynamic"
             //    },
             //});
+            var containerImage = $"{config["DockerHub:Registry"]}/{config["DockerHub:Username"]}/brickshoarder:latest";
 
-            //var functionApp = new WebApp("WebApp.Functions.Linux", new WebAppArgs
-            //{
-            //    Name = "func-linux-brickshoarder-prd2",
-            //    ResourceGroupName = resourceGroup.Name,
-            //    ServerFarmId = appServicePlanFunctionsLinux.Id,
-            //    SiteConfig = new SiteConfigArgs
-            //    {
-            //        AppSettings = new[]
-            //        {
-            //            new NameValuePairArgs
-            //            {
-            //                Name = "FUNCTIONS_WORKER_RUNTIME",
-            //                Value = "dotnet-isolated"
-            //            },
-            //            new NameValuePairArgs
-            //            {
-            //                Name = "AzureWebJobsStorage",
-            //                Value = StorageAccountConnectionString
-            //            },
-            //            new NameValuePairArgs
-            //            {
-            //                Name = "FUNCTIONS_EXTENSION_VERSION",
-            //                Value = "~4"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-            //                Value = StorageAccountConnectionString
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "WEBSITE_CONTENTSHARE",
-            //                Value = "func-linux-brickshoarder-prd"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED",
-            //                Value = "1"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
-            //                Value = appInsights.ConnectionString
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "PLAYWRIGHT_BROWSERS_PATH",
-            //                Value = "/home/site/wwwroot/.playwright/ms-playwright"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "ServiceBusConnectionString",
-            //                Value = ServiceBusConnectionString
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "Rebrickable__Url",
-            //                Value = "https://rebrickable.com"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "Rebrickable__Key",
-            //                Value = rebrickableKeyOutput
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "MartenAzure__Host",
-            //                Value = "psql-brickshoarder-prd.postgres.database.azure.com"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "MartenAzure__Database",
-            //                Value = dBForPostgreSqlDatabase.Name
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "MartenAzure__Username",
-            //                Value = "brickshoarder_admin"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "MartenAzure__Password",
-            //                Value = DbForPostgreSqlAdminPassword
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "AzureServiceBus__Endpoint",
-            //                Value = Endpoint
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "AzureServiceBus__SharedAccessKeyName",
-            //                Value = SharedAccessKeyName
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "AzureServiceBus__SharedAccessKey",
-            //                Value = SharedAccessKey
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "BrickshoarderDb__Url",
-            //                Value = "sql-brickshoarder-prd.database.windows.net,1433"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "BrickshoarderDb__Catalog",
-            //                Value = "brickshoarder"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "BrickshoarderDb__User",
-            //                Value = "brickshoarder_admin"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "BrickshoarderDb__Password",
-            //                Value = DbForMsSqlAdminPassword
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "Redis__ConnectionString",
-            //                Value = redisConnectionStringOutput
-            //            }
-            //        }
-            //    },
-            //    Kind = "functionapp",
-            //    HttpsOnly = true
-            //});
+            var functionApp = new WebApp("WebApp.Functions.Linux2", new WebAppArgs
+            {
+                Name = "func-cea-brickshoarder-prd2",
+                ResourceGroupName = resourceGroup.Name,
+                Location = resourceGroup.Location,
+                ManagedEnvironmentId = containerAppEnv.Id,
+                SiteConfig = new SiteConfigArgs
+                {
+                    LinuxFxVersion = $"DOCKER|{containerImage}",
+                    NetFrameworkVersion = null,
+                    AppSettings = new[]
+                    {
+                        new NameValuePairArgs
+                        {
+                            Name = "DOCKER_REGISTRY_SERVER_URL",
+                            Value = config["DockerHub:Registry"]
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "DOCKER_REGISTRY_SERVER_USERNAME",
+                            Value = config["DockerHub:Username"]
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "DOCKER_REGISTRY_SERVER_PASSWORD",
+                            Value = config["DockerHub:Password"]
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "AzureWebJobsStorage",
+                            Value = StorageAccountConnectionString
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "FUNCTIONS_EXTENSION_VERSION",
+                            Value = "~4"
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                            Value = appInsights.ConnectionString
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "PLAYWRIGHT_BROWSERS_PATH",
+                            Value = "/home/site/wwwroot/.playwright/ms-playwright"
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "ServiceBusConnectionString",
+                            Value = ServiceBusConnectionString
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "Rebrickable__Url",
+                            Value = "https://rebrickable.com"
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "Rebrickable__Key",
+                            Value = config["Rebrickable:Key"]
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "MartenAzure__Host",
+                            Value = "psql-brickshoarder-prd.postgres.database.azure.com"
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "MartenAzure__Database",
+                            Value = dBForPostgreSqlDatabase.Name
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "MartenAzure__Username",
+                            Value = "brickshoarder_admin"
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "MartenAzure__Password",
+                            Value = DbForPostgreSqlAdminPassword
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__Endpoint",
+                            Value = serviceBusNamespace.ServiceBusEndpoint
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__SharedAccessKeyName",
+                            Value = serviceBusNamespace.SharedAccessKeyName
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__SharedAccessKey",
+                            Value = serviceBusNamespace.SharedAccessKey
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "Redis__ConnectionString",
+                            Value = config["Redis:ConnectionString"]
+                        }
+                    }
+                },
+                Kind = "functionapp",
+                HttpsOnly = true
+            });
 
-            //#endregion Functions Linux
+            #endregion Functions Linux
         }
 
         [Output]
