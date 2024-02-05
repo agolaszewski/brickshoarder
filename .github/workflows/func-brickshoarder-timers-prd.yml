@@ -1,4 +1,4 @@
-name: Build and deploy .NET Core application to Function App func-brickshoarder-timers-prd
+name: func-brickshoarder-timers-prd
 on:
   workflow_dispatch:
   push:

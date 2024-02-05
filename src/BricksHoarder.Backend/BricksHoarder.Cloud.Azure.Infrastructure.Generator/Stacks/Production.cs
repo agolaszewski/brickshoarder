@@ -309,7 +309,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         new NameValuePairArgs
                         {
                             Name = "WEBSITE_CONTENTSHARE",
-                            Value = "func-windows-brickshoarder-prd"
+                            Value = "func-brickshoarder-timers-prd"
                         },
                         new NameValuePairArgs
                         {

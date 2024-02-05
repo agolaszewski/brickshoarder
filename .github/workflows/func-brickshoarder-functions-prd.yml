@@ -1,4 +1,4 @@
-name: Build and deploy .NET Core application to Function App func-brickshoarder-functions-prd
+name: func-brickshoarder-functions-prd
 on:
   workflow_dispatch:
   push:
