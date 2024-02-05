@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "BricksHoarder.Functions.Timers": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7098",
+      "launchBrowser": false
+    }
+  }
+}

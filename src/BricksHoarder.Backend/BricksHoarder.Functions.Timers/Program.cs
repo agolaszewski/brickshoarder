@@ -4,8 +4,6 @@ using BricksHoarder.Core.Services;
 using BricksHoarder.Credentials;
 using BricksHoarder.DateTime;
 using BricksHoarder.Domain;
-using BricksHoarder.Marten;
-using BricksHoarder.Rebrickable;
 using BricksHoarder.Redis;
 using BricksHoarder.Serilog;
 using Marten;
@@ -42,9 +40,6 @@ void Production(IServiceCollection services, IConfiguration config)
 
     services.AddApplicationInsightsTelemetryWorkerService();
     services.ConfigureFunctionsApplicationInsights();
-
-    var martenCredentials = new PostgresAzureCredentials(config, "MartenAzure");
-    services.AddMartenEventStore(martenCredentials);
 }
 
 void Development(IServiceCollection services, IConfiguration config)
@@ -52,11 +47,7 @@ void Development(IServiceCollection services, IConfiguration config)
     Common(services, config);
 
     Log.Logger = Log.Logger.AddSerilog().AddSeq(new Uri("http://localhost:5341/")).CreateLogger();
-
     services.AddLogging(lb => lb.AddSerilog(Log.Logger, true));
-
-    var martenCredentials = new PostgresCredentials(config, "MartenAzure");
-    services.AddMartenEventStore(martenCredentials);
 }
 
 void Common(IServiceCollection services, IConfiguration config)
@@ -69,8 +60,6 @@ void Common(IServiceCollection services, IConfiguration config)
 
     services.CommonServices();
     services.AddDateTimeProvider();
-
-    services.AddRebrickable(new RebrickableCredentials(config));
 
     var redisCredentials = new RedisCredentials(new RedisLabCredentialsBase(config));
     services.AddRedis(redisCredentials);

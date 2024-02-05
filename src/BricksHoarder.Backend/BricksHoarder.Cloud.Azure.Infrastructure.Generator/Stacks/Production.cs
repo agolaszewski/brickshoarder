@@ -8,11 +8,8 @@ using Pulumi.AzureNative.Insights;
 using Pulumi.AzureNative.OperationalInsights.Inputs;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Storage;
-using Pulumi.AzureNative.ContainerService;
-using Pulumi.AzureNative.ContainerService.Inputs;
 using Pulumi.AzureNative.Web;
 using Pulumi.AzureNative.Web.Inputs;
-using System.Net.Sockets;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 {
@@ -138,6 +135,8 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             #endregion Application Insight
 
+            #region Functions Linux
+
             var containerAppEnv = new ManagedEnvironment("ContainerAppsEnvironment", new ManagedEnvironmentArgs
             {
                 ResourceGroupName = resourceGroup.Name,
@@ -149,10 +148,6 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 },
                 DaprAIInstrumentationKey = appInsights.InstrumentationKey
             });
-
-
-
-            #region Functions Linux
 
             var containerImage = $"{config["DockerHub:Registry"]}/{config["DockerHub:Username"]}/brickshoarder:latest";
 
@@ -284,11 +279,9 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
         [Output]
         public Output<string> ServiceBusConnectionString { get; set; }
 
-        
         [Output]
         public Output<string> DbForPostgreSqlAdminPassword { get; set; }
 
-        
         [Output]
         public Output<string> StorageAccountConnectionString { get; set; }
     }
