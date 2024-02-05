@@ -257,6 +257,11 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         {
                             Name = "Redis__ConnectionString",
                             Value = config["Redis:ConnectionString"]
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "Rev",
+                            Value = "123"
                         }
                     }
                 },
