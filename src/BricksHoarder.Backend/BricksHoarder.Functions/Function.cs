@@ -25,9 +25,10 @@ namespace BricksHoarder.Functions
         public IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
         {
+            _logger.LogWarning("234");
             _logger.LogWarning(_configuration["Redis:ConnectionString"]);
             _cacheService.SetAsync("TEST", "TEST", TimeSpan.FromDays(1));
-            return new OkObjectResult($"123Welcome to Azure Functions, {req.Query["name"]}!");
+            return new OkObjectResult($"Welcome to Azure Functions, {req.Query["name"]}!");
         }
     }
 }
