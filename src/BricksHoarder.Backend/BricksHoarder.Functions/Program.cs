@@ -16,7 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 
 var host = new HostBuilder()
-    .ConfigureFunctionsWorkerDefaults()
+    .ConfigureFunctionsWebApplication()
     .ConfigureAppConfiguration(builder =>
     {
         builder.AddJsonFile("local.settings.json", optional: true, reloadOnChange: false);

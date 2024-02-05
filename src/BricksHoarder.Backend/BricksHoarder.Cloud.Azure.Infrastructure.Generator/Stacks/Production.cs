@@ -154,24 +154,11 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             #region Functions Linux
 
-            //var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
-            //{
-            //    Name = "asp-func-linux-brickshoarder-prd",
-            //    ResourceGroupName = resourceGroup.Name,
-            //    Location = resourceGroup.Location,
-            //    Kind = "Linux",
-            //    Reserved = true,
-            //    Sku = new SkuDescriptionArgs
-            //    {
-            //        Name = "Y1",
-            //        Tier = "Dynamic"
-            //    },
-            //});
             var containerImage = $"{config["DockerHub:Registry"]}/{config["DockerHub:Username"]}/brickshoarder:latest";
 
-            var functionApp = new WebApp("WebApp.Functions.Linux2", new WebAppArgs
+            var functionApp = new WebApp("WebApp.Functions.Linux", new WebAppArgs
             {
-                Name = "func-cea-brickshoarder-prd2",
+                Name = "func-cea-brickshoarder-prd",
                 ResourceGroupName = resourceGroup.Name,
                 Location = resourceGroup.Location,
                 ManagedEnvironmentId = containerAppEnv.Id,
