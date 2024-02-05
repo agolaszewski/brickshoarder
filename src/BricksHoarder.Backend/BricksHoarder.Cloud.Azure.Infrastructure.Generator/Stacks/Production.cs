@@ -151,9 +151,9 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             var containerImage = $"{config["DockerHub:Registry"]}/{config["DockerHub:Username"]}/brickshoarder:latest";
 
-            var functionApp = new WebApp("WebApp.Functions.Linux", new WebAppArgs
+            var functionApp = new WebApp("WebApp.Functions.BricksHoarder.Functions", new WebAppArgs
             {
-                Name = "func-cea-brickshoarder-prd",
+                Name = "func-brickshoarder-functions-prd",
                 ResourceGroupName = resourceGroup.Name,
                 Location = resourceGroup.Location,
                 ManagedEnvironmentId = containerAppEnv.Id,
@@ -192,11 +192,6 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         {
                             Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
                             Value = appInsights.ConnectionString
-                        },
-                        new NameValuePairArgs()
-                        {
-                            Name = "PLAYWRIGHT_BROWSERS_PATH",
-                            Value = "/home/site/wwwroot/.playwright/ms-playwright"
                         },
                         new NameValuePairArgs()
                         {
@@ -253,11 +248,120 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                             Name = "Redis__ConnectionString",
                             Value = config["Redis:ConnectionString"]
                         },
+                    }
+                },
+                Kind = "functionapp",
+                HttpsOnly = true
+            });
+
+            #endregion Functions Linux
+
+            #region Functions Windows
+
+            var appServicePlanFunctionsWindows = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
+            {
+                Name = "asp-func-linux-brickshoarder-prd",
+                ResourceGroupName = resourceGroup.Name,
+                Location = resourceGroup.Location,
+                Kind = "Linux",
+                Reserved = true,
+                Sku = new SkuDescriptionArgs
+                {
+                    Name = "Y1",
+                    Tier = "Dynamic"
+                },
+            });
+
+            var functionAppWindows = new WebApp("WebApp.Functions.BricksHoarder.Functions.Timers", new WebAppArgs
+            {
+                Name = "func-brickshoarder-timers-prd",
+                ResourceGroupName = resourceGroup.Name,
+                ServerFarmId = appServicePlanFunctionsWindows.Id,
+                SiteConfig = new SiteConfigArgs
+                {
+                    AppSettings = new[]
+                    {
                         new NameValuePairArgs()
                         {
-                            Name = "Rev",
-                            Value = "123"
-                        }
+                            Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                            Value = appInsights.ConnectionString
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "AzureWebJobsStorage",
+                            Value = StorageAccountConnectionString
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "FUNCTIONS_EXTENSION_VERSION",
+                            Value = "~4"
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "FUNCTIONS_WORKER_RUNTIME",
+                            Value = "dotnet-isolated"
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            Value = StorageAccountConnectionString
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "WEBSITE_CONTENTSHARE",
+                            Value = "func-windows-brickshoarder-prd"
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED",
+                            Value = "1"
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "ServiceBusConnectionString",
+                            Value = ServiceBusConnectionString
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "MartenAzure__Host",
+                            Value = "psql-brickshoarder-prd.postgres.database.azure.com"
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "MartenAzure__Database",
+                            Value = dBForPostgreSqlDatabase.Name
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "MartenAzure__Username",
+                            Value = "brickshoarder_admin"
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "MartenAzure__Password",
+                            Value = DbForPostgreSqlAdminPassword
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__Endpoint",
+                            Value = serviceBusNamespace.ServiceBusEndpoint
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__SharedAccessKeyName",
+                            Value = serviceBusNamespace.SharedAccessKeyName
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__SharedAccessKey",
+                            Value = serviceBusNamespace.SharedAccessKey
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "Redis__ConnectionString",
+                            Value = config["Redis:ConnectionString"]
+                        },
+
                     }
                 },
                 Kind = "functionapp",

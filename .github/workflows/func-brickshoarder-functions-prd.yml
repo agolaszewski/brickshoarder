@@ -1,19 +1,13 @@
-name: Build and deploy .NET Core application to Function App func-linux-brickshoarder-dev
+name: Build and deploy .NET Core application to Function App func-brickshoarder-functions-prd
 on:
   workflow_dispatch:
   push:
     paths:
       - 'src/BricksHoarder.Backend/BricksHoarder.Functions/**'
-      - '.github/workflows/func-linux-brickshoarder-dev.yml' 
-env:
-  AZURE_FUNCTIONAPP_NAME: 'func-linux-brickshoarder-dev'   
-  WORKING_DIRECTORY: ./src/BricksHoarder.Backend/BricksHoarder.Functions
-  DOTNET_VERSION: '7.0.x'
-  PLAYWRIGHT_BROWSERS_PATH: ./published/.playwright/ms-playwright
-
+      - '.github/workflows/func-brickshoarder-functions-prd.yml'  
 defaults:
- run:
-  working-directory: ./src/BricksHoarder.Backend/BricksHoarder.Functions
+  run:
+    working-directory: ./src/BricksHoarder.Backend/BricksHoarder.Functions
 
 jobs:
   build-and-deploy-image:
