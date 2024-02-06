@@ -231,7 +231,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         new NameValuePairArgs()
                         {
                             Name = "AzureServiceBus__Endpoint",
-                            Value = serviceBusNamespace.ServiceBusEndpoint
+                            Value = serviceBusNamespace.ServiceBusEndpoint.Apply(x => x.Replace("https://",string.Empty))
                         },
                         new NameValuePairArgs()
                         {
@@ -290,7 +290,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         new NameValuePairArgs()
                         {
                             Name = "AzureServiceBus__Endpoint",
-                            Value = serviceBusNamespace.ServiceBusEndpoint
+                            Value = serviceBusNamespace.ServiceBusEndpoint.Apply(x => x.Replace("https://",string.Empty))
                         },
                         new NameValuePairArgs()
                         {
@@ -353,7 +353,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 HttpsOnly = true
             });
 
-            #endregion Functions Linux
+            #endregion Functions Windows
         }
 
         [Output]
