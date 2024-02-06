@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'src/BricksHoarder.Backend/BricksHoarder.Functions.Timers/**'
+      - 'src/BricksHoarder.Backend/**'
       - '.github/workflows/func-brickshoarder-timers-prd.yml' 
 env:
   AZURE_FUNCTIONAPP_NAME: 'func-brickshoarder-timers-prd'   

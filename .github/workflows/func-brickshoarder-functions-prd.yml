@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'src/BricksHoarder.Backend/BricksHoarder.Functions/**'
+      - 'src/BricksHoarder.Backend/**'
       - '.github/workflows/func-brickshoarder-functions-prd.yml'  
 defaults:
   run:

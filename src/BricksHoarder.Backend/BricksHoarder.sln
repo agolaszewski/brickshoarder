@@ -80,7 +80,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Playwright.Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Websites.Scrappers", "BricksHoarder.Websites.Scrappers\BricksHoarder.Websites.Scrappers.csproj", "{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricksHoarder.Functions.Timers", "BricksHoarder.Functions.Timers\BricksHoarder.Functions.Timers.csproj", "{D68206A0-2D16-4381-AC26-DD74870A89CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions.Timers", "BricksHoarder.Functions.Timers\BricksHoarder.Functions.Timers.csproj", "{D68206A0-2D16-4381-AC26-DD74870A89CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
