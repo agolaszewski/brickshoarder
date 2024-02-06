@@ -279,12 +279,28 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 ServerFarmId = appServicePlanFunctionsWindows.Id,
                 SiteConfig = new SiteConfigArgs
                 {
+                    LinuxFxVersion = "dotnet|7.0",
                     AppSettings = new[]
                     {
                         new NameValuePairArgs()
                         {
                             Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
                             Value = appInsights.ConnectionString
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__Endpoint",
+                            Value = serviceBusNamespace.ServiceBusEndpoint
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__SharedAccessKeyName",
+                            Value = serviceBusNamespace.SharedAccessKeyName
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__SharedAccessKey",
+                            Value = serviceBusNamespace.SharedAccessKey
                         },
                         new NameValuePairArgs
                         {
@@ -300,26 +316,6 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         {
                             Name = "FUNCTIONS_WORKER_RUNTIME",
                             Value = "dotnet-isolated"
-                        },
-                        new NameValuePairArgs
-                        {
-                            Name = "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            Value = StorageAccountConnectionString
-                        },
-                        new NameValuePairArgs
-                        {
-                            Name = "WEBSITE_CONTENTSHARE",
-                            Value = "func-brickshoarder-timers-prd"
-                        },
-                        new NameValuePairArgs
-                        {
-                            Name = "WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED",
-                            Value = "1"
-                        },
-                        new NameValuePairArgs()
-                        {
-                            Name = "ServiceBusConnectionString",
-                            Value = ServiceBusConnectionString
                         },
                         new NameValuePairArgs()
                         {
@@ -343,25 +339,14 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         },
                         new NameValuePairArgs()
                         {
-                            Name = "AzureServiceBus__Endpoint",
-                            Value = serviceBusNamespace.ServiceBusEndpoint
-                        },
-                        new NameValuePairArgs()
-                        {
-                            Name = "AzureServiceBus__SharedAccessKeyName",
-                            Value = serviceBusNamespace.SharedAccessKeyName
-                        },
-                        new NameValuePairArgs()
-                        {
-                            Name = "AzureServiceBus__SharedAccessKey",
-                            Value = serviceBusNamespace.SharedAccessKey
-                        },
-                        new NameValuePairArgs()
-                        {
                             Name = "Redis__ConnectionString",
                             Value = config["Redis:ConnectionString"]
                         },
-
+                        new NameValuePairArgs()
+                        {
+                            Name = "ServiceBusConnectionString",
+                            Value = ServiceBusConnectionString
+                        },
                     }
                 },
                 Kind = "functionapp",
