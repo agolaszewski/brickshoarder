@@ -34,18 +34,15 @@ public class SyncSets
                 IReadOnlyList<LegoSetsListAsyncResponse.Result> setsFromApi = await GetSetsAsync(page);
                 foreach (var apiSet in setsFromApi)
                 {
-                    if (sets.HasChanged(apiSet))
-                    {
-                        continue;
-                    }
-
-                    if (!sets.Events.Any())
-                    {
-                        _integrationEventsQueue.Queue(new NoChangesToSets());
-                    }
-
-                    return sets;
+                    sets.HasChanged(apiSet);
                 }
+
+                if (!sets.Events.Any())
+                {
+                    _integrationEventsQueue.Queue(new NoChangesToSets());
+                }
+
+                return sets;
             }
         }
 
