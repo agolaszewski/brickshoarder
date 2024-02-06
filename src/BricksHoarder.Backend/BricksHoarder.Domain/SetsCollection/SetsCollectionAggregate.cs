@@ -28,7 +28,7 @@ namespace BricksHoarder.Domain.SetsCollection
         {
             var set = _collection.FirstOrDefault(x => x.Id == apiSet.SetNum);
 
-            if (_collection.Count > 3)
+            if (_collection.Count > 50)
             {
                 return false;
             }
