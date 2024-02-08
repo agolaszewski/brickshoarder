@@ -78,7 +78,7 @@ void Common(IServiceCollection services, IConfiguration config)
     services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 }
 
-var cache = host.Services.GetRequiredService<ICacheService>();
-await cache.ClearAsync();
+//var cache = host.Services.GetRequiredService<ICacheService>();
+//await cache.ClearAsync();
 
 host.Run();
