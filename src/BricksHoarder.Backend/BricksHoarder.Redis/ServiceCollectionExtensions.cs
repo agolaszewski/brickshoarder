@@ -14,6 +14,7 @@ namespace BricksHoarder.Redis
                 return ConnectionMultiplexer.Connect(redisCredentials.ConnectionString, config =>
                 {
                     config.AllowAdmin = true;
+                    config.AbortOnConnectFail = false;
                 });
             });
 

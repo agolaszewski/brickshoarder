@@ -41,10 +41,6 @@
   	<ProjectReference Include="..\BricksHoarder.Serilog\BricksHoarder.Serilog.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="production.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

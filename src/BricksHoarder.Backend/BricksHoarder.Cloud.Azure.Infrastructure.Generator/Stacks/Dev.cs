@@ -26,7 +26,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             Output.All(ServiceBusEndpoint, SharedAccessKey, SharedAccessKeyName, ServiceBusConnectionString).Apply(_ =>
             {
-                string json = File.ReadAllText("..//BricksHoarder.Functions//dev.settings.json");
+                string json = File.ReadAllText("..//BricksHoarder.Functions//local.settings.json");
 
                 JObject jObject = Newtonsoft.Json.JsonConvert.DeserializeObject(json) as JObject;
 
@@ -43,7 +43,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 azureServiceBusSharedAccessKey.Replace(SharedAccessKey.Convert());
 
                 string updatedJsonString = jObject.ToString();
-                File.WriteAllText("..//BricksHoarder.Functions//dev.settings.json", updatedJsonString);
+                File.WriteAllText("..//BricksHoarder.Functions//local.settings.json", updatedJsonString);
 
                 return Task.CompletedTask;
             });
