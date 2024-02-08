@@ -1,12 +1,9 @@
 using BricksHoarder.AzureCloud.ServiceBus;
 using BricksHoarder.Common;
-using BricksHoarder.Core.Services;
 using BricksHoarder.Credentials;
 using BricksHoarder.DateTime;
-using BricksHoarder.Domain;
 using BricksHoarder.Redis;
 using BricksHoarder.Serilog;
-using Marten;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,12 +49,6 @@ void Development(IServiceCollection services, IConfiguration config)
 
 void Common(IServiceCollection services, IConfiguration config)
 {
-    services.AddDomain();
-    services.AddAutoMapper(mapper =>
-    {
-        mapper.AddDomainProfiles();
-    });
-
     services.CommonServices();
     services.AddDateTimeProvider();
 
@@ -66,8 +57,5 @@ void Common(IServiceCollection services, IConfiguration config)
 
     services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 }
-
-var cache = host.Services.GetRequiredService<ICacheService>();
-await cache.ClearAsync();
 
 host.Run();

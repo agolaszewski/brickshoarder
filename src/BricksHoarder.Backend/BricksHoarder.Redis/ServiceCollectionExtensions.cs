@@ -9,7 +9,13 @@ namespace BricksHoarder.Redis
     {
         public static void AddRedis(this IServiceCollection services, RedisCredentials redisCredentials)
         {
-            services.AddSingleton(b => ConnectionMultiplexer.Connect(redisCredentials.ConnectionString));
+            services.AddSingleton(b =>
+            {
+                return ConnectionMultiplexer.Connect(redisCredentials.ConnectionString, config =>
+                {
+                    config.AllowAdmin = true;
+                });
+            });
 
             services.AddSingleton(b =>
             {
