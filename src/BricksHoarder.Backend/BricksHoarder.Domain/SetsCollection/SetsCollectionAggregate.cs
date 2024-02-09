@@ -6,8 +6,8 @@ using Rebrickable.Api;
 namespace BricksHoarder.Domain.SetsCollection
 {
     public class SetsCollectionAggregate : AggregateRoot<SetsCollectionAggregate>,
-    IApply<SetReleased>,
-    IApply<SetDetailsChanged>
+        IApply<SetReleased>,
+        IApply<SetDetailsChanged>
     {
         private readonly List<Set> _collection = new();
 
@@ -28,12 +28,12 @@ namespace BricksHoarder.Domain.SetsCollection
         {
             var set = _collection.FirstOrDefault(x => x.Id == apiSet.SetNum);
 
-            if (_collection.Count > 1500)
+            if (_collection.Count > 5)
             {
                 return false;
             }
 
-            if (true)
+            if (set == null)
             {
                 AddEvent(new SetReleased(apiSet.SetNum, apiSet.LastModifiedDt));
                 return true;
