@@ -2,4 +2,4 @@
 
 namespace BricksHoarder.Events;
 
-public record ThemeReleased(int Id, int? ParentId, string Name) : IEvent;
+public record ThemeReleased(int ThemeId, int? ParentId, string Name) : IEvent;

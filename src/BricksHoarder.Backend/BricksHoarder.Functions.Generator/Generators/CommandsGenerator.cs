@@ -49,6 +49,9 @@ namespace BricksHoarder.Functions.Generator.Generators
 
                 compiled = Templates.CommandConsumedMetadataTemplate.Replace("{{command}}", command.Name);
                 File.WriteAllText($"{Catalogs.EventsMetadataCatalog}\\{command.Name}ConsumedMetadata.cs", compiled);
+
+                compiled = Templates.CommandFaultedMetadataTemplate.Replace("{{command}}", command.Name);
+                File.WriteAllText($"{Catalogs.EventsMetadataCatalog}\\{command.Name}FaultedMetadata.cs", compiled);
             }
         }
 
@@ -56,7 +59,7 @@ namespace BricksHoarder.Functions.Generator.Generators
         {
             foreach (var handler in _commandHandlers)
             {
-                CreateFunctionForSaga(handler);
+                CreateConsumedFunctionForSaga(handler);
                 CreateFunction(handler);
             }
         }
@@ -79,9 +82,11 @@ namespace BricksHoarder.Functions.Generator.Generators
             File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{command.Name}Function.cs", compiled);
         }
 
-        private void CreateFunctionForSaga(CommandHandlerType handler)
+        private void CreateConsumedFunctionForSaga(CommandHandlerType handler)
         {
             var command = handler.Command;
+
+
 
             var saga = _sagas.FirstOrDefault(s => IsEventUsedBySaga(s, command));
             if (saga is null)

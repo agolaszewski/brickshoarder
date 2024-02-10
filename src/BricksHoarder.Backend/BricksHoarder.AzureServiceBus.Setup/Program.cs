@@ -68,14 +68,22 @@ async Task SetupAsync()
                 cfg.SubscriptionEndpoint("default", $"brickshoarder.events/consumed/{command.Name}", configure =>
                 {
                 });
+
+                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/faulted/{command.Name}", configure =>
+                {
+                });
             }
 
             foreach (var events in eventsTypes)
             {
-                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{events.Name}", _ =>
+                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{events.Name}", configure =>
                 {
                 });
             }
+
+            cfg.SubscriptionEndpoint("default", $"masstransit/fault", configure =>
+            {
+            });
 
             cfg.ConfigureEndpoints(context);
         });

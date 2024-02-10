@@ -15,18 +15,18 @@ namespace BricksHoarder.Domain.SetsCollection
 
         public void Apply(SetDetailsChanged @event)
         {
-            var set = _collection.First(x => x.Id != @event.Id);
+            var set = _collection.First(x => x.SetId != @event.SetId);
             set = set with { LastModifiedDate = @event.LastModifiedDate };
         }
 
         public void Apply(SetReleased @event)
         {
-            _collection.Add(new Set(@event.Id, @event.LastModifiedDate));
+            _collection.Add(new Set(@event.SetId, @event.LastModifiedDate));
         }
 
         internal bool HasChanged(LegoSetsListAsyncResponse.Result apiSet)
         {
-            var set = _collection.FirstOrDefault(x => x.Id == apiSet.SetNum);
+            var set = _collection.FirstOrDefault(x => x.SetId == apiSet.SetNum);
 
             if (_collection.Count > 5)
             {

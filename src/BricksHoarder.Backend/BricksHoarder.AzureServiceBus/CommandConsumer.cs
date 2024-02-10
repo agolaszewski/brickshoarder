@@ -49,9 +49,10 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     await context.Publish(@event, @event.GetType(), x => x.CorrelationId = context.CorrelationId);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                int x = 1;
+                _logger.LogCritical(ex,$"Exception {context.Message.GetType().FullName} {context.CorrelationId!}");
+                throw;
             }
             finally
             {

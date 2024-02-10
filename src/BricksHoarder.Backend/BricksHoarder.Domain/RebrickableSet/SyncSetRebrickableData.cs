@@ -20,12 +20,12 @@ namespace BricksHoarder.Domain.RebrickableSet
 
             public async Task<RebrickableSetAggregate> HandleAsync(SyncSetRebrickableDataCommand command)
             {
-                var set = await _aggregateStore.GetByIdOrDefaultAsync<RebrickableSetAggregate>(command.Id);
+                var set = await _aggregateStore.GetByIdOrDefaultAsync<RebrickableSetAggregate>(command.SetId);
 
-                var apiSet = await _rebrickableClient.LegoSetsReadAsync(command.Id);
+                var apiSet = await _rebrickableClient.LegoSetsReadAsync(command.SetId);
                 set.SetData(apiSet);
 
-                var minifigures = await _rebrickableClient.LegoSetsMinifigsListAsync(command.Id);
+                var minifigures = await _rebrickableClient.LegoSetsMinifigsListAsync(command.SetId);
                 foreach (var minifigure in minifigures.Results)
                 {
                     set.SetMinifigureData(minifigure);

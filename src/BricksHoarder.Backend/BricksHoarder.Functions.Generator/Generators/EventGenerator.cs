@@ -1,6 +1,7 @@
 ﻿using BricksHoarder.Core.Events;
 using BricksHoarder.Domain;
 using BricksHoarder.Events;
+using MassTransit;
 
 namespace BricksHoarder.Functions.Generator.Generators
 {
@@ -38,7 +39,12 @@ namespace BricksHoarder.Functions.Generator.Generators
         {
             foreach (var @event in _events)
             {
-                var saga = _sagas.FirstOrDefault(s => IsEventUsedBySaga(s, @event));
+                var eventType = typeof(Event<>);
+                var consumed = typeof(CommandConsumed<>);
+                var genericConsumed = consumed.MakeGenericType(@eventType);
+                var genericEventType = eventType.MakeGenericType(genericConsumed);
+
+                var saga = _sagas.FirstOrDefault(s => IsEventUsedBySaga(s, genericEventType));
                 if (saga is null)
                 {
                     continue;

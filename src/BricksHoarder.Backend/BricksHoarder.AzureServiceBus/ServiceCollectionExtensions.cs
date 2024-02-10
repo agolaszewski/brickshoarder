@@ -10,6 +10,7 @@ using BricksHoarder.Events.Metadata;
 using MassTransit;
 using MassTransit.AzureServiceBusTransport;
 using Microsoft.Azure.WebJobs.ServiceBus;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -88,6 +89,8 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     cfg.Publish<IEvent>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
+                    cfg.SendTopology.ErrorQueueNameFormatter = new Derp();
+
                     cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
                     {
                         x.SetEntityName(SyncThemesCommandConsumedMetadata.TopicPath);
@@ -103,9 +106,14 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                         x.SetEntityName(SyncSetRebrickableDataCommandConsumedMetadata.TopicPath);
                     });
 
+                    cfg.Message<Fault<SyncThemesCommand>>(x =>
+                    {
+                        x.SetEntityName($"brickshoarder.events/faulted/SyncThemesCommand");
+                    });
+
                     cfg.UseServiceBusMessageScheduler();
 
-                    cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10)));
+                    cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5)));
                 });
 
                 //x.AddEntityFrameworkOutbox<MassTransitDbContext>(o =>
@@ -120,7 +128,15 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                 //});
             });
 
-            services.RemoveMassTransitHostedService();
+            //services.RemoveMassTransitHostedService();
+        }
+
+        public class Derp : IErrorQueueNameFormatter
+        {
+            public string FormatErrorQueueName(string queueName)
+            {
+                return $"{queueName}-dupa";
+            }
         }
     }
 }

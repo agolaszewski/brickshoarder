@@ -21,5 +21,12 @@ namespace BricksHoarder.AzureCloud.ServiceBus
             await _publishEndpoint.Publish(@event, callback => { callback.CorrelationId = correlationId; });
             return correlationId;
         }
+
+        public async Task<Guid> DispatchAsync(object @event) 
+        {
+            var correlationId = _guidService.New;
+            await _publishEndpoint.Publish(@event, callback => { callback.CorrelationId = correlationId; });
+            return correlationId;
+        }
     }
 }
