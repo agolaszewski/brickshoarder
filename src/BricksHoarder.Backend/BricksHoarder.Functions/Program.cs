@@ -78,10 +78,10 @@ void Common(IServiceCollection services, IConfiguration config)
     services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 }
 
-//var cache = host.Services.GetRequiredService<ICacheService>();
-//await cache.ClearAsync();
+var cache = host.Services.GetRequiredService<ICacheService>();
+await cache.ClearAsync();
 
-//var ds = host.Services.GetRequiredService<IDocumentStore>();
-//await ds.Advanced.ResetAllData();
+var ds = host.Services.GetRequiredService<IDocumentStore>();
+await ds.Advanced.ResetAllData();
 
 host.Run();
