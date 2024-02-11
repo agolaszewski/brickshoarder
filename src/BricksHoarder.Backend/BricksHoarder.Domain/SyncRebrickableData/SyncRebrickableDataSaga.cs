@@ -34,6 +34,10 @@ namespace BricksHoarder.Domain.SyncRebrickableData
                 .Then(_ => logger.LogDebug("SyncThemesCommandConsumed"))
                 .Then(ProcessSyncThemesCommandConsumed));
 
+            During(SyncingState, When(FaultSyncThemesCommand)
+                .Then(_ => logger.LogDebug("SyncThemesCommandConsumed"))
+                .Then(ReSend));
+
             During(SyncingState, When(SyncSetsCommandConsumed)
                 .Then(_ => logger.LogDebug("SyncSetsCommandConsumed"))
                 .Then(ProcessSyncSetsCommandConsumed));
@@ -62,6 +66,11 @@ namespace BricksHoarder.Domain.SyncRebrickableData
             SetCompletedWhenFinalized();
         }
 
+        private void ReSend(BehaviorContext<SyncRebrickableDataSagaState, Fault<SyncThemesCommand>> context)
+        {
+            context.ScheduleSend(SyncThemesCommandMetadata.QueuePathUri, DateTime.UtcNow.AddMinutes(2), context.Message.Message, Pipe.Execute<SendContext<SyncThemesCommand>>(x => x.CorrelationId = context.Saga.CorrelationId));
+        }
+
         private void ProcessSyncSetsCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncSetsCommand>> context)
         {
             context.Saga.SyncingSetsFinished = true;
@@ -73,7 +82,7 @@ namespace BricksHoarder.Domain.SyncRebrickableData
 
         public Event<CommandConsumed<SyncThemesCommand>> SyncThemesCommandConsumed { get; }
 
-        public Event<Fault<SyncThemesCommand>> FaultSyncThemesCommand{ get; }
+        public Event<Fault<SyncThemesCommand>> FaultSyncThemesCommand { get; }
 
         public Event<CommandConsumed<SyncSetsCommand>> SyncSetsCommandConsumed { get; }
 

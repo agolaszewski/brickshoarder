@@ -10,7 +10,6 @@ using BricksHoarder.Events.Metadata;
 using MassTransit;
 using MassTransit.AzureServiceBusTransport;
 using Microsoft.Azure.WebJobs.ServiceBus;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -89,8 +88,6 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     cfg.Publish<IEvent>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
-                    cfg.SendTopology.ErrorQueueNameFormatter = new Derp();
-
                     cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
                     {
                         x.SetEntityName(SyncThemesCommandConsumedMetadata.TopicPath);
@@ -108,7 +105,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
 
                     cfg.Message<Fault<SyncThemesCommand>>(x =>
                     {
-                        x.SetEntityName($"brickshoarder.events/faulted/SyncThemesCommand");
+                        x.SetEntityName(SyncThemesCommandFaultedMetadata.TopicPath);
                     });
 
                     cfg.UseServiceBusMessageScheduler();
@@ -129,14 +126,6 @@ namespace BricksHoarder.AzureCloud.ServiceBus
             });
 
             //services.RemoveMassTransitHostedService();
-        }
-
-        public class Derp : IErrorQueueNameFormatter
-        {
-            public string FormatErrorQueueName(string queueName)
-            {
-                return $"{queueName}-dupa";
-            }
         }
     }
 }

@@ -63,6 +63,7 @@ async Task SetupAsync()
                 cfg.ReceiveEndpoint(command.Name, configureEndpoint =>
                 {
                     configureEndpoint.ConfigureConsumeTopology = false;
+                    configureEndpoint.MaxDeliveryCount = 1;
                 });
 
                 cfg.SubscriptionEndpoint("default", $"brickshoarder.events/consumed/{command.Name}", configure =>
