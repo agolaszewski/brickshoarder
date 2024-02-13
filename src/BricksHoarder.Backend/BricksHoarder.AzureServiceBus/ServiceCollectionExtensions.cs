@@ -45,21 +45,13 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     x.AddConsumer(typeof(CommandConsumer<,>).MakeGenericType(typeArguments));
                 }
 
-                var sagas = domainAssembly
-                    .Where(t => t.Name.EndsWith("Saga"));
+                var sagas = domainAssembly.Where(t => t.Name.EndsWith("Saga"));
 
                 x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().RedisRepository(opt =>
                 {
                     opt.ConcurrencyMode = ConcurrencyMode.Pessimistic;
                     opt.DatabaseConfiguration(redisCredentials.ConnectionString);
                 });
-
-                //.EntityFrameworkRepository(r =>
-                //{
-                //    r.ExistingDbContext<MassTransitDbContext>();
-                //    r.UseSqlServer();
-                //    r.
-                //});
 
                 //foreach (var sagaType in sagas)
                 //{

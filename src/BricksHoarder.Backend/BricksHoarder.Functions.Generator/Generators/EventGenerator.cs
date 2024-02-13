@@ -40,11 +40,9 @@ namespace BricksHoarder.Functions.Generator.Generators
             foreach (var @event in _events)
             {
                 var eventType = typeof(Event<>);
-                var consumed = typeof(CommandConsumed<>);
-                var genericConsumed = consumed.MakeGenericType(@eventType);
-                var genericEventType = eventType.MakeGenericType(genericConsumed);
-
-                var saga = _sagas.FirstOrDefault(s => IsUsedBySaga(s, genericEventType));
+                var eventTypeGeneric = eventType.MakeGenericType(@event);
+                
+                var saga = _sagas.FirstOrDefault(s => IsUsedBySaga(s, eventTypeGeneric));
                 if (saga is null)
                 {
                     continue;

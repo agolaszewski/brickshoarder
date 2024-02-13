@@ -21,12 +21,6 @@ public class SyncThemes
 
         public async Task<ThemesCollectionAggregate> HandleAsync(SyncThemesCommand command)
         {
-            Random r = new Random();
-            if (r.Next(0, 100) < 95)
-            {
-                throw new Exception("UPS");
-            }
-
             var themesFromApi = await GetAllThemesAsync();
             var themes = await _aggregateStore.GetByIdOrDefaultAsync<ThemesCollectionAggregate>();
 
