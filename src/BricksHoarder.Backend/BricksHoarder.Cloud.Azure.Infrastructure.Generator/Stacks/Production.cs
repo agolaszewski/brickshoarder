@@ -174,7 +174,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 SiteConfig = new PreviewSiteConfigArgs
                 {
                     LinuxFxVersion = $"DOCKER|{containerImage}",
-                    FunctionAppScaleLimit = 5,
+                    FunctionAppScaleLimit = 2,
                     NetFrameworkVersion = null,
                     AppSettings = new[]
                     {
