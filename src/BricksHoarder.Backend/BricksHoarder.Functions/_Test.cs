@@ -1,20 +1,17 @@
 using BricksHoarder.Core.Events;
-using BricksHoarder.DateTime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 using System.Text.Json;
 
 namespace BricksHoarder.Functions
 {
-    public class Test
+    public class _Test
     {
         private readonly IEventDispatcher _eventDispatcher;
-        private readonly IDateTimeProvider _dataTimeProvider;
 
-        public Test(IEventDispatcher eventDispatcher, IDateTimeProvider dataTimeProvider)
+        public _Test(IEventDispatcher eventDispatcher)
         {
             _eventDispatcher = eventDispatcher;
-            _dataTimeProvider = dataTimeProvider;
         }
 
         [Function("SendEvent")]

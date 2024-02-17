@@ -10,6 +10,7 @@ using BricksHoarder.Events.Metadata;
 using MassTransit;
 using MassTransit.AzureServiceBusTransport;
 using Microsoft.Azure.WebJobs.ServiceBus;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -24,6 +25,11 @@ namespace BricksHoarder.AzureCloud.ServiceBus
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
+            services.AddAzureClients(builder =>
+            {
+                builder.AddServiceBusClient(credentials.ConnectionString).WithName("ServiceBusClient");
+                builder.AddServiceBusAdministrationClient(credentials.ConnectionString).WithName("ServiceBusAdministrationClient");
+            });
 
             services.AddMassTransit(x =>
             {

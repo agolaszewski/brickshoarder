@@ -25,13 +25,16 @@ public class SyncSets
         public async Task<SetsCollectionAggregate> HandleAsync(SyncSetsCommand command)
         {
             var sets = await _aggregateStore.GetByIdOrDefaultAsync<SetsCollectionAggregate>();
+
             int page = 0;
 
             while (true)
             {
                 page += 1;
 
-                IReadOnlyList<LegoSetsListAsyncResponse.Result> setsFromApi = await GetSetsAsync(page);
+                var legoSetsListResponse = await _rebrickableClient.LegoSetsListAsync(page: page, page_size: 1000, ordering: "-last_modified_dt");
+                var setsFromApi = legoSetsListResponse.Results;
+
                 foreach (var apiSet in setsFromApi)
                 {
                     sets.HasChanged(apiSet);
@@ -40,16 +43,16 @@ public class SyncSets
                 if (!sets.Events.Any())
                 {
                     _integrationEventsQueue.Queue(new NoChangesToSets());
+                    break;
                 }
 
-                return sets;
+                if (string.IsNullOrWhiteSpace(legoSetsListResponse.Next))
+                {
+                    break;
+                }
             }
-        }
 
-        private async Task<IReadOnlyList<LegoSetsListAsyncResponse.Result>> GetSetsAsync(int pageNumber)
-        {
-            LegoSetsListAsyncResponse? response = await _rebrickableClient.LegoSetsListAsync(page: pageNumber, page_size: 1000, ordering: "-last_modified_dt");
-            return response.Results;
+            return sets;
         }
     }
 }

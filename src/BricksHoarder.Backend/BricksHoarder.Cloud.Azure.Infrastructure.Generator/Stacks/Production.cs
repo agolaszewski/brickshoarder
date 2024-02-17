@@ -1,6 +1,9 @@
-﻿using BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources;
+﻿using System.IO;
+using System.Threading.Tasks;
+using BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
@@ -9,7 +12,13 @@ using Pulumi.AzureNative.OperationalInsights.Inputs;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Storage;
 using Pulumi.AzureNative.Web;
-using Pulumi.AzureNative.Web.Inputs;
+using NameValuePairArgs = Pulumi.AzureNative.Web.Inputs.NameValuePairArgs;
+using PreviewNameValuePairArgs = Pulumi.AzureNative.Web.V20230101.Inputs.NameValuePairArgs;
+using PreviewSiteConfigArgs = Pulumi.AzureNative.Web.V20230101.Inputs.SiteConfigArgs;
+using PreviewWebApp = Pulumi.AzureNative.Web.V20230101.WebApp;
+using PreviewWebAppArgs = Pulumi.AzureNative.Web.V20230101.WebAppArgs;
+using SiteConfigArgs = Pulumi.AzureNative.Web.Inputs.SiteConfigArgs;
+using SkuDescriptionArgs = Pulumi.AzureNative.Web.Inputs.SkuDescriptionArgs;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 {
@@ -146,104 +155,110 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 {
                     Name = "Consumption"
                 },
-                DaprAIInstrumentationKey = appInsights.InstrumentationKey
+                DaprAIInstrumentationKey = appInsights.InstrumentationKey,
             });
 
             var containerImage = $"{config["DockerHub:Registry"]}/{config["DockerHub:Username"]}/brickshoarder:latest";
 
-            var functionApp = new WebApp("WebApp.Functions.BricksHoarder.Functions", new WebAppArgs
+            var functionApp = new PreviewWebApp("WebApp.Functions.BricksHoarder.Functions", new PreviewWebAppArgs
             {
                 Name = "func-brickshoarder-functions-prd",
                 ResourceGroupName = resourceGroup.Name,
                 Location = resourceGroup.Location,
                 ManagedEnvironmentId = containerAppEnv.Id,
-                SiteConfig = new SiteConfigArgs
+                //ResourceConfig = new ResourceConfigArgs()
+                //{
+                //    Cpu = 0.5,
+                //    Memory = "1Gi"
+                //},
+                SiteConfig = new PreviewSiteConfigArgs
                 {
                     LinuxFxVersion = $"DOCKER|{containerImage}",
+                    FunctionAppScaleLimit = 5,
                     NetFrameworkVersion = null,
                     AppSettings = new[]
                     {
-                        new NameValuePairArgs
+                        new PreviewNameValuePairArgs
                         {
                             Name = "DOCKER_REGISTRY_SERVER_URL",
                             Value = config["DockerHub:Registry"]
                         },
-                        new NameValuePairArgs
+                        new PreviewNameValuePairArgs
                         {
                             Name = "DOCKER_REGISTRY_SERVER_USERNAME",
                             Value = config["DockerHub:Username"]
                         },
-                        new NameValuePairArgs
+                        new PreviewNameValuePairArgs
                         {
                             Name = "DOCKER_REGISTRY_SERVER_PASSWORD",
                             Value = config["DockerHub:Password"]
                         },
-                        new NameValuePairArgs
+                        new PreviewNameValuePairArgs
                         {
                             Name = "AzureWebJobsStorage",
                             Value = StorageAccountConnectionString
                         },
-                        new NameValuePairArgs
+                        new PreviewNameValuePairArgs
                         {
                             Name = "FUNCTIONS_EXTENSION_VERSION",
                             Value = "~4"
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
                             Value = appInsights.ConnectionString
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "ServiceBusConnectionString",
                             Value = ServiceBusConnectionString
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "Rebrickable__Url",
                             Value = "https://rebrickable.com"
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "Rebrickable__Key",
                             Value = config["Rebrickable:Key"]
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "MartenAzure__Host",
                             Value = "psql-brickshoarder-prd.postgres.database.azure.com"
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "MartenAzure__Database",
                             Value = dBForPostgreSqlDatabase.Name
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "MartenAzure__Username",
                             Value = "brickshoarder_admin"
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "MartenAzure__Password",
                             Value = DbForPostgreSqlAdminPassword
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "AzureServiceBus__Endpoint",
                             Value = serviceBusNamespace.ServiceBusEndpoint.Apply(x => x.Replace("https://",string.Empty))
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "AzureServiceBus__SharedAccessKeyName",
                             Value = serviceBusNamespace.SharedAccessKeyName
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "AzureServiceBus__SharedAccessKey",
                             Value = serviceBusNamespace.SharedAccessKey
                         },
-                        new NameValuePairArgs()
+                        new PreviewNameValuePairArgs()
                         {
                             Name = "Redis__ConnectionString",
                             Value = config["Redis:ConnectionString"]
@@ -251,7 +266,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                     }
                 },
                 Kind = "functionapp",
-                HttpsOnly = true
+                HttpsOnly = true,
             });
 
             #endregion Functions Linux
@@ -279,7 +294,9 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 ServerFarmId = appServicePlanFunctionsWindows.Id,
                 SiteConfig = new SiteConfigArgs
                 {
-                    LinuxFxVersion = "dotnet|7.0",
+                    LinuxFxVersion = "DOTNET-ISOLATED|7.0",
+                    FunctionAppScaleLimit = 1,
+                    NumberOfWorkers = 1,
                     AppSettings = new[]
                     {
                         new NameValuePairArgs()
@@ -354,6 +371,35 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
             });
 
             #endregion Functions Windows
+
+            Output.All(ServiceBusEndpoint, SharedAccessKey, SharedAccessKeyName, ServiceBusConnectionString).Apply(_ =>
+            {
+                string json = File.ReadAllText("..//BricksHoarder.Functions//production.settings.json");
+
+                JObject jObject = Newtonsoft.Json.JsonConvert.DeserializeObject(json) as JObject;
+
+                JToken serviceBusConnectionStringToken = jObject!.SelectToken("Values.ServiceBusConnectionString")!;
+                serviceBusConnectionStringToken.Replace(ServiceBusConnectionString.Convert());
+
+                JToken azureServiceBusEndpoint = jObject!.SelectToken("AzureServiceBus.Endpoint")!;
+                azureServiceBusEndpoint.Replace(ServiceBusEndpoint.Convert().Replace("https://", string.Empty));
+
+                JToken azureServiceBusSharedAccessKeyName = jObject!.SelectToken("AzureServiceBus.SharedAccessKeyName")!;
+                azureServiceBusSharedAccessKeyName.Replace(SharedAccessKeyName.Convert());
+
+                JToken azureServiceBusSharedAccessKey = jObject!.SelectToken("AzureServiceBus.SharedAccessKey")!;
+                azureServiceBusSharedAccessKey.Replace(SharedAccessKey.Convert());
+
+                jObject!.SelectToken("MartenAzure.Host")!.Replace("psql-brickshoarder-prd.postgres.database.azure.com");
+                jObject!.SelectToken("MartenAzure.Database")!.Replace(dBForPostgreSqlDatabase.Name.Convert());
+                jObject!.SelectToken("MartenAzure.Username")!.Replace("brickshoarder_admin");
+                jObject!.SelectToken("MartenAzure.Password")!.Replace(DbForPostgreSqlAdminPassword.Convert());
+
+                string updatedJsonString = jObject.ToString();
+                File.WriteAllText("..//BricksHoarder.Functions//production.settings.json", updatedJsonString);
+
+                return Task.CompletedTask;
+            });
         }
 
         [Output]
