@@ -40,11 +40,6 @@ public class SyncSets
                     sets.HasChanged(apiSet);
                 }
 
-                if (page > 5)
-                {
-                    break;
-                }
-
                 if (!sets.Events.Any())
                 {
                     _integrationEventsQueue.Queue(new NoChangesToSets());
