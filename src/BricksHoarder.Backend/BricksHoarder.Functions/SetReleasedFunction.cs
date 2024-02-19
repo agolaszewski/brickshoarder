@@ -6,15 +6,15 @@ using Microsoft.Azure.Functions.Worker;
 
 namespace BricksHoarder.Functions;
 
-public class SetReleasedBatchFunction : BaseBatchFunction
+public class SetReleasedFunction : BaseBatchFunction
 {
-    public SetReleasedBatchFunction(IEventDispatcher eventDispatcher) : base(eventDispatcher)
+    public SetReleasedFunction(IEventDispatcher eventDispatcher) : base(eventDispatcher)
     {
     }
 
     [Function(SetReleasedMetadata.Consumer)]
     public async Task RunAsync([ServiceBusTrigger(SetReleasedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString, IsBatched = true)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage[] @events, CancellationToken cancellationToken)
     {
-        await HandleSagaBatchAsync<SetReleased>(@events);
+        await HandleBatchAsync<SetReleased>(@events);
     }
 }

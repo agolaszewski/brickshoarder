@@ -23,7 +23,7 @@ public abstract class BaseBatchFunction
         _eventDispatcher = eventDispatcher;
     }
 
-    public async Task HandleSagaBatchAsync<TMessage>(ServiceBusReceivedMessage[] @events) where TMessage : class, IBatch
+    public async Task HandleBatchAsync<TMessage>(ServiceBusReceivedMessage[] @events) where TMessage : class, IBatch
     {
         try
         {

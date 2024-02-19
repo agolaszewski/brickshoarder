@@ -2,15 +2,15 @@
 
 namespace BricksHoarder.Functions;
 
-public class {{event}}BatchFunction : BaseBatchFunction
+public class {{event}}Function : BaseBatchFunction
 {
-    public {{event}}BatchFunction(IEventDispatcher eventDispatcher) : base(eventDispatcher)
+    public {{event}}Function(IEventDispatcher eventDispatcher) : base(eventDispatcher)
     {
     }
 
     [Function({{event}}Metadata.Consumer)]
     public async Task RunAsync([ServiceBusTrigger({{event}}Metadata.TopicPath, Default, Connection = ServiceBusConnectionString, IsBatched = true)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage[] @events, CancellationToken cancellationToken)
     {
-        await HandleSagaBatchAsync<{{event}}>(@events);
+        await HandleBatchAsync<{{event}}>(@events);
     }
 }

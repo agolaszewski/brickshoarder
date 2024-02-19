@@ -5,14 +5,14 @@ using Microsoft.Azure.Functions.Worker;
 
 namespace BricksHoarder.Functions;
 
-public class SetReleasedFunction : BaseFunction
+public class SetReleasedBatchFunction : BaseFunction
 {
-    public SetReleasedFunction(IMessageReceiver receiver) : base(receiver)
+    public SetReleasedBatchFunction(IMessageReceiver receiver) : base(receiver)
     {
     }
 
-    [Function(SetReleasedMetadata.Consumer)]
-    public async Task RunAsync([ServiceBusTrigger(SetReleasedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
+    [Function(SetReleasedBatchMetadata.Consumer)]
+    public async Task RunAsync([ServiceBusTrigger(SetReleasedBatchMetadata.TopicPath, Default, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
     {
         await HandleSagaAsync<SyncRebrickableDataSagaState>(@event, SetReleasedBatchMetadata.TopicPath, Default, cancellationToken);
     }

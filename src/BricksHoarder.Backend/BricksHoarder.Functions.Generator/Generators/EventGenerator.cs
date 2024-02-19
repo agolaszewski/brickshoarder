@@ -107,14 +107,14 @@ namespace BricksHoarder.Functions.Generator.Generators
             namespaces = namespaces.OrderBy(x => x, new NamespaceComparer()).Select(x => $"using {x};").ToList();
             compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
 
-            File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{@event.Name}BatchFunction.cs", compiled);
+            File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{@event.Name}Function.cs", compiled);
         }
 
         private void BatchConsumerFunction(Type saga, Type @event)
         {
             var eventHandler = $"await HandleSagaAsync<{saga.Name}State>(@event, {@event.Name}BatchMetadata.TopicPath, Default, cancellationToken);";
 
-            var compiled = Templates.EventFunctionTemplate.Replace("{{event}}", @event.Name);
+            var compiled = Templates.EventFunctionTemplate.Replace("{{event}}", @event.Name + "Batch");
             compiled = compiled.Replace("{{eventHandler}}", eventHandler);
 
             var namespaces = _requiredEventsNamespaces.ToList();
@@ -123,7 +123,7 @@ namespace BricksHoarder.Functions.Generator.Generators
 
             compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
 
-            File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{@event.Name}Function.cs", compiled);
+            File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{@event.Name}BatchFunction.cs", compiled);
         }
 
         public void Initialize()
