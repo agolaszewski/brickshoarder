@@ -22,6 +22,12 @@ namespace BricksHoarder.AzureCloud.ServiceBus
             return correlationId;
         }
 
+        public async Task<Guid> DispatchAsync<TEvent>(TEvent @event, Guid correlationId) where TEvent : class, IEvent
+        {
+            await _publishEndpoint.Publish(@event, callback => { callback.CorrelationId = correlationId; });
+            return correlationId;
+        }
+
         public async Task<Guid> DispatchAsync(object @event) 
         {
             var correlationId = _guidService.New;

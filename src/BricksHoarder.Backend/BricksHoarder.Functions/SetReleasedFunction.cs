@@ -1,19 +1,20 @@
-using BricksHoarder.Domain.SyncRebrickableData;
+using BricksHoarder.Core.Events;
+using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
 
 namespace BricksHoarder.Functions;
 
-public class SetReleasedFunction : BaseFunction
+public class SetReleasedBatchFunction : BaseBatchFunction
 {
-    public SetReleasedFunction(IMessageReceiver receiver) : base(receiver)
+    public SetReleasedBatchFunction(IEventDispatcher eventDispatcher) : base(eventDispatcher)
     {
     }
 
     [Function(SetReleasedMetadata.Consumer)]
-    public async Task RunAsync([ServiceBusTrigger(SetReleasedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
+    public async Task RunAsync([ServiceBusTrigger(SetReleasedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString, IsBatched = true)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage[] @events, CancellationToken cancellationToken)
     {
-        await HandleSagaAsync<SyncRebrickableDataSagaState>(@event, SetReleasedMetadata.TopicPath, Default, cancellationToken);
+        await HandleSagaBatchAsync<SetReleased>(@events);
     }
 }

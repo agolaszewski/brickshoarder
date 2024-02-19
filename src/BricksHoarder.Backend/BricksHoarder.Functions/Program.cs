@@ -9,6 +9,7 @@ using BricksHoarder.Rebrickable;
 using BricksHoarder.Redis;
 using BricksHoarder.Serilog;
 using Marten;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -78,10 +79,15 @@ void Common(IServiceCollection services, IConfiguration config)
     services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 }
 
-//var cache = host.Services.GetRequiredService<ICacheService>();
-//await cache.ClearAsync();
+IWebHostEnvironment env = host.Services.GetRequiredService<IWebHostEnvironment>();
 
-//var ds = host.Services.GetRequiredService<IDocumentStore>();
-//await ds.Advanced.ResetAllData();
+if (env.IsDevelopment())
+{
+    var cache = host.Services.GetRequiredService<ICacheService>();
+    await cache.ClearAsync();
+
+    var ds = host.Services.GetRequiredService<IDocumentStore>();
+    await ds.Advanced.ResetAllData();
+}
 
 host.Run();

@@ -8,6 +8,7 @@ eventsGenerator.Initialize();
 
 eventsGenerator.GenerateMetadata();
 eventsGenerator.GenerateFunctionsForSagas();
+eventsGenerator.GenerateBatchFunctionsForSagas();
 
 var commandsGenerator = new CommandsGenerator();
 commandsGenerator.GenerateMetadata();

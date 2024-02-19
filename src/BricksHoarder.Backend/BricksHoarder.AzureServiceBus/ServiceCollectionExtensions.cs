@@ -84,6 +84,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     });
 
                     cfg.Publish<IEvent>(x => x.Exclude = true);
+                    cfg.Publish<IBatch>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
                     cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
@@ -104,6 +105,11 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     cfg.Message<Fault<SyncThemesCommand>>(x =>
                     {
                         x.SetEntityName(SyncThemesCommandFaultedMetadata.TopicPath);
+                    });
+
+                    cfg.Message<BatchEvent<SetReleased>>(x =>
+                    {
+                        x.SetEntityName(SetReleasedBatchMetadata.TopicPath);
                     });
 
                     cfg.UseServiceBusMessageScheduler();

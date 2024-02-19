@@ -48,6 +48,11 @@ async Task SetupAsync()
             .Where(t => !t.IsGenericType)
             .ToList();
 
+        var batchedEvents = eventsAssembly
+            .Where(t => typeof(IBatch).IsAssignableFrom(t))
+            .Where(t => !t.IsGenericType)
+            .ToList();
+
         x.UsingAzureServiceBus((context, cfg) =>
         {
             cfg.Host(azureServiceBusCredentials.ConnectionString, _ =>
@@ -56,6 +61,7 @@ async Task SetupAsync()
             cfg.DeployTopologyOnly = true;
 
             cfg.Publish<IEvent>(x => x.Exclude = true);
+            cfg.Publish<IBatch>(x => x.Exclude = true);
             cfg.Publish<ICommand>(x => x.Exclude = true);
 
             foreach (var command in commandsTypes)
@@ -78,6 +84,13 @@ async Task SetupAsync()
             foreach (var events in eventsTypes)
             {
                 cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{events.Name}", configure =>
+                {
+                });
+            }
+
+            foreach (var events in batchedEvents)
+            {
+                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/batch/{events.Name}", configure =>
                 {
                 });
             }

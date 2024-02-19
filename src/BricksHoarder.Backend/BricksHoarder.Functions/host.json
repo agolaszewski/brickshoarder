@@ -8,6 +8,11 @@
           "excludedTypes": "Request"
         }
       }
+    },
+    "serviceBus": {
+      "prefetchCount": 0,
+      "maxMessageBatchSize": 1000,
+      "minMessageBatchSize": 500
     }
   }
 }
