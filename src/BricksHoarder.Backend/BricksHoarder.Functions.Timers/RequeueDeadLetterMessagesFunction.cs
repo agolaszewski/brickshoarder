@@ -17,46 +17,38 @@ namespace BricksHoarder.Functions.Timers
             _serviceBusClientFactory = serviceBusClientFactory;
         }
 
-        [Function("Deadletterqueue")]
-        public async Task RunAsync([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] TimerInfo trigger)
+        [Function("DeadLetterQueue")]
+        public async Task RunAsync([TimerTrigger("0 */5 * * * *")] TimerInfo trigger)
         {
-            try
-            {
-                ServiceBusAdministrationClient serviceBusAdministrationClient = _serviceBusAdministrationClientFactory.CreateClient("ServiceBusAdministrationClient");
-                var queues = serviceBusAdministrationClient.GetQueuesAsync();
+            ServiceBusAdministrationClient serviceBusAdministrationClient = _serviceBusAdministrationClientFactory.CreateClient("ServiceBusAdministrationClient");
+            var queues = serviceBusAdministrationClient.GetQueuesAsync();
 
-                ServiceBusClient serviceBusClient = _serviceBusClientFactory.CreateClient("ServiceBusClient");
-                await foreach (var queue in queues)
+            ServiceBusClient serviceBusClient = _serviceBusClientFactory.CreateClient("ServiceBusClient");
+            await foreach (var queue in queues)
+            {
+                var messageReceiver = serviceBusClient.CreateReceiver($"{queue.Name}/$deadletterqueue", new ServiceBusReceiverOptions());
+                IReadOnlyList<ServiceBusReceivedMessage> messages = await messageReceiver.ReceiveMessagesAsync(100, TimeSpan.FromSeconds(1));
+
+                if (!messages.Any())
                 {
-                    var messageReceiver = serviceBusClient.CreateReceiver($"{queue.Name}/$deadletterqueue", new ServiceBusReceiverOptions());
-                    IReadOnlyList<ServiceBusReceivedMessage> messages = await messageReceiver.ReceiveMessagesAsync(100, TimeSpan.FromSeconds(1));
-
-                    if (!messages.Any())
-                    {
-                        continue;
-                    }
-
-                    var sender = serviceBusClient.CreateSender(queue.Name);
-
-                    using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-                    
-                    foreach (var message in messages)
-                    {
-                        var resubmitMessage = new ServiceBusMessage(message);
-                        await sender.SendMessageAsync(resubmitMessage);
-                        await messageReceiver.CompleteMessageAsync(message);
-                    }
-
-                    scope.Complete();
-
-                    await messageReceiver.DisposeAsync();
-                    await sender.DisposeAsync();
+                    continue;
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
+
+                var sender = serviceBusClient.CreateSender(queue.Name);
+
+                using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+                foreach (var message in messages)
+                {
+                    var resubmitMessage = new ServiceBusMessage(message);
+                    await sender.SendMessageAsync(resubmitMessage);
+                    await messageReceiver.CompleteMessageAsync(message);
+                }
+
+                scope.Complete();
+
+                await messageReceiver.DisposeAsync();
+                await sender.DisposeAsync();
             }
         }
     }

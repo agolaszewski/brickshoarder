@@ -64,20 +64,23 @@ async Task SetupAsync()
             cfg.Publish<IBatch>(x => x.Exclude = true);
             cfg.Publish<ICommand>(x => x.Exclude = true);
 
+            cfg.SubscriptionEndpoint("default", $"brickshoarder/fault", configure =>
+            {
+            });
+
             foreach (var command in commandsTypes)
             {
                 cfg.ReceiveEndpoint(command.Name, configureEndpoint =>
                 {
                     configureEndpoint.ConfigureConsumeTopology = false;
                     configureEndpoint.MaxDeliveryCount = 1;
+                    configureEndpoint.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
                 });
 
                 cfg.SubscriptionEndpoint("default", $"brickshoarder.events/consumed/{command.Name}", configure =>
                 {
-                });
-
-                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/faulted/{command.Name}", configure =>
-                {
+                    configure.MaxDeliveryCount = 1;
+                    configure.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
                 });
             }
 
@@ -85,6 +88,8 @@ async Task SetupAsync()
             {
                 cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{events.Name}", configure =>
                 {
+                    configure.MaxDeliveryCount = 1;
+                    configure.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
                 });
             }
 
@@ -92,12 +97,10 @@ async Task SetupAsync()
             {
                 cfg.SubscriptionEndpoint("default", $"brickshoarder.events/batch/{events.Name}", configure =>
                 {
+                    configure.MaxDeliveryCount = 1;
+                    configure.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
                 });
             }
-
-            cfg.SubscriptionEndpoint("default", $"masstransit/fault", configure =>
-            {
-            });
 
             cfg.ConfigureEndpoints(context);
         });

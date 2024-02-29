@@ -45,9 +45,9 @@ public class SyncRebrickableDataSagaState : SagaStateMachineInstance, ISagaVersi
         set.State = ProcessingState.Processing;
     }
 
-    internal string GetNextUnprocessedSet()
+    internal ProcessingItem? GetNextUnprocessedSet()
     {
-        var set = SetsToProcess.First(x => x.State == ProcessingState.NotStarted);
-        return set.Id;
+        var set = SetsToProcess.FirstOrDefault(x => x.State == ProcessingState.NotStarted);
+        return set;
     }
 }

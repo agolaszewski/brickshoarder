@@ -13,6 +13,7 @@ using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BricksHoarder.AzureCloud.ServiceBus
 {

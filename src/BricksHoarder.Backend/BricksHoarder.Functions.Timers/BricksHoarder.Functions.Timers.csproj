@@ -19,7 +19,7 @@
     <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BricksHoarder.AzureServiceBus\BricksHoarder.AzureCloud.ServiceBus.csproj" />
+    <ProjectReference Include="..\BricksHoarder.AzureServiceBus\BricksHoarder.Azure.ServiceBus.csproj" />
     <ProjectReference Include="..\BricksHoarder.Common\BricksHoarder.Common.csproj" />
     <ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
     <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.csproj" />

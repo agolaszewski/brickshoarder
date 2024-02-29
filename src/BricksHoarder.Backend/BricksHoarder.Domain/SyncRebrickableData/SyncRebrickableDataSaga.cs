@@ -2,6 +2,7 @@
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Events;
+using BricksHoarder.Helpers;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -99,6 +100,8 @@ namespace BricksHoarder.Domain.SyncRebrickableData
                 context.Saga.AddSetToBeProcessed(msg.SetId);
             }
 
+            throw new NotImplementedException();
+
             if (!context.Saga.AnySetIsCurrentlyProcessing())
             {
                 var first = context.Message.Collection.First();
@@ -127,9 +130,14 @@ namespace BricksHoarder.Domain.SyncRebrickableData
                 return;
             }
 
-            var setId = context.Saga.GetNextUnprocessedSet();
-            context.Saga.MarkSetAsCurrentlyProcessing(setId);
-            context.Send(SyncSetRebrickableDataCommandMetadata.QueuePathUri, new SyncSetRebrickableDataCommand(setId), x => x.CorrelationId = context.Saga.CorrelationId);
+            var set = context.Saga.GetNextUnprocessedSet();
+            if (set == null)
+            {
+                return;
+            }
+
+            context.Saga.MarkSetAsCurrentlyProcessing(set.Id);
+            context.Send(SyncSetRebrickableDataCommandMetadata.QueuePathUri, new SyncSetRebrickableDataCommand(set.Id), x => x.CorrelationId = context.Saga.CorrelationId);
         }
     }
 }

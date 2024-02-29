@@ -16,14 +16,16 @@ namespace BricksHoarder.Functions.Generator.Generators
         {
             "BricksHoarder.Commands.Metadata",
             "MassTransit",
-            "Microsoft.Azure.Functions.Worker"
+            "Microsoft.Azure.Functions.Worker",
+            "Azure.Messaging.ServiceBus"
         };
 
         private readonly List<string> _requiredCommandsConsumedNamespaces = new()
         {
             "BricksHoarder.Events.Metadata",
             "MassTransit",
-            "Microsoft.Azure.Functions.Worker"
+            "Microsoft.Azure.Functions.Worker",
+            "Azure.Messaging.ServiceBus"
         };
 
         public CommandsGenerator()

@@ -17,7 +17,8 @@ namespace BricksHoarder.Functions.Generator.Generators
         {
             "BricksHoarder.Events.Metadata",
             "MassTransit",
-            "Microsoft.Azure.Functions.Worker"
+            "Microsoft.Azure.Functions.Worker",
+            "Azure.Messaging.ServiceBus"
         };
 
         public EventGenerator()

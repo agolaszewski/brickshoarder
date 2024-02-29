@@ -9,7 +9,7 @@ public class {{event}}Function : BaseBatchFunction
     }
 
     [Function({{event}}Metadata.Consumer)]
-    public async Task RunAsync([ServiceBusTrigger({{event}}Metadata.TopicPath, Default, Connection = ServiceBusConnectionString, IsBatched = true)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage[] @events, CancellationToken cancellationToken)
+    public async Task RunAsync([ServiceBusTrigger({{event}}Metadata.TopicPath, Default, Connection = ServiceBusConnectionString, IsBatched = true)] ServiceBusReceivedMessage[] @events, CancellationToken cancellationToken)
     {
         await HandleBatchAsync<{{event}}>(@events);
     }

@@ -1,15 +1,15 @@
+using System.Text.Json;
 using BricksHoarder.Core.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
-using System.Text.Json;
 
-namespace BricksHoarder.Functions
+namespace BricksHoarder.Functions.AppFunctions
 {
-    public class _Test
+    public class SendEventFunction
     {
         private readonly IEventDispatcher _eventDispatcher;
 
-        public _Test(IEventDispatcher eventDispatcher)
+        public SendEventFunction(IEventDispatcher eventDispatcher)
         {
             _eventDispatcher = eventDispatcher;
         }

@@ -1,5 +1,6 @@
 using BricksHoarder.Domain.SyncRebrickableData;
 using BricksHoarder.Events.Metadata;
+using Azure.Messaging.ServiceBus;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
 
@@ -12,7 +13,7 @@ public class SyncThemesCommandConsumedFunction : BaseFunction
     }
 
     [Function(SyncThemesCommandConsumedMetadata.Consumer)]
-    public async Task RunAsync([ServiceBusTrigger(SyncThemesCommandConsumedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
+    public async Task RunAsync([ServiceBusTrigger(SyncThemesCommandConsumedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString)] ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
     {
         await HandleSagaAsync<SyncRebrickableDataSagaState>(@event, SyncThemesCommandConsumedMetadata.TopicPath, Default, cancellationToken);
     }
