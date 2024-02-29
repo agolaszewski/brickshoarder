@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Commands.Sets;
+﻿using BricksHoarder.Azure.ServiceBus.Services;
+using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
@@ -31,6 +32,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                 builder.AddServiceBusClient(credentials.ConnectionString).WithName("ServiceBusClient");
                 builder.AddServiceBusAdministrationClient(credentials.ConnectionString).WithName("ServiceBusAdministrationClient");
             });
+            services.AddScoped<DeadLetterQueueRescheduler>();
 
             services.AddMassTransit(x =>
             {

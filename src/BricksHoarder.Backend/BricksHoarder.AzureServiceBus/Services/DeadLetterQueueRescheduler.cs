@@ -19,7 +19,7 @@ namespace BricksHoarder.Azure.ServiceBus.Services
         public async Task HandleAsync(ServiceBusReceivedMessage message)
         {
             var body = Encoding.UTF8.GetString(message.Body);
-
+           
             using var jsonParse = JsonDocument.Parse(body);
             var messageType = jsonParse.RootElement.GetProperty("messageType")
                 .Deserialize<List<string>>()!
@@ -34,17 +34,19 @@ namespace BricksHoarder.Azure.ServiceBus.Services
 
             if (messageType.Any(e => e.Contains(nameof(IEvent))))
             {
+                var name = messageType[0].Split(":").Last().Replace("]", string.Empty);
+
                 if (messageType.Any(e => e.Contains("BatchEvent")))
                 {
-                    type = $"brickshoarder.events/{messageType[0].Split(":").Last()}";
+                    type = $"brickshoarder.events/{name}";
                 }
                 else if (messageType.Any(e => e.Contains("CommandConsumed")))
                 {
-                    type = $"brickshoarder.events/consumed/{messageType[0].Split(":").Last()}";
+                    type = $"brickshoarder.events/consumed/{name}";
                 }
                 else if (messageType.Any(e => e.Contains("BatchEvent")))
                 {
-                    type = $"brickshoarder.events/batch/{messageType[0].Split(":").Last()}";
+                    type = $"brickshoarder.events/batch/{name}";
                 }
             }
 

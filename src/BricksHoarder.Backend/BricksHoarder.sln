@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Azure.Service
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8CEE1C12-60B2-4CEE-B55A-15BA600F5CA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.ArchTests", "BricksHoarder.ArchTests\BricksHoarder.ArchTests.csproj", "{A7AA7AF3-0454-4387-ADD6-32F2D7178688}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Arch.Tests", "BricksHoarder.ArchTests\BricksHoarder.Arch.Tests.csproj", "{A7AA7AF3-0454-4387-ADD6-32F2D7178688}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Cache.NoCache", "BricksHoarder.Cache.NoCache\BricksHoarder.Cache.NoCache.csproj", "{D79B4AE0-4114-4E88-A943-C7387FD3EB58}"
 EndProject

@@ -1,7 +1,9 @@
 using System.Text.Json;
+using Azure.Messaging.ServiceBus;
 using BricksHoarder.Core.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Azure;
 
 namespace BricksHoarder.Functions.AppFunctions
 {
@@ -15,7 +17,7 @@ namespace BricksHoarder.Functions.AppFunctions
         }
 
         [Function("SendEvent")]
-        public async Task Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+        public async Task RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
         {
             var eventsAssembly = AppDomain.CurrentDomain.GetAssemblies().Single(assembly => assembly.GetName().Name == "BricksHoarder.Events");
 
@@ -26,4 +28,23 @@ namespace BricksHoarder.Functions.AppFunctions
             await _eventDispatcher.DispatchAsync(@event);
         }
     }
+
+    public class SendMassTransitMessage
+    {
+        private readonly IAzureClientFactory<ServiceBusClient> _serviceBusClientFactory;
+
+        public SendMassTransitMessage(IAzureClientFactory<ServiceBusClient> serviceBusClientFactory)
+        {
+            _serviceBusClientFactory = serviceBusClientFactory;
+        }
+
+        [Function("SendMassTransitMessage")]
+        public async Task RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+        {
+            var serviceBusClient = _serviceBusClientFactory.CreateClient("ServiceBusClient");
+            var sender = serviceBusClient.CreateSender(req.Headers["QueueOrTopicName"]);
+            await sender.SendMessageAsync(new ServiceBusMessage(await BinaryData.FromStreamAsync(req.Body)));
+        }
+    }
 }
+

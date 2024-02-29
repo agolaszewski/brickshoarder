@@ -100,8 +100,6 @@ namespace BricksHoarder.Domain.SyncRebrickableData
                 context.Saga.AddSetToBeProcessed(msg.SetId);
             }
 
-            throw new NotImplementedException();
-
             if (!context.Saga.AnySetIsCurrentlyProcessing())
             {
                 var first = context.Message.Collection.First();

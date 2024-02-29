@@ -59,6 +59,7 @@ async Task SetupAsync()
             {
             });
             cfg.DeployTopologyOnly = true;
+            cfg.DeployPublishTopology = true;
 
             cfg.Publish<IEvent>(x => x.Exclude = true);
             cfg.Publish<IBatch>(x => x.Exclude = true);
@@ -67,6 +68,8 @@ async Task SetupAsync()
             cfg.SubscriptionEndpoint("default", $"brickshoarder/fault", configure =>
             {
             });
+
+            Thread.Sleep(1000);
 
             foreach (var command in commandsTypes)
             {
