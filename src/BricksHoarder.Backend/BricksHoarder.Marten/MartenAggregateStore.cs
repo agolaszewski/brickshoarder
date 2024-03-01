@@ -85,7 +85,7 @@ namespace BricksHoarder.Marten
                 aggregate.Version += aggregate.Events.Count();
 
                 var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
-                await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromHours(1));
+                await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromDays(7));
                 return;
             }
 

@@ -14,7 +14,7 @@ namespace BricksHoarder.Common.DDD.Aggregates
     public abstract class AggregateRoot<TAggregate> : IAggregateRoot
         where TAggregate : AggregateRoot<TAggregate>
     {
-        private readonly List<EventComposite> _events = new List<EventComposite>();
+        private readonly List<EventComposite> _events = new();
 
         [IgnoreMember]
         public IServiceProvider Context { get; set; }
