@@ -1,4 +1,4 @@
-﻿namespace BricksHoarder.DateTime
+﻿namespace BricksHoarder.DateTime.Noda
 {
     public interface IDateTimeProvider
     {

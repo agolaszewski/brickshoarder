@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.csproj" />
+    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.Noda.csproj" />
     <ProjectReference Include="..\BricksHoarder.Helpers\BricksHoarder.Helpers.csproj" />
     <ProjectReference Include="..\BricksHoarder.Playwright.Scrappers\BricksHoarder.Playwright.csproj" />
   </ItemGroup>

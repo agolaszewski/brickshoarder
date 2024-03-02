@@ -1,15 +1,31 @@
 ﻿using BricksHoarder.Commands.Sets;
+using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Websites.Scrappers.Lego;
 
 namespace BricksHoarder.Domain.LegoSet
 {
-    public class SyncLegoSetAggregate
+    public class SyncLegoSetData
     {
         public class Handler : ICommandHandler<SyncSetLegoDataCommand, LegoSetAggregate>
         {
-            public Task<LegoSetAggregate> HandleAsync(SyncSetLegoDataCommand command)
+            private readonly LegoScrapper _legoScrapper;
+            private readonly IAggregateStore _aggregateStore;
+
+            public Handler(IAggregateStore aggregateStore, LegoScrapper legoScrapper)
             {
-                throw new NotImplementedException();
+                _legoScrapper = legoScrapper;
+                _aggregateStore = aggregateStore;
+            }
+
+            public async Task<LegoSetAggregate> HandleAsync(SyncSetLegoDataCommand command)
+            {
+                var set = await _aggregateStore.GetByIdOrDefaultAsync<LegoSetAggregate>(command.SetId);
+                var response = await _legoScrapper.RunAsync(command.SetId);
+
+                set.Handle(response);
+
+                return set;
             }
         }
     }

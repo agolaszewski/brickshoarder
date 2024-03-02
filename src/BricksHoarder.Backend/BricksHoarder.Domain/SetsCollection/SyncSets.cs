@@ -27,8 +27,9 @@ public class SyncSets
             var sets = await _aggregateStore.GetByIdOrDefaultAsync<SetsCollectionAggregate>();
 
             int page = 0;
+            bool run = true;
 
-            while (true)
+            while (run)
             {
                 page += 1;
 
@@ -37,19 +38,22 @@ public class SyncSets
 
                 foreach (var apiSet in setsFromApi)
                 {
-                    sets.HasChanged(apiSet);
-                }
-
-                if (!sets.Events.Any())
-                {
-                    _integrationEventsQueue.Queue(new NoChangesToSets());
-                    break;
+                    if (!sets.HasChanged(apiSet))
+                    {
+                        run = false;
+                        break;
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(legoSetsListResponse.Next))
                 {
                     break;
                 }
+            }
+
+            if (!sets.Events.Any())
+            {
+                _integrationEventsQueue.Queue(new NoChangesToSets());
             }
 
             return sets;

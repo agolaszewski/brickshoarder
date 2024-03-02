@@ -1,5 +1,4 @@
 using Azure.Messaging.ServiceBus;
-using BricksHoarder.AzureCloud.ServiceBus;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
@@ -7,6 +6,7 @@ using BricksHoarder.Events;
 using MassTransit;
 using System.Text;
 using System.Text.Json;
+using BricksHoarder.Azure.ServiceBus;
 
 namespace BricksHoarder.Functions;
 

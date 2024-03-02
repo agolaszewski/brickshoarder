@@ -6,7 +6,7 @@ using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using ValidationException = FluentValidation.ValidationException;
 
-namespace BricksHoarder.AzureCloud.ServiceBus
+namespace BricksHoarder.Azure.ServiceBus
 {
     public class CommandDispatcher : ICommandDispatcher
     {
@@ -61,6 +61,16 @@ namespace BricksHoarder.AzureCloud.ServiceBus
         {
             TCommand command = _requestToCommandMapper.Map(request, afterMap);
             return await DispatchAsync(command);
+        }
+
+        public async Task<Guid> DispatchAsync(object command)
+        {
+            Guid correlationId = _guidService.New;
+            var commandName = command.GetType().Name;
+
+            ISendEndpoint endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue:{commandName}"));
+            await endpoint.Send(command, callback => { callback.CorrelationId = correlationId; });
+            return correlationId;
         }
     }
 }

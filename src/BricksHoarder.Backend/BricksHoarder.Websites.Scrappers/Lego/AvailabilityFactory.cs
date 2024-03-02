@@ -4,19 +4,19 @@
     {
         public static Availability Make(string? text, string? productStatus)
         {
-            if (productStatus == "Ostatnia szansa")
-            {
-                return Availability.RunningOut;
-            }
-
-            if (productStatus == "Ostatnia szansa")
-            {
-                return Availability.RunningOut;
-            }
-
             if (string.IsNullOrWhiteSpace(text))
             {
                 return Availability.Unknown;
+            }
+
+            if (productStatus == "Ostatnia szansa")
+            {
+                return Availability.RunningOut;
+            }
+
+            if (productStatus == "Ostatnia szansa")
+            {
+                return Availability.RunningOut;
             }
 
             if (text.Contains("zamówienia oczekujące"))

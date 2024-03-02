@@ -4,9 +4,9 @@
     {
         public string SetId { get; set; }
 
-        public DateTime LastModifiedDate { get; set; }
+        public System.DateTime LastModifiedDate { get; set; }
 
-        public Set(string setId, DateTime lastModifiedDate)
+        public Set(string setId, System.DateTime lastModifiedDate)
         {
             SetId = setId;
             LastModifiedDate = lastModifiedDate;

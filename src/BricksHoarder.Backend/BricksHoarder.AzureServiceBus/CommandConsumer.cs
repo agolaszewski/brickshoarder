@@ -5,7 +5,7 @@ using BricksHoarder.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace BricksHoarder.AzureCloud.ServiceBus
+namespace BricksHoarder.Azure.ServiceBus
 {
     public class CommandConsumer<TCommand, TAggregateRoot> : IConsumer<TCommand> where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
     {

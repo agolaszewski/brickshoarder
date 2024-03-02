@@ -5,24 +5,30 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 {
     public record LegoScrapperResponse
     {
-        public LegoScrapperResponse(string id, Availability availability, string? price, string? maxQuantity, System.DateTime scanDate)
+        public LegoScrapperResponse(string id, string? name, Availability availability, string? price, string? maxQuantity, string? imageUrl, System.DateTime scanDate)
         {
             var culture = new CultureInfo("pl-PL");
 
             Id = id;
+            Name = name;
             Availability = availability;
             Price = price.ToN<decimal>(culture);
             MaxQuantity = maxQuantity.ToN<int>(culture);
+            ImageUrl = imageUrl;
             ScanDate = scanDate;
         }
 
         public string Id { get; }
+
+        public string? Name { get; }
 
         public Availability Availability { get; }
 
         public decimal? Price { get; }
 
         public int? MaxQuantity { get; }
+
+        public string? ImageUrl { get; }
 
         public System.DateTime ScanDate { get; }
     }

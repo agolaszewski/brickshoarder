@@ -14,14 +14,14 @@ using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace BricksHoarder.AzureCloud.ServiceBus
+namespace BricksHoarder.Azure.ServiceBus
 {
     public static class ServiceCollectionExtensions
     {
         public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, RedisCredentials redisCredentials)
         {
+            services.AddScoped<RequestToCommandMapper>();
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
@@ -117,7 +117,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
 
                     cfg.UseServiceBusMessageScheduler();
 
-                    cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5)));
+                    cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(5)));
                 });
 
                 //x.AddEntityFrameworkOutbox<MassTransitDbContext>(o =>

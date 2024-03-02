@@ -16,7 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
     <ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
-    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.csproj" />
+    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.Noda.csproj" />
   </ItemGroup>
 
   <ItemGroup>

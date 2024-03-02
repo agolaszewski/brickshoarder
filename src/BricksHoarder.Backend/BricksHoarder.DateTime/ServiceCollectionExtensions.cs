@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace BricksHoarder.DateTime
+namespace BricksHoarder.DateTime.Noda
 {
     public static class ServiceCollectionExtensions
     {

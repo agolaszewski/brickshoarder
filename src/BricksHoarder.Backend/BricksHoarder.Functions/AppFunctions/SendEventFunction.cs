@@ -1,9 +1,8 @@
-using System.Text.Json;
-using Azure.Messaging.ServiceBus;
+using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Azure;
+using System.Text.Json;
 
 namespace BricksHoarder.Functions.AppFunctions
 {
@@ -29,22 +28,25 @@ namespace BricksHoarder.Functions.AppFunctions
         }
     }
 
-    public class SendMassTransitMessage
+    public class SendCommandFunction
     {
-        private readonly IAzureClientFactory<ServiceBusClient> _serviceBusClientFactory;
+        private readonly ICommandDispatcher _commandDispatcher;
 
-        public SendMassTransitMessage(IAzureClientFactory<ServiceBusClient> serviceBusClientFactory)
+        public SendCommandFunction(ICommandDispatcher commandDispatcher)
         {
-            _serviceBusClientFactory = serviceBusClientFactory;
+            _commandDispatcher = commandDispatcher;
         }
 
-        [Function("SendMassTransitMessage")]
+        [Function("SendCommand")]
         public async Task RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
         {
-            var serviceBusClient = _serviceBusClientFactory.CreateClient("ServiceBusClient");
-            var sender = serviceBusClient.CreateSender(req.Headers["QueueOrTopicName"]);
-            await sender.SendMessageAsync(new ServiceBusMessage(await BinaryData.FromStreamAsync(req.Body)));
+            var commandsAssembly = AppDomain.CurrentDomain.GetAssemblies().Single(assembly => assembly.GetName().Name == "BricksHoarder.Commands");
+
+            string typeFullName = req.Headers["Command-Type"]!;
+            Type type = commandsAssembly.GetType(typeFullName)!;
+
+            object command = await JsonSerializer.DeserializeAsync(req.Body, type);
+            await _commandDispatcher.DispatchAsync(command!);
         }
     }
 }
-

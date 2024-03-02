@@ -1,14 +1,14 @@
-using BricksHoarder.AzureCloud.ServiceBus;
+using BricksHoarder.Azure.ServiceBus;
 using BricksHoarder.Common;
-using BricksHoarder.Core.Services;
 using BricksHoarder.Credentials;
-using BricksHoarder.DateTime;
+using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Domain;
 using BricksHoarder.Marten;
+using BricksHoarder.Playwright;
 using BricksHoarder.Rebrickable;
 using BricksHoarder.Redis;
 using BricksHoarder.Serilog;
-using Marten;
+using BricksHoarder.Websites.Scrappers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -75,6 +75,9 @@ void Common(IServiceCollection services, IConfiguration config)
 
     var redisCredentials = new RedisCredentials(new RedisLabCredentialsBase(config));
     services.AddRedis(redisCredentials);
+
+    services.AddScrappers();
+    services.AddPlaywright();
 
     services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 }

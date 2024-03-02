@@ -2,6 +2,7 @@
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Text.Json;
 
@@ -10,16 +11,20 @@ namespace BricksHoarder.Azure.ServiceBus.Services
     public class DeadLetterQueueRescheduler
     {
         private readonly IAzureClientFactory<ServiceBusClient> _serviceBusClientFactory;
+        private readonly ILogger<DeadLetterQueueRescheduler> _logger;
 
-        public DeadLetterQueueRescheduler(IAzureClientFactory<ServiceBusClient> serviceBusClientFactory)
+        public DeadLetterQueueRescheduler(IAzureClientFactory<ServiceBusClient> serviceBusClientFactory, ILogger<DeadLetterQueueRescheduler> logger)
         {
             _serviceBusClientFactory = serviceBusClientFactory;
+            _logger = logger;
         }
 
         public async Task HandleAsync(ServiceBusReceivedMessage message)
         {
+            _logger.LogWarning("DeadLetterQueueRescheduler invoked");
+
             var body = Encoding.UTF8.GetString(message.Body);
-           
+
             using var jsonParse = JsonDocument.Parse(body);
             var messageType = jsonParse.RootElement.GetProperty("messageType")
                 .Deserialize<List<string>>()!
@@ -36,11 +41,7 @@ namespace BricksHoarder.Azure.ServiceBus.Services
             {
                 var name = messageType[0].Split(":").Last().Replace("]", string.Empty);
 
-                if (messageType.Any(e => e.Contains("BatchEvent")))
-                {
-                    type = $"brickshoarder.events/{name}";
-                }
-                else if (messageType.Any(e => e.Contains("CommandConsumed")))
+                if (messageType.Any(e => e.Contains("CommandConsumed")))
                 {
                     type = $"brickshoarder.events/consumed/{name}";
                 }
@@ -48,11 +49,19 @@ namespace BricksHoarder.Azure.ServiceBus.Services
                 {
                     type = $"brickshoarder.events/batch/{name}";
                 }
+                else
+                {
+                    type = $"brickshoarder.events/{name}";
+                }
             }
+
+            _logger.LogWarning("type : {0} MessageId : {1}", type, message.MessageId);
 
             ServiceBusClient serviceBusClient = _serviceBusClientFactory.CreateClient("ServiceBusClient");
             var client = serviceBusClient.CreateSender(type);
             await client.SendMessageAsync(new ServiceBusMessage(message));
+
+            _logger.LogWarning("DeadLetterQueueRescheduler finished");
         }
     }
 }

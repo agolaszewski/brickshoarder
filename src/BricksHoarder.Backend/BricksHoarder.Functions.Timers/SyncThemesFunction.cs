@@ -1,5 +1,5 @@
 using BricksHoarder.Core.Events;
-using BricksHoarder.DateTime;
+using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Events;
 using Microsoft.Azure.Functions.Worker;
 

@@ -1,5 +1,6 @@
-﻿using BricksHoarder.DateTime;
+﻿using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Playwright;
+using System.Web;
 
 namespace BricksHoarder.Websites.Scrappers.Lego
 {
@@ -27,8 +28,19 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             var notFoundPage = await page.Locator("data-test=error-link-cta").IsVisibleAsync();
             if (notFoundPage)
             {
-                return new LegoScrapperResponse(id, Availability.Discontinued, null, null, _dateTimeProvider.UtcNow());
+                return new LegoScrapperResponse(id, null, Availability.Unknown, null, null, null, _dateTimeProvider.UtcNow());
             }
+
+            var name = await page.Locator("data-test=product-overview-name").TextContentAsync();
+
+            await page.Locator("data-test=gallery-thumbnail-1").ClickAsync();
+            var pictureSrcset = await page.Locator("picture[data-test=mediagallery-image-1] > source >> nth=0").GetAttributeAsync("srcset");
+            var pictureUrl = pictureSrcset.Split(",").First().Trim().Replace("1x", string.Empty);
+            var pictureBuilder = HttpUtility.ParseQueryString(pictureUrl);
+            pictureBuilder.Set("quality","90");
+            pictureBuilder.Set("width", "800");
+            pictureBuilder.Set("height", "800");
+            pictureBuilder.Set("dpr", "2");
 
             var container = page.Locator("data-test=product-overview-container");
             var availabilityText = await container.Locator("data-test=product-overview-availability").TextContentAsync();
@@ -41,7 +53,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
             if (availability is Availability.Unknown or Availability.Discontinued)
             {
-                return new LegoScrapperResponse(id, availability, null, null, _dateTimeProvider.UtcNow());
+                return new LegoScrapperResponse(id, name, availability, null, null, pictureBuilder.ToString()!, _dateTimeProvider.UtcNow());
             }
 
             var price = await container.Locator("data-test=product-price").TextContentAsync();
@@ -57,7 +69,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
                 price = salePrice;
             }
 
-            return new LegoScrapperResponse(id, availability, price, maxQuantity, _dateTimeProvider.UtcNow());
+            return new LegoScrapperResponse(id, name, availability, price, maxQuantity, pictureBuilder.ToString()!, _dateTimeProvider.UtcNow());
         }
     }
 }

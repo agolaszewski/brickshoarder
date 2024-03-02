@@ -62,7 +62,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions.Gen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Cloud.Azure.Infrastructure.Generator", "BricksHoarder.Cloud.Azure.Infrastructure.Generator\BricksHoarder.Cloud.Azure.Infrastructure.Generator.csproj", "{2D8B3A93-E1FB-4551-A553-F90DF0938BF5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.DateTime", "BricksHoarder.DateTime\BricksHoarder.DateTime.csproj", "{559B0679-AF55-432E-91FF-1CF4F9C583C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.DateTime.Noda", "BricksHoarder.DateTime\BricksHoarder.DateTime.Noda.csproj", "{559B0679-AF55-432E-91FF-1CF4F9C583C6}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BricksHoarder.Database", "BricksHoarder.MsSql.Database\BricksHoarder.Database.sqlproj", "{3F87FC61-D01B-4E5C-A379-148013A4C96D}"
 EndProject

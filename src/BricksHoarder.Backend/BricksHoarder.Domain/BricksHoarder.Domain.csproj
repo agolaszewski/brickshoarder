@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Kurnakov.EnumConverter" Version="2.1.1" />
     <PackageReference Include="MessagePack.Annotations" Version="2.5.129" />
     <PackageReference Include="Rebrickable.Api" Version="3.2.1" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
@@ -26,6 +27,7 @@
     <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
     <ProjectReference Include="..\BricksHoarder.Events\BricksHoarder.Events.csproj" />
     <ProjectReference Include="..\BricksHoarder.Helpers\BricksHoarder.Helpers.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Websites.Scrappers\BricksHoarder.Websites.Scrappers.csproj" />
   </ItemGroup>
 
 </Project>

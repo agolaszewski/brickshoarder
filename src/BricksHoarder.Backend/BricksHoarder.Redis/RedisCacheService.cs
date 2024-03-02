@@ -11,8 +11,7 @@ namespace BricksHoarder.Redis
     {
         private readonly IDatabase _cache;
         private readonly ConnectionMultiplexer _connection;
-        private readonly IServer _server;
-
+       
         private static readonly JsonSerializerOptions SerializeOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase

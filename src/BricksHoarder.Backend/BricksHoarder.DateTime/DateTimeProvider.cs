@@ -1,6 +1,6 @@
 ﻿using NodaTime;
 
-namespace BricksHoarder.DateTime
+namespace BricksHoarder.DateTime.Noda
 {
     public class DateTimeProvider : IDateTimeProvider
     {

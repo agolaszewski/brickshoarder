@@ -22,6 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Playwright" Version="1.41.2" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
     <PackageReference Include="ThrottlingTroll.AzureFunctions" Version="5.0.0" />
   </ItemGroup>
@@ -32,13 +33,14 @@
   	<ProjectReference Include="..\BricksHoarder.Cache.NoCache\BricksHoarder.Cache.NoCache.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Common\BricksHoarder.Common.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
-  	<ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.Noda.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Marten\BricksHoarder.Marten.csproj" />
   	<ProjectReference Include="..\BricksHoarder.MsSql.Database.Sql\BricksHoarder.MsSql.Database.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Rebrickable\BricksHoarder.Rebrickable.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Redis\BricksHoarder.Redis.csproj" />
   	<ProjectReference Include="..\BricksHoarder.Serilog\BricksHoarder.Serilog.csproj" />
+  	<ProjectReference Include="..\BricksHoarder.Websites.Scrappers\BricksHoarder.Websites.Scrappers.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
