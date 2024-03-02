@@ -82,6 +82,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Websites.Scra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions.Timers", "BricksHoarder.Functions.Timers\BricksHoarder.Functions.Timers.csproj", "{D68206A0-2D16-4381-AC26-DD74870A89CF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Projections", "BricksHoarder.Projections\BricksHoarder.Projections.csproj", "{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricksHoarder.Projections.Rebuilder", "BricksHoarder.Projections.Rebuilder\BricksHoarder.Projections.Rebuilder.csproj", "{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug - Azure|Any CPU = Debug - Azure|Any CPU
@@ -342,6 +346,22 @@ Global
 		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -373,6 +393,8 @@ Global
 		{B643418A-9ED2-4034-8C80-D9D92A11504B} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
 		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D} = {662C9B86-7C3B-449F-96B4-B8503D7FFBBF}
 		{D68206A0-2D16-4381-AC26-DD74870A89CF} = {27869AFF-33AB-4FA7-B30B-7BD2729B51F9}
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0} = {662C9B86-7C3B-449F-96B4-B8503D7FFBBF}
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E820C2F3-08C8-491E-84A1-4E46C6D0C013}

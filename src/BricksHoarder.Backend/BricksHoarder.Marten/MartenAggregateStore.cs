@@ -50,31 +50,14 @@ namespace BricksHoarder.Marten
         public async Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
         {
             string streamName = $"{aggregate.GetType().Name}:{aggregate.Id}";
-            var aggregateMap = _context.GetService<IAggregateMap<TAggregate>>();
-
-            if (aggregateMap != null)
-            {
-                if (aggregate.Version == -1)
-                {
-                    await Policies.SqRetryPolicy.ExecuteAsync(() => aggregateMap.CreateAsync(aggregate));
-                }
-                else if (aggregate.IsDeleted)
-                {
-                    await Policies.SqRetryPolicy.ExecuteAsync(() => aggregateMap.DeleteAsync(aggregate));
-                }
-                else
-                {
-                    await Policies.SqRetryPolicy.ExecuteAsync(() => aggregateMap.UpdateAsync(aggregate));
-                }
-            }
-
+            
             PolicyResult eventStoreOutcome = PolicyResult.Successful(null);
 
             if (aggregate.Events.Any())
             {
                 eventStoreOutcome = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(async () =>
                 {
-                    await using var session = _eventStore.OpenSession();
+                    await using var session = _eventStore.LightweightSession();
                     session.Events.Append(streamName, aggregate.Version + aggregate.Events.Count(), aggregate.Events.Select(a => a.Event).ToList());
                     await session.SaveChangesAsync();
                 });
@@ -86,24 +69,6 @@ namespace BricksHoarder.Marten
 
                 var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
                 await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromDays(7));
-                return;
-            }
-
-            if (aggregateMap != null)
-            {
-                var publishResult = await Policies.PublishRetryPolicy.ExecuteAndCaptureAsync(() => _publishEndpoint.Publish(new AggregateInOutOfSyncState()
-                {
-                    AggregateId = aggregate.Id,
-                    Type = aggregate.GetType().FullName!,
-                    Version = aggregate.Version
-                }));
-
-                if (publishResult.Outcome == OutcomeType.Failure)
-                {
-                    throw new ApplicationException($"Cannot sync aggregate {aggregate.Id} of type {aggregate.GetType().FullName}", eventStoreOutcome.FinalException);
-                }
-
-                throw eventStoreOutcome.FinalException;
             }
         }
 
@@ -149,7 +114,7 @@ namespace BricksHoarder.Marten
 
             long sliceStart = aggregate.Version + 1;
 
-            using var session = _eventStore.OpenSession();
+            using var session = _eventStore.LightweightSession();
             var events = await session.Events.FetchStreamAsync(streamName, version: version, fromVersion: sliceStart);
 
             foreach (var @event in events)

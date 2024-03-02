@@ -16,7 +16,7 @@ async Task SetupAsync()
 {
     var services = new ServiceCollection();
 
-    var absolutePath = System.IO.Path.GetFullPath("./BricksHoarder.Functions");
+    var absolutePath = Path.GetFullPath("./BricksHoarder.Functions");
 
     var config = new ConfigurationBuilder()
         .SetBasePath(absolutePath)
