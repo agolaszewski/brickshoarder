@@ -79,6 +79,7 @@ void Common(IServiceCollection services, IConfiguration config)
     services.AddScrappers();
     services.AddPlaywright();
 
+
     services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 }
 
