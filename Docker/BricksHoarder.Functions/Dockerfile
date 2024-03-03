@@ -34,7 +34,7 @@ RUN dpkg -i powershell_7.4.1-1.deb_amd64.deb
 RUN apt-get install -f
 
 WORKDIR "."
-ENV PLAYWRIGHT_BROWSERS_PATH=/app/publish/.playwright/ms-playwright
+ENV PLAYWRIGHT_BROWSERS_PATH=/.playwright/ms-playwright
 RUN pwsh playwright.ps1 install-deps
 RUN pwsh playwright.ps1 install chromium
 
