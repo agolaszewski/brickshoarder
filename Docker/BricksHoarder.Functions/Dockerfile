@@ -33,8 +33,7 @@ RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/power
 RUN dpkg -i powershell_7.4.1-1.deb_amd64.deb
 RUN apt-get install -f
 
-WORKDIR "."
-ENV PLAYWRIGHT_BROWSERS_PATH=/.playwright/ms-playwright
+ENV PLAYWRIGHT_BROWSERS_PATH=./test/ms-playwright
 RUN pwsh playwright.ps1 install-deps
 RUN pwsh playwright.ps1 install chromium
 
