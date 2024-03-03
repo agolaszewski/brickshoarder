@@ -5,6 +5,7 @@ using BricksHoarder.Events;
 using BricksHoarder.Helpers;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace BricksHoarder.Domain.SyncRebrickableData
 {
@@ -98,6 +99,7 @@ namespace BricksHoarder.Domain.SyncRebrickableData
             foreach (var msg in context.Message.Collection)
             {
                 context.Saga.AddSetToBeProcessed(msg.SetId);
+                context.Send(SyncSetLegoDataCommandMetadata.QueuePathUri, new SyncSetLegoDataCommand(msg.SetId), x => x.CorrelationId = context.Saga.CorrelationId);
             }
 
             if (!context.Saga.AnySetIsCurrentlyProcessing())
