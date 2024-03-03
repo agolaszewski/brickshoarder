@@ -6,6 +6,12 @@ namespace BricksHoarder.Events
 
     public record LegoSetMaxQuantityChanged(string SetId, int? NewValue, int? OldValue) : IEvent;
 
+    public record NewLegoSetDiscovered(string SetId, LegoSetAvailability Availability, int? MaxQuantity, decimal? Price, string? ImageUrl) : IEvent;
+
+    public record LegoSetToBeReleased(string SetId, DateTime ReleaseDate) : IEvent;
+
+    public record LegoSetNoLongerForSale(string SetId, DateTime Dis) : IEvent;
+
     public record LegoSetPriceChanged(string SetId, decimal? NewValue, decimal? OldValue) : IEvent;
 
     public enum LegoSetAvailability

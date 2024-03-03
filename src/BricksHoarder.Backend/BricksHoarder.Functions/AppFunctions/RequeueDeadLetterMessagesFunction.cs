@@ -13,7 +13,7 @@ namespace BricksHoarder.Functions.AppFunctions
             _deadLetterQueueRescheduler = deadLetterQueueRescheduler;
         }
 
-        [Function("RequeueDeadLetterMessagesFunction")]
+        [Function("RequeueDeadLetterMessagesFunction")] 
         public async Task RunAsync([ServiceBusTrigger("brickshoarder/fault", "default", Connection = "ServiceBusConnectionString")] ServiceBusReceivedMessage message, CancellationToken cancellationToken)
         {
             await _deadLetterQueueRescheduler.HandleAsync(message);

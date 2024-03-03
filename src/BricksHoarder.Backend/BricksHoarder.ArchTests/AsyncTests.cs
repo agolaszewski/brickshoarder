@@ -1,12 +1,12 @@
+using System.Threading.Tasks;
 using ArchUnitNET.Domain;
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnit;
 using BricksHoarder.Functions;
-using System.Threading.Tasks;
 using Xunit;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace BricksHoarder.ArchTests
+namespace BricksHoarder.Arch.Tests
 {
     public class AsyncTests
     {

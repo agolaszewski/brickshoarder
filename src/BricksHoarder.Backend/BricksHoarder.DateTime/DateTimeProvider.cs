@@ -8,5 +8,11 @@ namespace BricksHoarder.DateTime.Noda
         {
             return SystemClock.Instance.GetCurrentInstant().ToDateTimeUtc();
         }
+
+        public System.DateTime LocalNow(TimeZoneId timeZoneId)
+        {
+            var timeZone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(timeZoneId.Value);
+            return SystemClock.Instance.GetCurrentInstant().InZone(timeZone!).ToDateTimeUnspecified();
+        }
     }
 }

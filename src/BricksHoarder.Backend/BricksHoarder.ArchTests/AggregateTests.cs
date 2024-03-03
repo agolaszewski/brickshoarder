@@ -3,7 +3,7 @@ using ArchUnitNET.Loader;
 using BricksHoarder.Domain;
 using MessagePack;
 
-namespace BricksHoarder.ArchTests
+namespace BricksHoarder.Arch.Tests
 {
     public class AggregateTests
     {

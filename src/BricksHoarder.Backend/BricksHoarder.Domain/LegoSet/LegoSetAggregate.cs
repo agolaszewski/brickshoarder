@@ -10,15 +10,11 @@ namespace BricksHoarder.Domain.LegoSet
     public class LegoSetAggregate : AggregateRoot<RebrickableSetAggregate>,
         IApply<LegoSetAvailabilityChanged>,
         IApply<LegoSetMaxQuantityChanged>,
-        IApply<LegoSetPriceChanged>
+        IApply<LegoSetPriceChanged>,
+        IApply<NewLegoSetDiscovered>
     {
         public LegoSetAggregate()
         {
-        }
-
-        public LegoSetAggregate(bool isImageDownloaded)
-        {
-            IsImageDownloaded = isImageDownloaded;
         }
 
         public LegoSetAvailability Availability { get; private set; }
@@ -26,8 +22,6 @@ namespace BricksHoarder.Domain.LegoSet
         public int? MaxQuantity { get; private set; }
 
         public decimal? Price { get; private set; }
-
-        public bool IsImageDownloaded { get; set; }
 
         public void Apply(LegoSetAvailabilityChanged @event)
         {
@@ -44,36 +38,67 @@ namespace BricksHoarder.Domain.LegoSet
             Price = @event.NewValue;
         }
 
-        public void Handle(LegoScrapperResponse response)
+        public void Apply(NewLegoSetDiscovered @event)
         {
-            CheckAvailability(response.Availability);
-            CheckMaxQuantity(response.MaxQuantity);
-            CheckPrice(response.Price);
+            Availability = @event.Availability;
+            MaxQuantity = @event.MaxQuantity;
+            Price = @event.Price;
         }
 
-        private void CheckAvailability(Availability availability)
+        public bool IsNewForSystem(LegoScrapperResponse response)
+        {
+            if (Availability == LegoSetAvailability.Unknown && response.Availability != Websites.Scrappers.Lego.Availability.Unknown)
+            {
+                AddEvent(new NewLegoSetDiscovered(Id, response.Availability.ToAnother<LegoSetAvailability>(), response.MaxQuantity, response.Price, response.ImageUrl));
+                return true;
+            }
+
+            return false;
+        }
+
+
+        public bool SetAvailability(Availability availability)
         {
             var newAvailability = availability.ToAnother<LegoSetAvailability>();
-            if (Availability != newAvailability)
+            if (Availability == newAvailability)
             {
-                AddEvent(new LegoSetAvailabilityChanged(Id, newAvailability, Availability));
+                return false;
             }
+
+            AddEvent(new LegoSetAvailabilityChanged(Id, newAvailability, Availability));
+            return true;
         }
 
-        private void CheckMaxQuantity(int? maxQuantity)
+        public bool SetMaxQuantity(int? maxQuantity)
         {
-            if (MaxQuantity != maxQuantity)
+            if (MaxQuantity == maxQuantity)
             {
-                AddEvent(new LegoSetMaxQuantityChanged(Id, maxQuantity, MaxQuantity));
+                return false;
             }
+
+            AddEvent(new LegoSetMaxQuantityChanged(Id, maxQuantity, MaxQuantity));
+            return true;
         }
 
-        private void CheckPrice(decimal? price)
+        public bool SetPrice(decimal? price)
         {
-            if (Price != price)
+            if (Price == price)
             {
-                AddEvent(new LegoSetPriceChanged(Id, price, Price));
+                return false;
             }
+
+            AddEvent(new LegoSetPriceChanged(Id, price, Price));
+            return true;
+        }
+
+        internal void NoLongerForSale(System.DateTime stopSaleDate)
+        {
+            AddEvent(new LegoSetNoLongerForSale(Id, stopSaleDate));
+        }
+
+        internal void WillBeReleasedLater(System.DateTime awaitingTill)
+        {
+            AddEvent(new LegoSetToBeReleased(Id, awaitingTill));
         }
     }
 }

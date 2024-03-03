@@ -1,5 +1,6 @@
 ﻿using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Playwright;
+using System.Globalization;
 using System.Web;
 
 namespace BricksHoarder.Websites.Scrappers.Lego
@@ -37,7 +38,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             var pictureSrcset = await page.Locator("picture[data-test=mediagallery-image-1] > source >> nth=0").GetAttributeAsync("srcset");
             var pictureUrl = pictureSrcset.Split(",").First().Trim().Replace("1x", string.Empty);
             var pictureBuilder = HttpUtility.ParseQueryString(pictureUrl);
-            pictureBuilder.Set("quality","90");
+            pictureBuilder.Set("quality", "90");
             pictureBuilder.Set("width", "800");
             pictureBuilder.Set("height", "800");
             pictureBuilder.Set("dpr", "2");
@@ -56,6 +57,13 @@ namespace BricksHoarder.Websites.Scrappers.Lego
                 return new LegoScrapperResponse(id, name, availability, null, null, pictureBuilder.ToString()!, _dateTimeProvider.UtcNow());
             }
 
+            System.DateTime? awaitingTill = null;
+            if (availability is Availability.Awaiting)
+            {
+                var fromWhen = availabilityText?.Replace("Dostępne od", string.Empty).Replace("Zamów ten produkt w przedsprzedaży już dziś; wysyłka rozpocznie się", string.Empty).Trim();
+                awaitingTill = System.DateTime.ParseExact(fromWhen, "d MMMM yyyy", new CultureInfo("pl-Pl"));
+            }
+
             var price = await container.Locator("data-test=product-price").TextContentAsync();
             price = price!.Replace("Price", string.Empty).Replace("zł", string.Empty).Trim();
 
@@ -69,7 +77,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
                 price = salePrice;
             }
 
-            return new LegoScrapperResponse(id, name, availability, price, maxQuantity, pictureBuilder.ToString()!, _dateTimeProvider.UtcNow());
+            return new LegoScrapperResponse(id, name, availability, price, maxQuantity, pictureBuilder.ToString()!, awaitingTill);
         }
     }
 }
