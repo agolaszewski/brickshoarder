@@ -263,6 +263,11 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                             Name = "Redis__ConnectionString",
                             Value = config["Redis:ConnectionString"]
                         },
+                        new PreviewNameValuePairArgs()
+                        {
+                            Name = "PLAYWRIGHT_BROWSERS_PATH",
+                            Value = "/home/site/wwwroot/.playwright/ms-playwright"
+                        },
                     }
                 },
                 Kind = "functionapp",

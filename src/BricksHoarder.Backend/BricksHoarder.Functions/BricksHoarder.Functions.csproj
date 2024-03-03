@@ -6,6 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <PropertyGroup>
+  	<PlaywrightPlatform>linux</PlaywrightPlatform>
+  </PropertyGroup>	
   <ItemGroup>
 	<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="1.2.1" />
