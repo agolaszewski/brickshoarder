@@ -23,12 +23,23 @@ RUN dotnet publish --no-restore --no-build -c Release -o /app/publish /p:UseAppH
 # ENV PLAYWRIGHT_BROWSERS_PATH=/app/publish/.playwright/ms-playwright
 # RUN playwright install chromium
 
-WORKDIR "/app/publish"
-ENV PLAYWRIGHT_BROWSERS_PATH=/app/publish/.playwright/ms-playwright
-RUN pwsh playwright.ps1 install chromium
-
 FROM base AS final
 WORKDIR /home/site/wwwroot
 COPY --from=publish /app/publish .
+
+RUN apt-get update
+RUN apt-get install -y wget
+RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/powershell_7.4.1-1.deb_amd64.deb
+RUN dpkg -i powershell_7.4.1-1.deb_amd64.deb
+RUN apt-get install -f
+
+WORKDIR "."
+ENV PLAYWRIGHT_BROWSERS_PATH=/app/publish/.playwright/ms-playwright
+RUN pwsh playwright.ps1 install-deps
+RUN pwsh playwright.ps1 install chromium
+
+RUN rm powershell_7.4.1-1.deb_amd64.deb
+RUN apt-get -y remove powershell
+
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true 
