@@ -21,14 +21,4 @@ namespace BricksHoarder.Credentials
 
         public string ConnectionString => $"host={_host};database={_database};password={_password};username={_username}";
     }
-
-    public class PostgresCredentialsBase : IConnectionString
-    {
-        public PostgresCredentialsBase()
-        {
-            
-        }
-
-        public string ConnectionString { get; }
-    }
 }
