@@ -56,7 +56,11 @@ namespace BricksHoarder.Azure.ServiceBus
 
                 var sagas = domainAssembly.Where(t => t.Name.EndsWith("Saga"));
 
-                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().RedisRepository(opt =>
+                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>((context, config) =>
+                {
+                    config.UseInMemoryOutbox(context);
+
+                }).RedisRepository(opt =>
                 {
                     opt.ConcurrencyMode = ConcurrencyMode.Pessimistic;
                     opt.DatabaseConfiguration(redisCredentials.ConnectionString);
@@ -117,7 +121,7 @@ namespace BricksHoarder.Azure.ServiceBus
 
                     cfg.UseServiceBusMessageScheduler();
 
-                    cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(5)));
+                    cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromMilliseconds(500), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(5)));
                 });
 
                 //x.AddEntityFrameworkOutbox<MassTransitDbContext>(o =>

@@ -18,27 +18,20 @@ FROM build AS publish
 WORKDIR "/src/BricksHoarder.Functions"
 RUN dotnet publish --no-restore --no-build -c Release -o /app/publish /p:UseAppHost=false
 
-# RUN dotnet tool install --global Microsoft.Playwright.CLI
-# ENV PATH="${PATH}:/root/.dotnet/tools"
-# ENV PLAYWRIGHT_BROWSERS_PATH=/app/publish/.playwright/ms-playwright
-# RUN playwright install chromium
-
 FROM base AS final
 WORKDIR /home/site/wwwroot
 COPY --from=publish /app/publish .
 
-RUN apt-get update
-RUN apt-get install -y wget
-RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/powershell_7.4.1-1.deb_amd64.deb
-RUN dpkg -i powershell_7.4.1-1.deb_amd64.deb
-RUN apt-get install -f
-
 ENV PLAYWRIGHT_BROWSERS_PATH=./.playwright/ms-playwright
-RUN pwsh playwright.ps1 install-deps
-RUN pwsh playwright.ps1 install chromium
-
-RUN rm powershell_7.4.1-1.deb_amd64.deb
-RUN apt-get -y remove powershell
+RUN apt-get update && \
+    apt-get install -y wget && \
+    wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/powershell_7.4.1-1.deb_amd64.deb && \
+    dpkg -i powershell_7.4.1-1.deb_amd64.deb && \
+    apt-get install -f && \
+    pwsh playwright.ps1 install-deps && \
+    pwsh playwright.ps1 install chromium && \
+    rm powershell_7.4.1-1.deb_amd64.deb && \
+    apt-get -y remove powershell 
 
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true 
