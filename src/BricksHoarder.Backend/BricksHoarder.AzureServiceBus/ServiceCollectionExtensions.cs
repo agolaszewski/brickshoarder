@@ -109,11 +109,6 @@ namespace BricksHoarder.Azure.ServiceBus
                         x.SetEntityName(SyncSetRebrickableDataCommandConsumedMetadata.TopicPath);
                     });
 
-                    cfg.Message<Fault<SyncThemesCommand>>(x =>
-                    {
-                        x.SetEntityName(SyncThemesCommandFaultedMetadata.TopicPath);
-                    });
-
                     cfg.Message<BatchEvent<SetReleased>>(x =>
                     {
                         x.SetEntityName(SetReleasedBatchMetadata.TopicPath);
