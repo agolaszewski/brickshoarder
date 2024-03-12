@@ -9,6 +9,8 @@ using BricksHoarder.Rebrickable;
 using BricksHoarder.Redis;
 using BricksHoarder.Serilog;
 using BricksHoarder.Websites.Scrappers;
+using Marten;
+using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;

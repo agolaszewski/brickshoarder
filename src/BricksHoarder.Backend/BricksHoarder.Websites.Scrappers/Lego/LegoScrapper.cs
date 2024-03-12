@@ -18,18 +18,20 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<LegoScrapperResponse> RunAsync(string id)
+        public async Task<LegoScrapperResponse> RunAsync(string setId)
         {
+            setId = setId.Split("-")[0];
+
             var page = await _pageFactory.CreatePageAsync();
             var cookies = await _cookiesFactory.CreateCookiesAsync("lego");
             await page.Context.AddCookiesAsync(cookies);
 
-            await page.GotoAsync($"https://www.lego.com/pl-pl/product/{id}");
+            await page.GotoAsync($"https://www.lego.com/pl-pl/product/{setId}");
 
             var notFoundPage = await page.Locator("data-test=error-link-cta").IsVisibleAsync();
             if (notFoundPage)
             {
-                return new LegoScrapperResponse(id, null, Availability.Unknown, null, null, null, _dateTimeProvider.UtcNow());
+                return new LegoScrapperResponse(setId, null, Availability.Unknown, null, null, null, _dateTimeProvider.UtcNow());
             }
 
             var name = await page.Locator("data-test=product-overview-name").TextContentAsync();
@@ -54,7 +56,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
             if (availability is Availability.Unknown or Availability.Discontinued)
             {
-                return new LegoScrapperResponse(id, name, availability, null, null, pictureBuilder.ToString()!, _dateTimeProvider.UtcNow());
+                return new LegoScrapperResponse(setId, name, availability, null, null, pictureBuilder.ToString()!, _dateTimeProvider.UtcNow());
             }
 
             System.DateTime? awaitingTill = null;
@@ -77,7 +79,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
                 price = salePrice;
             }
 
-            return new LegoScrapperResponse(id, name, availability, price, maxQuantity, pictureBuilder.ToString()!, awaitingTill);
+            return new LegoScrapperResponse(setId, name, availability, price, maxQuantity, pictureBuilder.ToString()!, awaitingTill);
         }
     }
 }

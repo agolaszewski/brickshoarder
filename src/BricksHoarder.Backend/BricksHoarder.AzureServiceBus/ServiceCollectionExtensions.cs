@@ -10,6 +10,7 @@ using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
 using MassTransit;
 using MassTransit.AzureServiceBusTransport;
+using MassTransit.Scheduling;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,7 @@ namespace BricksHoarder.Azure.ServiceBus
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
+            
             services.AddAzureClients(builder =>
             {
                 builder.AddServiceBusClient(credentials.ConnectionString).WithName("ServiceBusClient");
@@ -53,6 +55,8 @@ namespace BricksHoarder.Azure.ServiceBus
                     var typeArguments = commandHandlerType.GetGenericArguments();
                     x.AddConsumer(typeof(CommandConsumer<,>).MakeGenericType(typeArguments));
                 }
+
+                x.AddServiceBusMessageScheduler();
 
                 var sagas = domainAssembly.Where(t => t.Name.EndsWith("Saga"));
 
