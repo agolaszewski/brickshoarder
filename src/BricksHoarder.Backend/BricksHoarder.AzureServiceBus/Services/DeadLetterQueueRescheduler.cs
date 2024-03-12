@@ -21,6 +21,8 @@ namespace BricksHoarder.Azure.ServiceBus.Services
 
         public async Task HandleAsync(ServiceBusReceivedMessage message)
         {
+            return;
+
             _logger.LogWarning("DeadLetterQueueRescheduler invoked");
 
             var body = Encoding.UTF8.GetString(message.Body);
