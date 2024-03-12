@@ -19,9 +19,8 @@ namespace BricksHoarder.Azure.ServiceBus.Services
             _logger = logger;
         }
 
-        public async Task HandleAsync(ServiceBusReceivedMessage message)
+        public async Task<bool> HandleAsync(ServiceBusReceivedMessage message)
         {
-            return;
 
             _logger.LogWarning("DeadLetterQueueRescheduler invoked");
 
@@ -33,6 +32,13 @@ namespace BricksHoarder.Azure.ServiceBus.Services
                 .Select(x => x.Replace("urn:message:", string.Empty)).ToList().AsReadOnly();
 
             string type = null;
+
+
+            //TODO
+            if (messageType.Any(e => e.Contains("SyncSetLegoDataCommand")))
+            {
+                return false;
+            }
 
             if (messageType.Any(e => e.Contains(nameof(ICommand))))
             {
@@ -64,6 +70,7 @@ namespace BricksHoarder.Azure.ServiceBus.Services
             await client.SendMessageAsync(new ServiceBusMessage(message));
 
             _logger.LogWarning("DeadLetterQueueRescheduler finished");
+            return true;
         }
     }
 }

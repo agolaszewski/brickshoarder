@@ -57,7 +57,7 @@ namespace BricksHoarder.Marten.Sandbox
             //await daemon.RebuildProjection<TestTransformation>(10.Minutes(), CancellationToken.None);
 
             var session = store.LightweightSession();
-            var list = session.Events.QueryRawEventDataOnly<SetReleased>().OrderByDescending(x => x.LastModifiedDate).Take(10);
+            var list = session.Events.QueryRawEventDataOnly<SetReleased>().OrderByDescending(x => x.LastModifiedDate).Take(50);
 
             var start = System.DateTime.UtcNow;
             
@@ -65,8 +65,8 @@ namespace BricksHoarder.Marten.Sandbox
 
             foreach (var item in list)
             {
-                start = start.AddMinutes(1);
-                await _sendEndpointProvider.ScheduleSend(new Uri("queue:SyncSetLegoDataCommand"), start, new SyncSetLegoDataCommand(item.SetId));
+                start = start.AddSeconds(10);
+                await _sendEndpointProvider.ScheduleSend(new Uri("queue:SyncSetLegoDataCommand"), start, new SyncSetLegoDataCommand(item.SetId.Split("-")[0]));
             }
         }
     }

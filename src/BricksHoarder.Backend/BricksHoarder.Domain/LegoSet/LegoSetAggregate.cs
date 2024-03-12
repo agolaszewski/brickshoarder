@@ -49,7 +49,7 @@ namespace BricksHoarder.Domain.LegoSet
         {
             if (Availability == LegoSetAvailability.Unknown && response.Availability != Websites.Scrappers.Lego.Availability.Unknown)
             {
-                AddEvent(new NewLegoSetDiscovered(Id, response.Availability.ToAnother<LegoSetAvailability>(), response.MaxQuantity, response.Price, response.ImageUrl));
+                AddEvent(new NewLegoSetDiscovered(Id, response.Name!, response.Availability.ToAnother<LegoSetAvailability>(), response.MaxQuantity, response.Price, response.ImageUrl));
                 return true;
             }
 

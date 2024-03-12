@@ -1,5 +1,4 @@
 ﻿using BricksHoarder.Commands.Sets;
-using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
@@ -38,6 +37,11 @@ namespace BricksHoarder.Domain.LegoSet
                         set.WillBeReleasedLater(response.ReleaseDate!.Value);
                     }
 
+                    return set;
+                }
+
+                if (response.Availability == Availability.Unknown)
+                {
                     return set;
                 }
 

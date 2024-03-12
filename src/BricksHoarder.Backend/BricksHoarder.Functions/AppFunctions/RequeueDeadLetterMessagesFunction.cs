@@ -14,9 +14,12 @@ namespace BricksHoarder.Functions.AppFunctions
         }
 
         [Function("RequeueDeadLetterMessagesFunction")] 
-        public async Task RunAsync([ServiceBusTrigger("brickshoarder/fault", "default", Connection = "ServiceBusConnectionString")] ServiceBusReceivedMessage message, CancellationToken cancellationToken)
+        public async Task RunAsync([ServiceBusTrigger("brickshoarder/fault", "default", Connection = "ServiceBusConnectionString")] ServiceBusReceivedMessage message, ServiceBusMessageActions actions, CancellationToken cancellationToken)
         {
-            await _deadLetterQueueRescheduler.HandleAsync(message);
+            if (!(await _deadLetterQueueRescheduler.HandleAsync(message)))
+            {
+                await actions.DeadLetterMessageAsync(message, cancellationToken: cancellationToken);
+            }
         }
     }
 }

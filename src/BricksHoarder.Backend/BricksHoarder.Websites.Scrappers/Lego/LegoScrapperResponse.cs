@@ -5,7 +5,9 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 {
     public record LegoScrapperResponse
     {
-        public LegoScrapperResponse(string id, string? name, Availability availability, string? price, string? maxQuantity, string? imageUrl, System.DateTime? awaitingTill)
+        public static LegoScrapperResponse Unknown(string id) => new(id, null, Availability.Unknown, null, null, null, null, false);
+
+        public LegoScrapperResponse(string id, string? name, Availability availability, string? price, string? maxQuantity, string? imageUrl, System.DateTime? awaitingTill, bool isGift)
         {
             var culture = new CultureInfo("pl-PL");
 
@@ -16,6 +18,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             MaxQuantity = maxQuantity.ToN<int>(culture);
             ImageUrl = imageUrl;
             ReleaseDate = awaitingTill;
+            IsGift = isGift;
         }
 
         public string Id { get; }
@@ -31,5 +34,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
         public string? ImageUrl { get; }
 
         public System.DateTime? ReleaseDate { get; }
+
+        public bool IsGift { get; }
     }
 }

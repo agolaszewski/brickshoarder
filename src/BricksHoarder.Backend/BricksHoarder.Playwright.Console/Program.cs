@@ -11,7 +11,7 @@ namespace BricksHoarder.Playwright.Console
             var factory = new DebuggingPageFactory();
             var runner = new LegoScrapper(factory, new CookiesFactory(), new DateTimeProvider());
 
-            await runner.RunAsync("76284-1");
+            await runner.RunAsync("40712");
         }
     }
 }

@@ -30,8 +30,8 @@ namespace BricksHoarder.Azure.ServiceBus
         {
             try
             {
-                _logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.CorrelationId}");
-
+                _logger.LogInformation("Consuming {0} {1}", context.Message.GetType().FullName, context.CorrelationId);
+               
                 TAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
                 await _aggregateStore.SaveAsync(aggregateRoot);
 
@@ -51,12 +51,14 @@ namespace BricksHoarder.Azure.ServiceBus
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex,$"Exception {context.Message.GetType().FullName} {context.CorrelationId!}");
+                _logger.LogCritical("Exception {0} {1}", context.Message.GetType().FullName, context.CorrelationId);
+                _logger.LogCritical(System.Text.Json.JsonSerializer.Serialize(context.Message));
+
                 throw;
             }
             finally
             {
-                _logger.LogDebug($"Consumed {context.Message.GetType().FullName} {context.CorrelationId!}");
+                _logger.LogInformation("Consumed {0} {1}", context.Message.GetType().FullName, context.CorrelationId);
             }
         }
     }
