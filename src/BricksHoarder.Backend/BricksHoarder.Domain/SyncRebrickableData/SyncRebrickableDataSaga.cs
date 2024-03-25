@@ -2,10 +2,8 @@
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Events;
-using BricksHoarder.Helpers;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 
 namespace BricksHoarder.Domain.SyncRebrickableData
 {
@@ -22,7 +20,7 @@ namespace BricksHoarder.Domain.SyncRebrickableData
             Event(() => SetDetailsChanged, x => x.CorrelateById(x => x.CorrelationId!.Value));
             Event(() => FetchSetRebrickableDataCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
             Event(() => NoChangesToSets, x => x.CorrelateById(x => x.CorrelationId!.Value));
-            
+
             Initially(When(SyncSagaStarted)
                 .TransitionTo(SyncingState)
                 .Then(_ => logger.LogDebug("SyncSagaStarted"))

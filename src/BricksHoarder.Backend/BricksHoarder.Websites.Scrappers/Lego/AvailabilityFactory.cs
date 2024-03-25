@@ -14,11 +14,6 @@
                 return Availability.RunningOut;
             }
 
-            if (productStatus == "Ostatnia szansa")
-            {
-                return Availability.RunningOut;
-            }
-
             if (text.Contains("zamówienia oczekujące"))
             {
                 return Availability.Pending;

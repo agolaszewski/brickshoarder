@@ -1,12 +1,12 @@
 ﻿using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Playwright;
 using Microsoft.Playwright;
+using System.Diagnostics;
 using System.Globalization;
 using System.Web;
 
 namespace BricksHoarder.Websites.Scrappers.Lego
 {
-
     public class LegoScrapper
     {
         private readonly IPageFactory _pageFactory;
@@ -20,7 +20,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<LegoScrapperResponse> RunAsync(string setId)
+        public async Task<LegoScrapperResponse> RunGiftAsync(string setId)
         {
             IPage page = await _pageFactory.CreatePageAsync();
             var cookies = await _cookiesFactory.CreateCookiesAsync("lego");
@@ -34,21 +34,40 @@ namespace BricksHoarder.Websites.Scrappers.Lego
                 return LegoScrapperResponse.Unknown(setId);
             }
 
-            var isGift = await page.Locator("data-test=expanded-promo-card-title").IsVisibleAsync();
-            if (isGift)
-            {
-                return await GetGiftAsync(page, setId);
-            }
-            else
-            {
-                return await GetProductAsync(page, setId);
-            }
+            return await GetGiftAsync(page, setId);
         }
 
-        private async Task<string> GetPictureAsync(IPage page)
+        public async Task<LegoScrapperResponse> RunProductAsync(string setId)
         {
-            await page.Locator("data-test=gallery-thumbnail-1").ClickAsync();
-            var pictureSrcset = await page.Locator("picture[data-test=mediagallery-image-1] > source >> nth=0").GetAttributeAsync("srcset");
+            IPage page = await _pageFactory.CreatePageAsync();
+            var cookies = await _cookiesFactory.CreateCookiesAsync("lego");
+            await page.Context.AddCookiesAsync(cookies);
+
+            await page.GotoAsync($"https://www.lego.com/pl-pl/product/{setId}");
+
+            var notFoundPage = await page.Locator("data-test=error-link-cta").IsVisibleAsync();
+            if (notFoundPage)
+            {
+                return LegoScrapperResponse.Unknown(setId);
+            }
+
+            return await GetProductAsync(page, setId);
+        }
+
+        private async Task<string?> GetPictureAsync(IPage page, int pictureNo)
+        {
+            if (pictureNo < 0)
+            {
+                return null;
+            }
+
+            if (!await page.Locator($"data-test=gallery-thumbnail-{pictureNo}").IsVisibleAsync())
+            {
+                return await GetPictureAsync(page, pictureNo - 1);
+            }
+
+            await page.Locator($"data-test=gallery-thumbnail-{pictureNo}").ClickAsync();
+            var pictureSrcset = await page.Locator($"picture[data-test=mediagallery-image-{pictureNo}] > source >> nth=0").GetAttributeAsync("srcset");
             var pictureUrl = pictureSrcset!.Split(",").First().Trim().Replace("1x", string.Empty);
             var pictureBuilder = HttpUtility.ParseQueryString(pictureUrl);
             pictureBuilder.Set("quality", "90");
@@ -62,7 +81,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
         private async Task<LegoScrapperResponse> GetGiftAsync(IPage page, string setId)
         {
             var name = await page.Locator("data-test=expanded-promo-card-product-title").TextContentAsync();
-            var imgUrl = await GetPictureAsync(page);
+            var imgUrl = await GetPictureAsync(page, 1);
 
             var availability = await page.Locator("data-test=pdp-gwp-section").Locator("span[class^=GwpPdpSection_not-available]").IsVisibleAsync() ? Availability.Discontinued : Availability.Available;
 
@@ -72,18 +91,16 @@ namespace BricksHoarder.Websites.Scrappers.Lego
         private async Task<LegoScrapperResponse> GetProductAsync(IPage page, string setId)
         {
             var name = await page.Locator("data-test=product-overview-name").TextContentAsync();
-            var imgUrl = await GetPictureAsync(page);
+            var imgUrl = await GetPictureAsync(page, 1);
 
             var container = page.Locator("data-test=product-overview-container");
-            var availabilityText = await container.Locator("data-test=product-overview-availability").TextContentAsync();
-
+            var availabilityText = await container.Locator("data-test=product-overview-availability").GetTextContentIfVisibleAsync();
+            
             var badges = page.Locator("div[class^=ProductOverviewstyles__Badges]");
             var productsStatus = await badges.Locator("data-test=product-flag")
             .Filter(new LocatorFilterOptions() { HasNotTextString = "Nowość", })
             .Filter(new LocatorFilterOptions() { HasNotTextString = "Specjalne", })
-            .GetTextIfVisibleAsync();
-
-            var isSale = await badges.Locator("data-test=sale-percentage").IsVisibleAsync();
+            .GetInnerTextIfVisibleAsync();
 
             var availability = AvailabilityFactory.Make(availabilityText, productsStatus);
 
@@ -95,16 +112,23 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             System.DateTime? awaitingTill = null;
             if (availability is Availability.Awaiting)
             {
-                var fromWhen = availabilityText?.Replace("Dostępne od", string.Empty).Replace("Zamów ten produkt w przedsprzedaży już dziś; wysyłka rozpocznie się", string.Empty).Trim();
+                var fromWhen = availabilityText!.Replace("Dostępne od", string.Empty).Replace("Zamów ten produkt w przedsprzedaży już dziś; wysyłka rozpocznie się", string.Empty).Trim();
                 awaitingTill = System.DateTime.ParseExact(fromWhen, "d MMMM yyyy", new CultureInfo("pl-Pl"));
             }
 
-            var price = await container.Locator("data-test=product-price").TextContentAsync();
-            price = price!.Replace("Price", string.Empty).Replace("zł", string.Empty).Trim();
+            if (availability is Availability.Pending)
+            {
+                var fromWhen = availabilityText!.Replace("Przyjmujemy zamówienia oczekujące, wysyłka rozpocznie się", string.Empty).Trim();
+                awaitingTill = System.DateTime.ParseExact(fromWhen, "d MMMM yyyy", new CultureInfo("pl-Pl"));
+            }
 
-            var maxQuantity = await page.Locator("div[class^=QuantitySelectorstyles__MaxQuantityWrapper] > span").InnerTextAsync();
-            maxQuantity = maxQuantity.Replace("Ograniczenie", string.Empty);
+            var price = await container.Locator("data-test=product-price").GetTextContentIfVisibleAsync();
+            price = price?.Replace("Price", string.Empty).Replace("zł", string.Empty).Trim();
+            
+            var maxQuantity = await page.Locator("div[class^=QuantitySelectorstyles__MaxQuantityWrapper] > span").GetTextContentIfVisibleAsync();
+            maxQuantity = maxQuantity?.Replace("Ograniczenie", string.Empty);
 
+            var isSale = await badges.Locator("data-test=sale-percentage").IsVisibleAsync();
             if (isSale)
             {
                 var salePrice = await container.Locator("data-test=product-price-sale").TextContentAsync();

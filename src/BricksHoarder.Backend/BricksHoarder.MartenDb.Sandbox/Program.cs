@@ -1,7 +1,6 @@
 ﻿using BricksHoarder.Azure.ServiceBus;
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Common;
-using BricksHoarder.Core.Commands;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
 using BricksHoarder.Events;
@@ -11,7 +10,8 @@ using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
+//dotnet run --project ./BricksHoarder.MartenDb.Sandbox/BricksHoarder.Marten.Sandbox.csproj
 
 namespace BricksHoarder.Marten.Sandbox
 {
@@ -57,10 +57,10 @@ namespace BricksHoarder.Marten.Sandbox
             //await daemon.RebuildProjection<TestTransformation>(10.Minutes(), CancellationToken.None);
 
             var session = store.LightweightSession();
-            var list = session.Events.QueryRawEventDataOnly<SetReleased>().OrderByDescending(x => x.LastModifiedDate).Take(50);
+            var list = session.Events.QueryRawEventDataOnly<SetReleased>().OrderByDescending(x => x.LastModifiedDate).Skip(3000).Take(500);
 
             var start = System.DateTime.UtcNow;
-            
+
             var _sendEndpointProvider = provider.GetRequiredService<IMessageScheduler>();
 
             foreach (var item in list)
