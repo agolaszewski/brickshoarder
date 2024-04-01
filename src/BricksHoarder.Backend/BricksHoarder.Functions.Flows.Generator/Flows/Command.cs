@@ -10,6 +10,10 @@ namespace BricksHoarder.Functions.Flows.Generator.Flows
         public void Build()
         {
             CommandGenerator.Generate(Type);
+            foreach (var @event in _events)
+            {
+                @event.Build();
+            }
         }
 
         private readonly List<IFlowComponent> _events = new List<IFlowComponent>();

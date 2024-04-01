@@ -8,6 +8,7 @@ namespace BricksHoarder.Common
         public static void CommonServices(this IServiceCollection services)
         {
             services.AddSingleton<IGuidService, GuidService>();
+            services.AddSingleton<IRandomService, RandomService>();
         }
     }
 }

@@ -1,14 +1,35 @@
-﻿using BricksHoarder.Core.Events;
+﻿using BricksHoarder.Commands.Metadata;
+using BricksHoarder.Commands.Sets;
+using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Events;
 
 namespace BricksHoarder.Events
 {
-    public record LegoSetToBeReleased(string SetId, DateTime ReleaseDate) : IEvent;
+    public record LegoSetToBeReleased(string SetId, DateTime ReleaseDate) : IEvent, IScheduling<SyncSetLegoDataCommand>
+    {
+        public SchedulingDetails<SyncSetLegoDataCommand> SchedulingDetails()
+        {
+            return new SchedulingDetails<SyncSetLegoDataCommand>(new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, this.ReleaseDate);
+        }
+    }
 
     public record LegoSetIsAvailable(string SetId, DateTime AvailableSince) : IEvent;
 
-    public record LegoSetInSale(string SetId, DateTime NextJobRun) : IEvent;
+    public record LegoSetInSale(string SetId, DateTime NextJobRun) : IEvent, IScheduling<SyncSetLegoDataCommand>
+    {
+        public SchedulingDetails<SyncSetLegoDataCommand> SchedulingDetails()
+        {
+            return new SchedulingDetails<SyncSetLegoDataCommand>(new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, NextJobRun);
+        }
+    }
 
-    public record LegoSetPending(string SetId, DateTime PendingUntil) : IEvent;
+    public record LegoSetPending(string SetId, DateTime PendingUntil) : IEvent, IScheduling<SyncSetLegoDataCommand>
+    {
+        public SchedulingDetails<SyncSetLegoDataCommand> SchedulingDetails()
+        {
+            return new SchedulingDetails<SyncSetLegoDataCommand>(new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, PendingUntil);
+        }
+    }
 
     public record LegoSetRunningOut(string SetId, DateTime RunningOutSince) : IEvent;
 

@@ -3,6 +3,8 @@ using BricksHoarder.Commands.Themes;
 using BricksHoarder.Domain.SyncRebrickableData;
 using BricksHoarder.Events;
 using BricksHoarder.Functions.Flows.Generator.Flows;
+using System.Diagnostics;
+//dotnet run --project ./BricksHoarder.Functions.Flows.Generator/BricksHoarder.Functions.Flows.Generator.csproj
 
 namespace BricksHoarder.Functions.Flows.Generator
 {

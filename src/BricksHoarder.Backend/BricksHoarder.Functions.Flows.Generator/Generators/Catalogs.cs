@@ -2,8 +2,9 @@
 {
     public static class Catalogs
     {
-        public const string EventsMetadataCatalog = "BricksHoarder.Events\\Metadata";
-        public const string FunctionsCatalog = "BricksHoarder.Functions";
-        public const string CommandMetadataCatalog = $"BricksHoarder.Commands\\Metadata";
+        private const string Base = "..\\..\\..\\..\\";
+        public const string EventsMetadataCatalog = $"{Base}\\BricksHoarder.Events\\Metadata";
+        public const string FunctionsCatalog = $"{Base}\\BricksHoarder.Functions";
+        public const string CommandMetadataCatalog = $"{Base}\\BricksHoarder.Commands\\Metadata";
     }
 }

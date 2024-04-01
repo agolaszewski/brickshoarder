@@ -1,5 +1,6 @@
 ﻿using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
+using BricksHoarder.Functions.Flows.Generator.Generators;
 
 namespace BricksHoarder.Functions.Flows.Generator.Flows
 {
@@ -11,7 +12,11 @@ namespace BricksHoarder.Functions.Flows.Generator.Flows
 
         public void Build()
         {
-            throw new NotImplementedException();
+            foreach (var command in _commandsToSchedule)
+            {
+                EventsGenerator.ScheduleCommand(Type,command.Type);
+                command.Build();
+            }
         }
 
         public void Schedule<TCommand>() where TCommand : class, ICommand

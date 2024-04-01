@@ -22,6 +22,8 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
         public async Task<LegoScrapperResponse> RunGiftAsync(string setId)
         {
+            setId = setId.Split("-")[0];
+
             IPage page = await _pageFactory.CreatePageAsync();
             var cookies = await _cookiesFactory.CreateCookiesAsync("lego");
             await page.Context.AddCookiesAsync(cookies);
@@ -39,6 +41,8 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
         public async Task<LegoScrapperResponse> RunProductAsync(string setId)
         {
+            setId = setId.Split("-")[0];
+
             IPage page = await _pageFactory.CreatePageAsync();
             var cookies = await _cookiesFactory.CreateCookiesAsync("lego");
             await page.Context.AddCookiesAsync(cookies);

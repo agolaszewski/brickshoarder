@@ -85,9 +85,9 @@ namespace BricksHoarder.Domain.LegoSet
                     return set;
                 }
 
-                var start = now.AddDays(1).Date.AddHours(8);
-                var end = now.AddDays(1).Date.AddHours(12);
-
+                var start = now.AddDays(1).Date.AddHours(8).ToUniversalTime();
+                var end = now.AddDays(1).Date.AddHours(12).ToUniversalTime();
+                
                 _integrationEventsQueue.Queue(new LegoSetInSale(set.Id, _randomService.Between(start, end)));
 
                 return set;

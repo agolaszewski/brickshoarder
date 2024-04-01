@@ -57,11 +57,11 @@ public abstract class BaseFunction
         }
     }
 
-    public async Task Schedule<TCommand, TEvent>(ServiceBusReceivedMessage @event, string topic, string subscription, CancellationToken cancellationToken) where TCommand : class, ICommand where TEvent : class, ISchedulingEvent    
+    public async Task ScheduleAsync<TCommand, TEvent>(ServiceBusReceivedMessage @event, string topic, string subscription, CancellationToken cancellationToken) where TCommand : class, ICommand where TEvent : class, IEvent, IScheduling<TCommand>    
     {
         try
         {
-            await _receiver.HandleConsumer<SchedulingConsumer<TCommand,TEvent>>(nameof(TEvent), @event, cancellationToken);
+            await _receiver.HandleConsumer<SchedulingConsumer<TCommand,TEvent>>(topic, subscription, @event, cancellationToken);
         }
         catch (Exception e)
         {

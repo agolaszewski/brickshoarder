@@ -1,5 +1,6 @@
 ﻿using BricksHoarder.Helpers;
 using System.Globalization;
+using System.Xml.Linq;
 
 namespace BricksHoarder.Websites.Scrappers.Lego
 {

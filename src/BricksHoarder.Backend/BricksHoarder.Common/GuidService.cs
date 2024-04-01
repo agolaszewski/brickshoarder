@@ -9,18 +9,13 @@ namespace BricksHoarder.Common
 
     public class RandomService : IRandomService
     {
-        private readonly Random _rng;
-
-        public RandomService()
-        {
-            _rng = new Random();
-        }
+        private readonly Random _rng = new();
 
         public DateTime Between(DateTime start, DateTime end)
         {
-            if (end >= start)
+            if (start >= end)
             {
-                throw new ArgumentException("end cannot be greater then start");
+                throw new ArgumentException("start cannot be greater then end");
             }
 
             var next = _rng.NextInt64(start.Ticks, end.Ticks);

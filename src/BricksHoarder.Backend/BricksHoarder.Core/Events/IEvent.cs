@@ -6,9 +6,9 @@ namespace BricksHoarder.Core.Events
     {
     }
 
-    public interface ISchedulingEvent : IEvent
+    public interface IScheduling<TCommand> where TCommand : ICommand
     {
-        public SchedulingDetails<TCommand> Scheduling<TCommand>() where TCommand : ICommand;
+        SchedulingDetails<TCommand> SchedulingDetails();
     }
 
     public record SchedulingDetails<TCommand> where TCommand : ICommand

@@ -1,6 +1,7 @@
 ﻿using BricksHoarder.Core.Commands;
 using BricksHoarder.Domain;
 using BricksHoarder.Functions.Flows.Generator.Flows;
+using MassTransit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +86,48 @@ namespace BricksHoarder.Functions.Flows.Generator.Generators
             compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
 
             File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{command.Name}Function.cs", compiled);
+        }
+    }
+
+    internal class EventsGenerator
+    {
+       
+        private static readonly List<string> RequiredEventsNamespaces = new()
+        {
+            "BricksHoarder.Events.Metadata",
+            "MassTransit",
+            "Microsoft.Azure.Functions.Worker",
+            "Azure.Messaging.ServiceBus"
+        };
+
+        internal static void ScheduleCommand(Type @event, Type command)
+        {
+            CreateMetadata(@event);
+            CreateScheduleCommandFunction(@event,command);
+        }
+
+        private static void CreateMetadata(Type @event)
+        {
+            var compiled = Templates.EventMetadataTemplate.Replace("{{event}}", @event.Name);
+            File.WriteAllText($"{Catalogs.EventsMetadataCatalog}\\{@event.Name}Metadata.cs", compiled);
+
+        }
+
+        private static void CreateScheduleCommandFunction(Type @event, Type command)
+        {
+            var compiled = Templates.EventScheduleCommandFunctionTemplate
+                .Replace("{{event}}", @event.Name)
+                .Replace("{{command}}", command.Name);
+
+            var namespaces = RequiredEventsNamespaces.ToList();
+            namespaces.Add("BricksHoarder.Core.Events");
+            namespaces.Add("BricksHoarder.Events");
+            namespaces.Add(command.Namespace!);
+
+            namespaces = namespaces.OrderBy(x => x, new NamespaceComparer()).Select(x => $"using {x};").ToList();
+            compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
+
+            File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{@event.Name}Function.cs", compiled);
         }
     }
 }

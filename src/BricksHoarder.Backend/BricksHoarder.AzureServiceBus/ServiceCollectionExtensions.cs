@@ -85,6 +85,11 @@ namespace BricksHoarder.Azure.ServiceBus
                     //x.AddConsumer(typeof(EventConsumer<>).MakeGenericType(eventType));
                 }
 
+                //SchedulingConsumers
+                x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetInSale>));
+                x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetToBeReleased>));
+                x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetPending>));
+
                 x.UsingAzureServiceBus((context, cfg) =>
                 {
                     var options = context.GetRequiredService<IOptions<ServiceBusOptions>>();
