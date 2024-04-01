@@ -36,3 +36,31 @@ public class EventConsumer<TEvent> : IConsumer<TEvent> where TEvent : class, IEv
         }
     }
 }
+
+public class SchedulingConsumer<TCommand, TEvent> : IConsumer<TEvent> where TEvent : class, ISchedulingEvent where TCommand : class, ICommand
+{
+    private readonly IEventHandler<TEvent> _handler;
+    private readonly ILogger<SchedulingConsumer<TCommand,TEvent>> _logger;
+
+    public SchedulingConsumer(
+        IEventHandler<TEvent> handler,
+        ILogger<SchedulingConsumer<TCommand, TEvent>> logger)
+    {
+        _logger = logger;
+        _handler = handler;
+    }
+
+    public async Task Consume(ConsumeContext<TEvent> context)
+    {
+        try
+        {
+            _logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.CorrelationId}");
+            var schedulingDetails = context.Message.Scheduling<TCommand>();
+            await context.ScheduleSend(schedulingDetails.QueueName, schedulingDetails.ScheduleTime, schedulingDetails.Command);
+        }
+        finally
+        {
+            _logger.LogDebug($"Consumed {context.Message.GetType().FullName} {context.CorrelationId}");
+        }
+    }
+}

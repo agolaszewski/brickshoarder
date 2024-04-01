@@ -88,7 +88,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Projections.R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Marten.Sandbox", "BricksHoarder.MartenDb.Sandbox\BricksHoarder.Marten.Sandbox.csproj", "{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions.Flows.Generator", "BricksHoarder.Functions.Flow\BricksHoarder.Functions.Flows.Generator.csproj", "{98958E86-6C5D-4F5D-B250-B57E22CCA595}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions.Flows.Generator", "BricksHoarder.Functions.Flows.Generator\BricksHoarder.Functions.Flows.Generator.csproj", "{98958E86-6C5D-4F5D-B250-B57E22CCA595}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

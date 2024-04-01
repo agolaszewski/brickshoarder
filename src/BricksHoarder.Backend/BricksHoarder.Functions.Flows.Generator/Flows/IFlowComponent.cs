@@ -3,5 +3,7 @@
     public interface IFlowComponent
     {
         public Type Type { get; }
+
+        void Build();
     }
 }

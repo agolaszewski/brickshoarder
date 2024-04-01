@@ -24,7 +24,10 @@ namespace BricksHoarder.Functions.Flows.Generator.Flows
 
         internal void Build()
         {
-            throw new NotImplementedException();
+            foreach (var command in _commands)
+            {
+                command.Build();
+            }
         }
     }
 }

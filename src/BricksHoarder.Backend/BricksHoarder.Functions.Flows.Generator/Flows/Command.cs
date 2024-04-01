@@ -1,20 +1,20 @@
 ﻿using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
+using BricksHoarder.Functions.Flows.Generator.Generators;
 
 namespace BricksHoarder.Functions.Flows.Generator.Flows
 {
     public class Command<TCommand> : IFlowComponent where TCommand : class, ICommand
     {
         public Type Type { get; } = typeof(TCommand);
+        public void Build()
+        {
+            CommandGenerator.Generate(Type);
+        }
 
         private readonly List<IFlowComponent> _events = new List<IFlowComponent>();
 
         public Command()
-        {
-
-        }
-
-        public Command(string scheduleProperty)
         {
 
         }

@@ -26,9 +26,9 @@ namespace BricksHoarder.Functions.Flows.Generator
             saga.Command<SyncSetRebrickableDataCommand>();
 
             var syncSetLegoDataCommand = flow.Command<SyncSetLegoDataCommand>();
-            syncSetLegoDataCommand.Event<LegoSetInSale>().Command<SyncSetLegoDataCommand>(nameof(LegoSetInSale.NextJobRun));
-            syncSetLegoDataCommand.Event<LegoSetToBeReleased>().Command<SyncSetLegoDataCommand>(nameof(LegoSetToBeReleased.ReleaseDate));
-            syncSetLegoDataCommand.Event<LegoSetPending>().Command<SyncSetLegoDataCommand>(nameof(LegoSetPending.PendingUntil));
+            syncSetLegoDataCommand.Event<LegoSetInSale>().Schedule<SyncSetLegoDataCommand>();
+            syncSetLegoDataCommand.Event<LegoSetToBeReleased>().Schedule<SyncSetLegoDataCommand>();
+            syncSetLegoDataCommand.Event<LegoSetPending>().Schedule<SyncSetLegoDataCommand>();
 
             flow.Build();
         }

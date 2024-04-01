@@ -56,4 +56,17 @@ public abstract class BaseFunction
             throw;
         }
     }
+
+    public async Task Schedule<TCommand, TEvent>(ServiceBusReceivedMessage @event, string topic, string subscription, CancellationToken cancellationToken) where TCommand : class, ICommand where TEvent : class, ISchedulingEvent    
+    {
+        try
+        {
+            await _receiver.HandleConsumer<SchedulingConsumer<TCommand,TEvent>>(nameof(TEvent), @event, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 }

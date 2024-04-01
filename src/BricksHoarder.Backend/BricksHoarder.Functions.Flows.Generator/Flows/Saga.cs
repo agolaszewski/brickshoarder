@@ -20,5 +20,10 @@ namespace BricksHoarder.Functions.Flows.Generator.Flows
         {
             _commands.Add(new Command<TCommand>());
         }
+
+        public void Build()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
