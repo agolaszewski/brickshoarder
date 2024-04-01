@@ -6,9 +6,9 @@ namespace BricksHoarder.Events
 
     public record LegoSetIsAvailable(string SetId, DateTime AvailableSince) : IEvent;
 
-    public record LegoSetInSale(string SetId) : IEvent;
+    public record LegoSetInSale(string SetId, DateTime NextJobRun) : IEvent;
 
-    public record LegoSetPending(string SetId, DateTime PendingSince) : IEvent;
+    public record LegoSetPending(string SetId, DateTime PendingUntil) : IEvent;
 
     public record LegoSetRunningOut(string SetId, DateTime RunningOutSince) : IEvent;
 

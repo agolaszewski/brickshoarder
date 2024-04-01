@@ -2,7 +2,7 @@
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
-using BricksHoarder.Core.Exceptions;
+using BricksHoarder.Core.Services;
 using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Events;
 using BricksHoarder.Websites.Scrappers.Lego;
@@ -18,13 +18,15 @@ namespace BricksHoarder.Domain.LegoSet
             private readonly IAggregateStore _aggregateStore;
             private readonly IDateTimeProvider _dateTimeProvider;
             private readonly IIntegrationEventsQueue _integrationEventsQueue;
+            private readonly IRandomService _randomService;
 
-            public Handler(IAggregateStore aggregateStore, LegoScrapper legoScrapper, IDateTimeProvider dateTimeProvider, IIntegrationEventsQueue integrationEventsQueue)
+            public Handler(IAggregateStore aggregateStore, LegoScrapper legoScrapper, IDateTimeProvider dateTimeProvider, IRandomService randomService, IIntegrationEventsQueue integrationEventsQueue)
             {
                 _legoScrapper = legoScrapper;
                 _aggregateStore = aggregateStore;
                 _dateTimeProvider = dateTimeProvider;
                 _integrationEventsQueue = integrationEventsQueue;
+                _randomService = randomService;
             }
 
             public async Task<LegoSetAggregate> HandleAsync(SyncSetLegoDataCommand command)
@@ -45,7 +47,7 @@ namespace BricksHoarder.Domain.LegoSet
                         .FallbackAsync(async _ => await _legoScrapper.RunGiftAsync(command.SetId))
                         .ExecuteAsync(() => _legoScrapper.RunProductAsync(command.SetId));
                 }
-                
+
                 //Insert
                 if (set.IsNewForSystem(response))
                 {
@@ -53,7 +55,8 @@ namespace BricksHoarder.Domain.LegoSet
                 }
 
                 //Update
-                set.CheckAvailability(response, _dateTimeProvider.LocalNow(TimeZoneId.Poland).Date);
+                var now = _dateTimeProvider.LocalNow(TimeZoneId.Poland);
+                set.CheckAvailability(response, now.Date);
 
                 if (response.Price > set.Price)
                 {
@@ -82,7 +85,10 @@ namespace BricksHoarder.Domain.LegoSet
                     return set;
                 }
 
-                _integrationEventsQueue.Queue(new LegoSetInSale(set.Id));
+                var start = now.AddDays(1).Date.AddHours(8);
+                var end = now.AddDays(1).Date.AddHours(12);
+
+                _integrationEventsQueue.Queue(new LegoSetInSale(set.Id, _randomService.Between(start, end)));
 
                 return set;
             }

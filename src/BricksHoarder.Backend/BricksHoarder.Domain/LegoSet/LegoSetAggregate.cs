@@ -74,7 +74,7 @@ namespace BricksHoarder.Domain.LegoSet
                     break;
 
                 case LegoSetAvailability.Awaiting:
-                    AddEvent(new LegoSetToBeReleased(Id, date));
+                    AddEvent(new LegoSetToBeReleased(Id, response.AwaitingTill!.Value));
                     break;
 
                 case LegoSetAvailability.Available:
@@ -82,7 +82,7 @@ namespace BricksHoarder.Domain.LegoSet
                     break;
 
                 case LegoSetAvailability.Pending:
-                    AddEvent(new LegoSetPending(Id, date));
+                    AddEvent(new LegoSetPending(Id, response.AwaitingTill!.Value));
                     break;
 
                 case LegoSetAvailability.RunningOut:

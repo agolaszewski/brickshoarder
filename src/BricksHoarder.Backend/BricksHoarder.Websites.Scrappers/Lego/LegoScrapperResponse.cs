@@ -17,7 +17,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             Price = price.ToN<decimal>(culture);
             MaxQuantity = maxQuantity.ToN<int>(culture);
             ImageUrl = imageUrl;
-            ReleaseDate = awaitingTill;
+            AwaitingTill = awaitingTill;
             IsGift = isGift;
         }
 
@@ -33,7 +33,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
         public string? ImageUrl { get; }
 
-        public System.DateTime? ReleaseDate { get; }
+        public System.DateTime? AwaitingTill { get; }
 
         public bool IsGift { get; }
     }
