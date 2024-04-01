@@ -37,11 +37,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Cache.InMemor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Common.CQRS", "BricksHoarder.Common.CQRS\BricksHoarder.Common.CQRS.csproj", "{8AD2706C-4162-4C89-98B6-41B4D14F3534}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.AzureCloud.ServiceBus", "BricksHoarder.AzureServiceBus\BricksHoarder.AzureCloud.ServiceBus.csproj", "{09C404C8-3AB4-46F0-A257-67A0B1AA2457}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Azure.ServiceBus", "BricksHoarder.AzureServiceBus\BricksHoarder.Azure.ServiceBus.csproj", "{09C404C8-3AB4-46F0-A257-67A0B1AA2457}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8CEE1C12-60B2-4CEE-B55A-15BA600F5CA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.ArchTests", "BricksHoarder.ArchTests\BricksHoarder.ArchTests.csproj", "{A7AA7AF3-0454-4387-ADD6-32F2D7178688}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Arch.Tests", "BricksHoarder.ArchTests\BricksHoarder.Arch.Tests.csproj", "{A7AA7AF3-0454-4387-ADD6-32F2D7178688}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Cache.NoCache", "BricksHoarder.Cache.NoCache\BricksHoarder.Cache.NoCache.csproj", "{D79B4AE0-4114-4E88-A943-C7387FD3EB58}"
 EndProject
@@ -62,7 +62,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions.Gen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Cloud.Azure.Infrastructure.Generator", "BricksHoarder.Cloud.Azure.Infrastructure.Generator\BricksHoarder.Cloud.Azure.Infrastructure.Generator.csproj", "{2D8B3A93-E1FB-4551-A553-F90DF0938BF5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.DateTime", "BricksHoarder.DateTime\BricksHoarder.DateTime.csproj", "{559B0679-AF55-432E-91FF-1CF4F9C583C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.DateTime.Noda", "BricksHoarder.DateTime\BricksHoarder.DateTime.Noda.csproj", "{559B0679-AF55-432E-91FF-1CF4F9C583C6}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BricksHoarder.Database", "BricksHoarder.MsSql.Database\BricksHoarder.Database.sqlproj", "{3F87FC61-D01B-4E5C-A379-148013A4C96D}"
 EndProject
@@ -74,7 +74,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.MassTransit", "BricksHoarder.MassTransit\BricksHoarder.MassTransit.csproj", "{F7D2C1EB-DCC2-4FC4-BD80-D421EA1C0DBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionApp4", "FunctionApp4\FunctionApp4.csproj", "{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Playwright", "BricksHoarder.Playwright.Scrappers\BricksHoarder.Playwright.csproj", "{2B0A6383-5302-4F14-8A59-3E7DAFE633BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Playwright.Console", "BricksHoarder.Playwright.Console\BricksHoarder.Playwright.Console.csproj", "{B643418A-9ED2-4034-8C80-D9D92A11504B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Websites.Scrappers", "BricksHoarder.Websites.Scrappers\BricksHoarder.Websites.Scrappers.csproj", "{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions.Timers", "BricksHoarder.Functions.Timers\BricksHoarder.Functions.Timers.csproj", "{D68206A0-2D16-4381-AC26-DD74870A89CF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Projections", "BricksHoarder.Projections\BricksHoarder.Projections.csproj", "{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Projections.Rebuilder", "BricksHoarder.Projections.Rebuilder\BricksHoarder.Projections.Rebuilder.csproj", "{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Marten.Sandbox", "BricksHoarder.MartenDb.Sandbox\BricksHoarder.Marten.Sandbox.csproj", "{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions.Flows.Generator", "BricksHoarder.Functions.Flows.Generator\BricksHoarder.Functions.Flows.Generator.csproj", "{98958E86-6C5D-4F5D-B250-B57E22CCA595}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -304,14 +318,70 @@ Global
 		{F7D2C1EB-DCC2-4FC4-BD80-D421EA1C0DBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7D2C1EB-DCC2-4FC4-BD80-D421EA1C0DBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7D2C1EB-DCC2-4FC4-BD80-D421EA1C0DBF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
-		{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
-		{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
-		{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
-		{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B0A6383-5302-4F14-8A59-3E7DAFE633BE}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B0A6383-5302-4F14-8A59-3E7DAFE633BE}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{2B0A6383-5302-4F14-8A59-3E7DAFE633BE}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B0A6383-5302-4F14-8A59-3E7DAFE633BE}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{2B0A6383-5302-4F14-8A59-3E7DAFE633BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B0A6383-5302-4F14-8A59-3E7DAFE633BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B0A6383-5302-4F14-8A59-3E7DAFE633BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B0A6383-5302-4F14-8A59-3E7DAFE633BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B643418A-9ED2-4034-8C80-D9D92A11504B}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{B643418A-9ED2-4034-8C80-D9D92A11504B}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{B643418A-9ED2-4034-8C80-D9D92A11504B}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{B643418A-9ED2-4034-8C80-D9D92A11504B}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{B643418A-9ED2-4034-8C80-D9D92A11504B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B643418A-9ED2-4034-8C80-D9D92A11504B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B643418A-9ED2-4034-8C80-D9D92A11504B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B643418A-9ED2-4034-8C80-D9D92A11504B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D68206A0-2D16-4381-AC26-DD74870A89CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Debug - Azure|Any CPU.ActiveCfg = Debug|Any CPU
+		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Debug - Azure|Any CPU.Build.0 = Debug|Any CPU
+		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Debug - Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Debug - Local|Any CPU.Build.0 = Debug|Any CPU
+		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -339,7 +409,14 @@ Global
 		{7064C445-E804-4CA0-A77F-03B65B4A5A57} = {11B2C7BC-7DA5-4CF7-9E27-3B38D05357FC}
 		{2D91E8EA-525D-4D3F-881A-1C3656132209} = {27869AFF-33AB-4FA7-B30B-7BD2729B51F9}
 		{F7D2C1EB-DCC2-4FC4-BD80-D421EA1C0DBF} = {E81904F8-3F54-4FF7-8542-96A51096BBEE}
-		{624195BF-2D2E-48E1-A6B3-B48FAD2F7C8E} = {27869AFF-33AB-4FA7-B30B-7BD2729B51F9}
+		{2B0A6383-5302-4F14-8A59-3E7DAFE633BE} = {11B2C7BC-7DA5-4CF7-9E27-3B38D05357FC}
+		{B643418A-9ED2-4034-8C80-D9D92A11504B} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
+		{D851E8C4-110D-4C7A-A89E-7195AE9DD52D} = {662C9B86-7C3B-449F-96B4-B8503D7FFBBF}
+		{D68206A0-2D16-4381-AC26-DD74870A89CF} = {27869AFF-33AB-4FA7-B30B-7BD2729B51F9}
+		{B07CC5C2-EC69-4DF9-BE39-27BE2AECCAF0} = {662C9B86-7C3B-449F-96B4-B8503D7FFBBF}
+		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
+		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
+		{98958E86-6C5D-4F5D-B250-B57E22CCA595} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E820C2F3-08C8-491E-84A1-4E46C6D0C013}

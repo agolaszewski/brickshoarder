@@ -14,8 +14,9 @@ namespace BricksHoarder.Serilog
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                .MinimumLevel.Override("MassTransit", LogEventLevel.Error)
-                .MinimumLevel.Override("Hangfire", LogEventLevel.Error)
+                .MinimumLevel.Override("MassTransit", LogEventLevel.Debug)
+                .MinimumLevel.Override("Marten", LogEventLevel.Warning)
+                .MinimumLevel.Override("ThrottlingTroll", LogEventLevel.Error)
                 .WriteTo.Console(outputTemplate: format)
                 .Enrich.FromLogContext();
         }

@@ -1,0 +1,26 @@
+[
+  {
+    "domain": ".lego.com",
+    "expirationDate": 2737288945,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "AGE_GATE",
+    "path": "/",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "grown_up"
+  },
+  {
+    "domain": ".lego.com",
+    "expirationDate": 2737290615,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "LEGO_COOKIE_SETTINGS",
+    "path": "/",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "{\"preferences\":[{\"key\":\"analytics\",\"value\":false},{\"key\":\"legomarketing\",\"value\":false},{\"key\":\"necessary\",\"value\":true},{\"key\":\"thirdparty\",\"value\":false}]}"
+  }
+]

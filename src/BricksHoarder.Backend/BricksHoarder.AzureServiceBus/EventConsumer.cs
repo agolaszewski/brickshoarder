@@ -3,7 +3,7 @@ using BricksHoarder.Core.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace BricksHoarder.AzureCloud.ServiceBus;
+namespace BricksHoarder.Azure.ServiceBus;
 
 public class EventConsumer<TEvent> : IConsumer<TEvent> where TEvent : class, IEvent
 {

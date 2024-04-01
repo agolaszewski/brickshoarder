@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.Noda.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Helpers\BricksHoarder.Helpers.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Playwright.Scrappers\BricksHoarder.Playwright.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Cookies\lego.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

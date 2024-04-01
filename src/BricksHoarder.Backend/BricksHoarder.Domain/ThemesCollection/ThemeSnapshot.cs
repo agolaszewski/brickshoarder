@@ -8,12 +8,12 @@ public record ThemeSnapshot
 
     public ThemeSnapshot(Theme theme)
     {
-        Id = theme.Id;
+        ThemeId = theme.ThemeId;
         Name = theme.Name;
-        ParentId = theme.Parent?.Id;
+        ParentId = theme.Parent?.ThemeId;
     }
 
-    public int Id { get; set; }
+    public int ThemeId { get; set; }
 
     public string Name { get; set; } = null!;
 

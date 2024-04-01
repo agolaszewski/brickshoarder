@@ -7,21 +7,36 @@
             return type.Name.EndsWith("Saga");
         }
 
-        protected bool IsEventUsedBySaga(Type saga, Type @event)
+        protected bool IsUsedBySaga(Type saga, Type @event)
         {
             var properties = saga.GetProperties();
-            return properties.Any(p => IsEventInSaga(p.PropertyType, @event));
+            return properties.Any(p => IsInSaga(p.PropertyType, @event));
         }
 
-        private bool IsEventInSaga(Type property, Type @event)
+        private bool IsInSaga(Type property, Type @event)
         {
-            if (!property.IsGenericType)
+            var @args = property.GetGenericArguments();
+            var argsEvent = @event.GetGenericArguments();
+
+            if (@args.Length != argsEvent.Length)
             {
                 return false;
             }
 
-            var @args = property.GetGenericArguments();
-            return CheckGeneric(args, @event);
+            for (int i = 0; i < @args.Length; i++)
+            {
+                if (@args[i].Name != argsEvent[i].Name)
+                {
+                    return false;
+                }
+
+                if (!IsInSaga(args[i], argsEvent[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private bool CheckGeneric(Type[] types, Type @event)

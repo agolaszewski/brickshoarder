@@ -1,7 +1,9 @@
 ﻿using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Credentials;
+using BricksHoarder.Projections;
 using Marten;
 using Marten.Events;
+using Marten.Events.Projections;
 using Microsoft.Extensions.DependencyInjection;
 using Weasel.Core;
 
@@ -26,6 +28,8 @@ namespace BricksHoarder.Marten
                 options.Connection(connectionString);
                 options.AutoCreateSchemaObjects = AutoCreate.All;
                 options.Events.StreamIdentity = StreamIdentity.AsString;
+
+                options.Projections.Add<TestTransformation>(ProjectionLifecycle.Inline);
             });
             services.AddScoped<IAggregateStore, MartenAggregateStore>();
         }

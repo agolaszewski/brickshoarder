@@ -6,8 +6,8 @@ using Rebrickable.Api;
 namespace BricksHoarder.Domain.SetsCollection
 {
     public class SetsCollectionAggregate : AggregateRoot<SetsCollectionAggregate>,
-    IApply<SetReleased>,
-    IApply<SetDetailsChanged>
+        IApply<SetReleased>,
+        IApply<SetDetailsChanged>
     {
         private readonly List<Set> _collection = new();
 
@@ -15,23 +15,18 @@ namespace BricksHoarder.Domain.SetsCollection
 
         public void Apply(SetDetailsChanged @event)
         {
-            var set = _collection.First(x => x.Id != @event.Id);
-            set = set with { LastModifiedDate = @event.LastModifiedDate };
+            var set = _collection.First(x => x.SetId == @event.SetId);
+            set.LastModifiedDate = @event.LastModifiedDate;
         }
 
         public void Apply(SetReleased @event)
         {
-            _collection.Add(new Set(@event.Id, @event.LastModifiedDate));
+            _collection.Add(new Set(@event.SetId, @event.LastModifiedDate));
         }
 
         internal bool HasChanged(LegoSetsListAsyncResponse.Result apiSet)
         {
-            var set = _collection.FirstOrDefault(x => x.Id == apiSet.SetNum);
-
-            if (_collection.Count > 0)
-            {
-                return false;
-            }
+            var set = _collection.FirstOrDefault(x => x.SetId == apiSet.SetNum);
 
             if (set == null)
             {

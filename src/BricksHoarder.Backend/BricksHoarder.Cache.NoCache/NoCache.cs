@@ -17,5 +17,10 @@ namespace BricksHoarder.Cache.NoCache
         {
             return Task.FromResult<T?>(null);
         }
+
+        public Task ClearAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

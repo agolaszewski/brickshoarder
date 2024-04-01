@@ -1,5 +1,4 @@
 ﻿using BricksHoarder.Commands.Sets;
-using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
@@ -26,34 +25,38 @@ public class SyncSets
         public async Task<SetsCollectionAggregate> HandleAsync(SyncSetsCommand command)
         {
             var sets = await _aggregateStore.GetByIdOrDefaultAsync<SetsCollectionAggregate>();
-            int page = 0;
 
-            while (true)
+            int page = 0;
+            bool run = true;
+
+            while (run)
             {
                 page += 1;
 
-                IReadOnlyList<LegoSetsListAsyncResponse.Result> setsFromApi = await GetSetsAsync(page);
+                var legoSetsListResponse = await _rebrickableClient.LegoSetsListAsync(page: page, page_size: 1000, ordering: "-last_modified_dt");
+                var setsFromApi = legoSetsListResponse.Results;
+
                 foreach (var apiSet in setsFromApi)
                 {
-                    if (sets.HasChanged(apiSet))
+                    if (!sets.HasChanged(apiSet))
                     {
-                        continue;
+                        run = false;
+                        break;
                     }
+                }
 
-                    if (!sets.Events.Any())
-                    {
-                        _integrationEventsQueue.Queue(new NoChangesToSets());
-                    }
-
-                    return sets;
+                if (string.IsNullOrWhiteSpace(legoSetsListResponse.Next))
+                {
+                    break;
                 }
             }
-        }
 
-        private async Task<IReadOnlyList<LegoSetsListAsyncResponse.Result>> GetSetsAsync(int pageNumber)
-        {
-            LegoSetsListAsyncResponse? response = await _rebrickableClient.LegoSetsListAsync(page: pageNumber, page_size: 1000, ordering: "-last_modified_dt");
-            return response.Results;
+            if (!sets.Events.Any())
+            {
+                _integrationEventsQueue.Queue(new NoChangesToSets());
+            }
+
+            return sets;
         }
     }
 }

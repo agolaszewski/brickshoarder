@@ -50,31 +50,14 @@ namespace BricksHoarder.Marten
         public async Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
         {
             string streamName = $"{aggregate.GetType().Name}:{aggregate.Id}";
-            var aggregateMap = _context.GetService<IAggregateMap<TAggregate>>();
-
-            if (aggregateMap != null)
-            {
-                if (aggregate.Version == -1)
-                {
-                    await Policies.SqRetryPolicy.ExecuteAsync(() => aggregateMap.CreateAsync(aggregate));
-                }
-                else if (aggregate.IsDeleted)
-                {
-                    await Policies.SqRetryPolicy.ExecuteAsync(() => aggregateMap.DeleteAsync(aggregate));
-                }
-                else
-                {
-                    await Policies.SqRetryPolicy.ExecuteAsync(() => aggregateMap.UpdateAsync(aggregate));
-                }
-            }
-
+            
             PolicyResult eventStoreOutcome = PolicyResult.Successful(null);
 
             if (aggregate.Events.Any())
             {
                 eventStoreOutcome = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(async () =>
                 {
-                    await using var session = _eventStore.OpenSession();
+                    await using var session = _eventStore.LightweightSession();
                     session.Events.Append(streamName, aggregate.Version + aggregate.Events.Count(), aggregate.Events.Select(a => a.Event).ToList());
                     await session.SaveChangesAsync();
                 });
@@ -85,29 +68,11 @@ namespace BricksHoarder.Marten
                 aggregate.Version += aggregate.Events.Count();
 
                 var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
-                await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromHours(1));
-                return;
-            }
-
-            if (aggregateMap != null)
-            {
-                var publishResult = await Policies.PublishRetryPolicy.ExecuteAndCaptureAsync(() => _publishEndpoint.Publish(new AggregateInOutOfSyncState()
-                {
-                    AggregateId = aggregate.Id,
-                    Type = aggregate.GetType().FullName!,
-                    Version = aggregate.Version
-                }));
-
-                if (publishResult.Outcome == OutcomeType.Failure)
-                {
-                    throw new ApplicationException($"Cannot sync aggregate {aggregate.Id} of type {aggregate.GetType().FullName}", eventStoreOutcome.FinalException);
-                }
-
-                throw eventStoreOutcome.FinalException;
+                await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromDays(7));
             }
         }
 
-        public async Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
+        public Task DeleteAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
         {
             throw new NotImplementedException();
         }
@@ -115,20 +80,20 @@ namespace BricksHoarder.Marten
         public async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>()
             where TAggregate : class, IAggregateRoot, new()
         {
-            var streamName = typeof(TAggregate).Name + ":";
-            return await GetByIdOrDefaultAsync<TAggregate>(streamName, 0);
+            return await GetByIdOrDefaultAsync<TAggregate>(string.Empty, 0);
         }
 
         public async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId)
             where TAggregate : class, IAggregateRoot, new()
         {
-            var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
-            return await GetByIdOrDefaultAsync<TAggregate>(streamName, 0);
+            return await GetByIdOrDefaultAsync<TAggregate>(aggregateId, 0);
         }
 
-        private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string streamName, int version)
+        private async Task<TAggregate> GetByIdOrDefaultAsync<TAggregate>(string aggregateId, int version)
             where TAggregate : class, IAggregateRoot, new()
         {
+            var streamName = $"{typeof(TAggregate).Name}:{aggregateId}";
+
             if (version < 0)
             {
                 throw new InvalidOperationException("Cannot get version <= 0");
@@ -149,7 +114,7 @@ namespace BricksHoarder.Marten
 
             long sliceStart = aggregate.Version + 1;
 
-            using var session = _eventStore.OpenSession();
+            using var session = _eventStore.LightweightSession();
             var events = await session.Events.FetchStreamAsync(streamName, version: version, fromVersion: sliceStart);
 
             foreach (var @event in events)
@@ -164,6 +129,7 @@ namespace BricksHoarder.Marten
                 aggregate.Version++;
             }
 
+            aggregate.Id = aggregateId;
             aggregate.Context = _context;
             return aggregate;
         }

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.143" />
+    <PackageReference Include="Dapper" Version="2.1.28" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
@@ -16,7 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
     <ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
-    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.csproj" />
+    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.Noda.csproj" />
   </ItemGroup>
 
   <ItemGroup>

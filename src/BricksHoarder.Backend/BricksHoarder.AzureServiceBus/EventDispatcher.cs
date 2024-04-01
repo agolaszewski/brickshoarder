@@ -2,7 +2,7 @@
 using BricksHoarder.Core.Services;
 using MassTransit;
 
-namespace BricksHoarder.AzureCloud.ServiceBus
+namespace BricksHoarder.Azure.ServiceBus
 {
     public class EventDispatcher : IEventDispatcher
     {
@@ -16,6 +16,19 @@ namespace BricksHoarder.AzureCloud.ServiceBus
         }
 
         public async Task<Guid> DispatchAsync<TEvent>(TEvent @event) where TEvent : class, IEvent
+        {
+            var correlationId = _guidService.New;
+            await _publishEndpoint.Publish(@event, callback => { callback.CorrelationId = correlationId; });
+            return correlationId;
+        }
+
+        public async Task<Guid> DispatchAsync<TEvent>(TEvent @event, Guid correlationId) where TEvent : class, IEvent
+        {
+            await _publishEndpoint.Publish(@event, callback => { callback.CorrelationId = correlationId; });
+            return correlationId;
+        }
+
+        public async Task<Guid> DispatchAsync(object @event) 
         {
             var correlationId = _guidService.New;
             await _publishEndpoint.Publish(@event, callback => { callback.CorrelationId = correlationId; });

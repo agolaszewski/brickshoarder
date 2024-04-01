@@ -1,12 +1,11 @@
-﻿using BricksHoarder.Common.CQRS;
-using BricksHoarder.Core.Aggregates;
+﻿using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace BricksHoarder.AzureCloud.ServiceBus
+namespace BricksHoarder.Azure.ServiceBus
 {
     public class CommandConsumer<TCommand, TAggregateRoot> : IConsumer<TCommand> where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
     {
@@ -31,8 +30,8 @@ namespace BricksHoarder.AzureCloud.ServiceBus
         {
             try
             {
-                _logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.CorrelationId}");
-
+                _logger.LogInformation("Consuming {0} {1}", context.Message.GetType().FullName, context.CorrelationId);
+               
                 TAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
                 await _aggregateStore.SaveAsync(aggregateRoot);
 
@@ -50,13 +49,16 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     await context.Publish(@event, @event.GetType(), x => x.CorrelationId = context.CorrelationId);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                int x = 1;
+                _logger.LogCritical("Exception {0} {1}", context.Message.GetType().FullName, context.CorrelationId);
+                _logger.LogCritical(System.Text.Json.JsonSerializer.Serialize(context.Message));
+
+                throw;
             }
             finally
             {
-                _logger.LogDebug($"Consumed {context.Message.GetType().FullName} {context.CorrelationId!}");
+                _logger.LogInformation("Consumed {0} {1}", context.Message.GetType().FullName, context.CorrelationId);
             }
         }
     }

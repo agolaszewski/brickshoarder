@@ -12,5 +12,7 @@
         Task<Guid> DispatchAsync<TRequest, TCommand>(TRequest request, Action<TCommand> afterMap)
             where TCommand : class, ICommand
             where TRequest : class, IRequest;
+
+        Task<Guid> DispatchAsync(object command);
     }
 }

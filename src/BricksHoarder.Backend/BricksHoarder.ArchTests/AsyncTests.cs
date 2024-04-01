@@ -1,12 +1,12 @@
+using System.Threading.Tasks;
 using ArchUnitNET.Domain;
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnit;
 using BricksHoarder.Functions;
-using System.Threading.Tasks;
 using Xunit;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace BricksHoarder.ArchTests
+namespace BricksHoarder.Arch.Tests
 {
     public class AsyncTests
     {
@@ -19,9 +19,9 @@ namespace BricksHoarder.ArchTests
                 .That()
                 .HaveFullNameContaining("BricksHoarder")
                 .And()
-                .DoNotHaveFullNameContaining("BricksHoarder.AzureServiceBus.CommandConsumer")
+                .DoNotHaveFullNameContaining("BricksHoarder.AzureCloud.ServiceBus.CommandConsumer")
                 .And()
-                .DoNotHaveFullNameContaining("BricksHoarder.AzureServiceBus.EventConsumer");
+                .DoNotHaveFullNameContaining("BricksHoarder.AzureCloud.ServiceBus.EventConsumer");
 
         [Fact]
         public void Async_Methods_Should_Ends_With_Async()

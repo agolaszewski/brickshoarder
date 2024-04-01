@@ -20,9 +20,9 @@ namespace BricksHoarder.Domain.ThemesCollection
         {
             foreach (var theme in snapshot.Themes)
             {
-                var parent = _collection.FirstOrDefault(item => item.Id == theme.ParentId);
+                var parent = _collection.FirstOrDefault(item => item.ThemeId == theme.ParentId);
 
-                var newTheme = new Theme(theme.Id, theme.Name, parent);
+                var newTheme = new Theme(theme.ThemeId, theme.Name, parent);
                 parent?.Children.Add(newTheme);
 
                 _collection.Add(newTheme);
@@ -33,15 +33,15 @@ namespace BricksHoarder.Domain.ThemesCollection
 
         public void Apply(ThemeReleased @event)
         {
-            var parent = _collection.FirstOrDefault(item => item.Id == @event.ParentId);
+            var parent = _collection.FirstOrDefault(item => item.ThemeId == @event.ParentId);
 
-            var newTheme = new Theme(@event.Id, @event.Name, parent);
+            var newTheme = new Theme(@event.ThemeId, @event.Name, parent);
             parent?.Children.Add(newTheme);
 
             _collection.Add(newTheme);
         }
 
-        public bool Exists(int id) => _collection.Any(item => item.Id == id);
+        public bool Exists(int id) => _collection.Any(item => item.ThemeId == id);
 
         public void Add(LegoThemesListAsyncResponse.Result theme)
         {

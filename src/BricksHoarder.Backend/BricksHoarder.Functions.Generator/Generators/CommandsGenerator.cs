@@ -1,5 +1,7 @@
 ﻿using BricksHoarder.Core.Commands;
 using BricksHoarder.Domain;
+using BricksHoarder.Events;
+using MassTransit;
 
 namespace BricksHoarder.Functions.Generator.Generators
 {
@@ -14,14 +16,16 @@ namespace BricksHoarder.Functions.Generator.Generators
         {
             "BricksHoarder.Commands.Metadata",
             "MassTransit",
-            "Microsoft.Azure.Functions.Worker"
+            "Microsoft.Azure.Functions.Worker",
+            "Azure.Messaging.ServiceBus"
         };
 
         private readonly List<string> _requiredCommandsConsumedNamespaces = new()
         {
             "BricksHoarder.Events.Metadata",
             "MassTransit",
-            "Microsoft.Azure.Functions.Worker"
+            "Microsoft.Azure.Functions.Worker",
+            "Azure.Messaging.ServiceBus"
         };
 
         public CommandsGenerator()
@@ -49,6 +53,9 @@ namespace BricksHoarder.Functions.Generator.Generators
 
                 compiled = Templates.CommandConsumedMetadataTemplate.Replace("{{command}}", command.Name);
                 File.WriteAllText($"{Catalogs.EventsMetadataCatalog}\\{command.Name}ConsumedMetadata.cs", compiled);
+
+                compiled = Templates.CommandFaultedMetadataTemplate.Replace("{{command}}", command.Name);
+                File.WriteAllText($"{Catalogs.EventsMetadataCatalog}\\{command.Name}FaultedMetadata.cs", compiled);
             }
         }
 
@@ -56,7 +63,8 @@ namespace BricksHoarder.Functions.Generator.Generators
         {
             foreach (var handler in _commandHandlers)
             {
-                CreateFunctionForSaga(handler);
+                CreateConsumedFunctionForSaga(handler);
+                CreateFaultedFunctionForSaga(handler);
                 CreateFunction(handler);
             }
         }
@@ -79,11 +87,17 @@ namespace BricksHoarder.Functions.Generator.Generators
             File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{command.Name}Function.cs", compiled);
         }
 
-        private void CreateFunctionForSaga(CommandHandlerType handler)
+        private void CreateConsumedFunctionForSaga(CommandHandlerType handler)
         {
             var command = handler.Command;
 
-            var saga = _sagas.FirstOrDefault(s => IsEventUsedBySaga(s, command));
+            var consumed = typeof(CommandConsumed<>);
+            var genericConsumed = consumed.MakeGenericType(command);
+
+            var eventType = typeof(Event<>);
+            var genericEventType = eventType.MakeGenericType(genericConsumed);
+
+            var saga = _sagas.FirstOrDefault(s => IsUsedBySaga(s, genericEventType));
             if (saga is null)
             {
                 return;
@@ -101,6 +115,36 @@ namespace BricksHoarder.Functions.Generator.Generators
             compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
 
             File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{command.Name}ConsumedFunction.cs", compiled);
+        }
+
+        private void CreateFaultedFunctionForSaga(CommandHandlerType handler)
+        {
+            var command = handler.Command;
+
+            var consumed = typeof(Fault<>);
+            var genericConsumed = consumed.MakeGenericType(command);
+
+            var eventType = typeof(Event<>);
+            var genericEventType = eventType.MakeGenericType(genericConsumed);
+
+            var saga = _sagas.FirstOrDefault(s => IsUsedBySaga(s, genericEventType));
+            if (saga is null)
+            {
+                return;
+            }
+
+            var eventHandler = $"await HandleSagaAsync<{saga.Name}State>(@event, {command.Name}FaultedMetadata.TopicPath, Default, cancellationToken);";
+
+            var compiled = Templates.EventFunctionTemplate.Replace("{{event}}", $"{command.Name}Faulted");
+            compiled = compiled.Replace("{{eventHandler}}", eventHandler);
+
+            var namespaces = _requiredCommandsConsumedNamespaces.ToList();
+            namespaces.Add(saga.Namespace!);
+            namespaces = namespaces.OrderBy(x => x, new NamespaceComparer()).Select(x => $"using {x};").ToList();
+
+            compiled = compiled.Replace("{{namespaces}}", string.Join(Environment.NewLine, namespaces));
+
+            File.WriteAllText($"{Catalogs.FunctionsCatalog}\\{command.Name}FaultedFunction.cs", compiled);
         }
     }
 }

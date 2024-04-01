@@ -14,6 +14,11 @@ namespace BricksHoarder.Credentials
             ConnectionString = credentials.ConnectionString;
         }
 
+        public RedisCredentials(RedisLabCredentialsBase credentials)
+        {
+            ConnectionString = credentials.ConnectionString;
+        }
+
         public string ConnectionString { get; }
     }
 }

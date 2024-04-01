@@ -1,4 +1,4 @@
-﻿using BricksHoarder.Commands.Metadata;
+﻿using BricksHoarder.Azure.ServiceBus.Services;
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common.CQRS;
@@ -8,26 +8,33 @@ using BricksHoarder.Credentials;
 using BricksHoarder.Domain.SyncRebrickableData;
 using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
-using BricksHoarder.MassTransit;
 using MassTransit;
 using MassTransit.AzureServiceBusTransport;
-using MassTransit.Configuration;
+using MassTransit.Scheduling;
 using Microsoft.Azure.WebJobs.ServiceBus;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace BricksHoarder.AzureCloud.ServiceBus
+namespace BricksHoarder.Azure.ServiceBus
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, SqlServerDatabaseCredentials sqlServerDatabaseCredentials)
+        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, RedisCredentials redisCredentials)
         {
+            services.AddScoped<RequestToCommandMapper>();
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-            services.AddOutbox(sqlServerDatabaseCredentials);
+            
+            services.AddAzureClients(builder =>
+            {
+                builder.AddServiceBusClient(credentials.ConnectionString).WithName("ServiceBusClient");
+                builder.AddServiceBusAdministrationClient(credentials.ConnectionString).WithName("ServiceBusAdministrationClient");
+            });
+            services.AddScoped<DeadLetterQueueRescheduler>();
 
             services.AddMassTransit(x =>
             {
@@ -49,16 +56,19 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     x.AddConsumer(typeof(CommandConsumer<,>).MakeGenericType(typeArguments));
                 }
 
-                var sagas = domainAssembly
-                    .Where(t => t.Name.EndsWith("Saga"));
+                x.AddServiceBusMessageScheduler();
 
-                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>().InMemoryRepository();
-                //.EntityFrameworkRepository(r =>
-                //{
-                //    r.ExistingDbContext<MassTransitDbContext>();
-                //    r.UseSqlServer();
-                //    r.
-                //});
+                var sagas = domainAssembly.Where(t => t.Name.EndsWith("Saga"));
+
+                x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>((context, config) =>
+                {
+                    config.UseInMemoryOutbox(context);
+
+                }).RedisRepository(opt =>
+                {
+                    opt.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+                    opt.DatabaseConfiguration(redisCredentials.ConnectionString);
+                });
 
                 //foreach (var sagaType in sagas)
                 //{
@@ -75,6 +85,11 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     //x.AddConsumer(typeof(EventConsumer<>).MakeGenericType(eventType));
                 }
 
+                //SchedulingConsumers
+                x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetInSale>));
+                x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetToBeReleased>));
+                x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetPending>));
+
                 x.UsingAzureServiceBus((context, cfg) =>
                 {
                     var options = context.GetRequiredService<IOptions<ServiceBusOptions>>();
@@ -85,6 +100,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                     });
 
                     cfg.Publish<IEvent>(x => x.Exclude = true);
+                    cfg.Publish<IBatch>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
                     cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
@@ -102,9 +118,14 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                         x.SetEntityName(SyncSetRebrickableDataCommandConsumedMetadata.TopicPath);
                     });
 
+                    cfg.Message<BatchEvent<SetReleased>>(x =>
+                    {
+                        x.SetEntityName(SetReleasedBatchMetadata.TopicPath);
+                    });
+
                     cfg.UseServiceBusMessageScheduler();
 
-                    cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10)));
+                    cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromMilliseconds(500), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(5)));
                 });
 
                 //x.AddEntityFrameworkOutbox<MassTransitDbContext>(o =>
@@ -119,7 +140,7 @@ namespace BricksHoarder.AzureCloud.ServiceBus
                 //});
             });
 
-            services.RemoveMassTransitHostedService();
+            //services.RemoveMassTransitHostedService();
         }
     }
 }

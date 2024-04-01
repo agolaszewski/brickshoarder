@@ -1,4 +1,15 @@
 ﻿namespace BricksHoarder.Domain.SetsCollection
 {
-    public record Set(string Id, DateTime LastModifiedDate);
+    public class Set
+    {
+        public string SetId { get; set; }
+
+        public System.DateTime LastModifiedDate { get; set; }
+
+        public Set(string setId, System.DateTime lastModifiedDate)
+        {
+            SetId = setId;
+            LastModifiedDate = lastModifiedDate;
+        }
+    }
 }

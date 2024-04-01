@@ -1,9 +1,9 @@
 using Azure.Messaging.ServiceBus;
-using BricksHoarder.AzureCloud.ServiceBus;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using MassTransit;
+using BricksHoarder.Azure.ServiceBus;
 
 namespace BricksHoarder.Functions;
 
@@ -49,6 +49,19 @@ public abstract class BaseFunction
         try
         {
             await _receiver.HandleSaga<TSaga>(topic, subscription, @event, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task ScheduleAsync<TCommand, TEvent>(ServiceBusReceivedMessage @event, string topic, string subscription, CancellationToken cancellationToken) where TCommand : class, ICommand where TEvent : class, IEvent, IScheduling<TCommand>    
+    {
+        try
+        {
+            await _receiver.HandleConsumer<SchedulingConsumer<TCommand,TEvent>>(topic, subscription, @event, cancellationToken);
         }
         catch (Exception e)
         {

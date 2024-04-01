@@ -15,8 +15,13 @@ await SetupAsync();
 async Task SetupAsync()
 {
     var services = new ServiceCollection();
+
+    var absolutePath = Path.GetFullPath("./BricksHoarder.Functions");
+
     var config = new ConfigurationBuilder()
+        .SetBasePath(absolutePath)
         .AddUserSecrets<Program>()
+        .AddJsonFile("local.settings.json", false)
         .Build();
 
     services.AddLogging(configure =>
@@ -43,32 +48,60 @@ async Task SetupAsync()
             .Where(t => !t.IsGenericType)
             .ToList();
 
+        var batchedEvents = eventsAssembly
+            .Where(t => typeof(IBatch).IsAssignableFrom(t))
+            .Where(t => !t.IsGenericType)
+            .ToList();
+
         x.UsingAzureServiceBus((context, cfg) =>
         {
             cfg.Host(azureServiceBusCredentials.ConnectionString, _ =>
             {
             });
             cfg.DeployTopologyOnly = true;
+            cfg.DeployPublishTopology = true;
 
             cfg.Publish<IEvent>(x => x.Exclude = true);
+            cfg.Publish<IBatch>(x => x.Exclude = true);
             cfg.Publish<ICommand>(x => x.Exclude = true);
+
+            cfg.SubscriptionEndpoint("default", $"brickshoarder/fault", configure =>
+            {
+            });
+
+            Thread.Sleep(1000);
 
             foreach (var command in commandsTypes)
             {
                 cfg.ReceiveEndpoint(command.Name, configureEndpoint =>
                 {
                     configureEndpoint.ConfigureConsumeTopology = false;
+                    configureEndpoint.MaxDeliveryCount = 1;
+                    configureEndpoint.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
                 });
 
                 cfg.SubscriptionEndpoint("default", $"brickshoarder.events/consumed/{command.Name}", configure =>
                 {
+                    configure.MaxDeliveryCount = 1;
+                    configure.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
                 });
             }
 
             foreach (var events in eventsTypes)
             {
-                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{events.Name}", _ =>
+                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/{events.Name}", configure =>
                 {
+                    configure.MaxDeliveryCount = 1;
+                    configure.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
+                });
+            }
+
+            foreach (var events in batchedEvents)
+            {
+                cfg.SubscriptionEndpoint("default", $"brickshoarder.events/batch/{events.Name}", configure =>
+                {
+                    configure.MaxDeliveryCount = 1;
+                    configure.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
                 });
             }
 

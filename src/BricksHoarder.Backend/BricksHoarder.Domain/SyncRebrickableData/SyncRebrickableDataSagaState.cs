@@ -2,17 +2,17 @@
 
 namespace BricksHoarder.Domain.SyncRebrickableData;
 
-public class SyncRebrickableDataSagaState : SagaStateMachineInstance
+public class SyncRebrickableDataSagaState : SagaStateMachineInstance, ISagaVersion
 {
-    public string Id { get; set; }
-
     public Guid CorrelationId { get; set; }
 
     public int CurrentState { get; set; }
 
     public List<ProcessingItem> SetsToProcess { get; set; } = new List<ProcessingItem>();
 
-    public bool SyncingSetsFinished { get;  set; }
+    public bool SyncingSetsFinished { get; set; }
+
+    public int Version { get; set; }
 
     internal void AddSetToBeProcessed(string id)
     {
@@ -46,9 +46,9 @@ public class SyncRebrickableDataSagaState : SagaStateMachineInstance
         set.State = ProcessingState.Processing;
     }
 
-    internal string GetNextUnprocessedSet()
+    internal ProcessingItem? GetNextUnprocessedSet()
     {
-        var set = SetsToProcess.First(x => x.State == ProcessingState.NotStarted);
-        return set.Id;
+        var set = SetsToProcess.FirstOrDefault(x => x.State == ProcessingState.NotStarted);
+        return set;
     }
 }

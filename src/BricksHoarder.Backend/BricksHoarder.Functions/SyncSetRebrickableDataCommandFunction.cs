@@ -1,6 +1,7 @@
 using BricksHoarder.Commands.Metadata;
 using BricksHoarder.Commands.Sets;
-using BricksHoarder.Domain.Set;
+using BricksHoarder.Domain.RebrickableSet;
+using Azure.Messaging.ServiceBus;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
 
@@ -13,8 +14,8 @@ public class SyncSetRebrickableDataCommandFunction : BaseFunction
     }
 
     [Function(SyncSetRebrickableDataCommandMetadata.Consumer)]
-    public async Task RunAsync([ServiceBusTrigger(SyncSetRebrickableDataCommandMetadata.QueuePath, Connection = ServiceBusConnectionString)] Azure.Messaging.ServiceBus.ServiceBusReceivedMessage command, CancellationToken cancellationToken)
+    public async Task RunAsync([ServiceBusTrigger(SyncSetRebrickableDataCommandMetadata.QueuePath, Connection = ServiceBusConnectionString)] ServiceBusReceivedMessage command, CancellationToken cancellationToken)
     {
-        await HandleCommandAsync<SyncSetRebrickableDataCommand,RebrickableSetAggregate>(command, cancellationToken);
+        await HandleCommandAsync<SyncSetRebrickableDataCommand, RebrickableSetAggregate>(command, cancellationToken);
     }
 }
