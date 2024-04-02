@@ -9,7 +9,7 @@
                 return Availability.Unknown;
             }
 
-            if (productStatus == "Ostatnia szansa")
+            if (productStatus == "Ostatnia szansa" && text != "Produkt wycofany – zakończono produkcję")
             {
                 return Availability.RunningOut;
             }
