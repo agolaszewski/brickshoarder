@@ -76,7 +76,7 @@ namespace BricksHoarder.Azure.ServiceBus.Services
     {
         private readonly ServiceBusClient _serviceBusClient = serviceBusClientFactory.CreateClient("ServiceBusClient");
 
-        public async Task HandleAsync()
+        public async Task HandleAsync(int amount)
         {
             logger.LogWarning("ResubmitDeadQueueService invoked");
 
@@ -85,7 +85,7 @@ namespace BricksHoarder.Azure.ServiceBus.Services
                 SubQueue = SubQueue.DeadLetter
             });
 
-            var messages = await receiver.ReceiveMessagesAsync(1000);
+            var messages = await receiver.ReceiveMessagesAsync(amount);
             foreach (var message in messages)
             {
                 await ResendAsync(message);

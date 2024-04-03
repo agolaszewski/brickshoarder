@@ -37,7 +37,7 @@ namespace BricksHoarder.Functions.AppFunctions
         [Function("ResubmitDeadQueueFunction")]
         public async Task RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
         {
-            await _resubmitDeadQueueService.HandleAsync();
+            await _resubmitDeadQueueService.HandleAsync(int.Parse(req.Form["amount"]));
         }
     }
 }
