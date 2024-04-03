@@ -4,7 +4,7 @@ namespace BricksHoarder.Functions;
 
 public class {{event}}Function : BaseFunction
 {
-    public {{event}}Function(IMessageReceiver receiver) : base(receiver)
+    public {{event}}Function(IMessageReceiver receiver, ILogger<{{event}}Function> logger) : base(receiver, logger)
     {
     }
 

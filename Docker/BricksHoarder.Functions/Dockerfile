@@ -3,11 +3,11 @@
 #docker tag brickshoarder:latest agolaszewski1337/brickshoarder:latest
 #docker push agolaszewski1337/brickshoarder:latest
 
-FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0 AS base
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0 AS base
 WORKDIR /home/site/wwwroot
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . ./
 RUN dotnet restore "BricksHoarder.Functions/BricksHoarder.Functions.csproj"

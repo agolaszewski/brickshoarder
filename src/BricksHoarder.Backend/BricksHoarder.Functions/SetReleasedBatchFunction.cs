@@ -3,12 +3,13 @@ using BricksHoarder.Events.Metadata;
 using Azure.Messaging.ServiceBus;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.Functions;
 
 public class SetReleasedBatchFunction : BaseFunction
 {
-    public SetReleasedBatchFunction(IMessageReceiver receiver) : base(receiver)
+    public SetReleasedBatchFunction(IMessageReceiver receiver, ILogger<SetReleasedBatchFunction> logger) : base(receiver, logger)
     {
     }
 

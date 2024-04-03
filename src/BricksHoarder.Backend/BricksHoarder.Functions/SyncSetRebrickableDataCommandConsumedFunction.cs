@@ -3,12 +3,13 @@ using BricksHoarder.Events.Metadata;
 using Azure.Messaging.ServiceBus;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.Functions;
 
 public class SyncSetRebrickableDataCommandConsumedFunction : BaseFunction
 {
-    public SyncSetRebrickableDataCommandConsumedFunction(IMessageReceiver receiver) : base(receiver)
+    public SyncSetRebrickableDataCommandConsumedFunction(IMessageReceiver receiver, ILogger<SyncSetRebrickableDataCommandConsumedFunction> logger) : base(receiver, logger)
     {
     }
 

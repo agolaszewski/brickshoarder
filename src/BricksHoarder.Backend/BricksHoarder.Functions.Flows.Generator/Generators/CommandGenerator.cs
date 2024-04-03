@@ -19,7 +19,8 @@ namespace BricksHoarder.Functions.Flows.Generator.Generators
             "BricksHoarder.Commands.Metadata",
             "MassTransit",
             "Microsoft.Azure.Functions.Worker",
-            "Azure.Messaging.ServiceBus"
+            "Azure.Messaging.ServiceBus",
+            "Microsoft.Extensions.Logging"
         };
 
         private static readonly List<string> RequiredCommandsConsumedNamespaces = new()
@@ -27,7 +28,8 @@ namespace BricksHoarder.Functions.Flows.Generator.Generators
             "BricksHoarder.Events.Metadata",
             "MassTransit",
             "Microsoft.Azure.Functions.Worker",
-            "Azure.Messaging.ServiceBus"
+            "Azure.Messaging.ServiceBus",
+            "Microsoft.Extensions.Logging"
         };
 
         private static readonly Type[] DomainAssembly;

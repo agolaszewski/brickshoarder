@@ -5,12 +5,13 @@ using BricksHoarder.Events.Metadata;
 using Azure.Messaging.ServiceBus;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.Functions;
 
 public class LegoSetToBeReleasedFunction : BaseFunction
 {
-    public LegoSetToBeReleasedFunction(IMessageReceiver receiver) : base(receiver)
+    public LegoSetToBeReleasedFunction(IMessageReceiver receiver, ILogger<LegoSetToBeReleasedFunction> logger) : base(receiver, logger)
     {
     }
 

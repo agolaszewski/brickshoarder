@@ -3,12 +3,13 @@ using BricksHoarder.Events.Metadata;
 using Azure.Messaging.ServiceBus;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.Functions;
 
 public class SyncSagaStartedFunction : BaseFunction
 {
-    public SyncSagaStartedFunction(IMessageReceiver receiver) : base(receiver)
+    public SyncSagaStartedFunction(IMessageReceiver receiver, ILogger<SyncSagaStartedFunction> logger) : base(receiver, logger)
     {
     }
 

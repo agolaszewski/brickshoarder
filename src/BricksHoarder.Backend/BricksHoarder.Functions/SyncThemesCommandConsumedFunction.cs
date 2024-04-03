@@ -3,12 +3,13 @@ using BricksHoarder.Events.Metadata;
 using Azure.Messaging.ServiceBus;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.Functions;
 
 public class SyncThemesCommandConsumedFunction : BaseFunction
 {
-    public SyncThemesCommandConsumedFunction(IMessageReceiver receiver) : base(receiver)
+    public SyncThemesCommandConsumedFunction(IMessageReceiver receiver, ILogger<SyncThemesCommandConsumedFunction> logger) : base(receiver, logger)
     {
     }
 

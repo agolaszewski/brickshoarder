@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Kurnakov.EnumConverter" Version="2.1.1" />
-    <PackageReference Include="MessagePack.Annotations" Version="2.5.129" />
+    <PackageReference Include="Kurnakov.EnumConverter" Version="2.2.0" />
+    <PackageReference Include="MessagePack.Annotations" Version="2.5.140" />
     <PackageReference Include="Polly" Version="8.3.1" />
     <PackageReference Include="Rebrickable.Api" Version="3.2.1" />
     <PackageReference Include="Scrutor" Version="4.2.2" />

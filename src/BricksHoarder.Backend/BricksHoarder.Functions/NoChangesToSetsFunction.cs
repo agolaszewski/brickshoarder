@@ -3,12 +3,13 @@ using BricksHoarder.Events.Metadata;
 using Azure.Messaging.ServiceBus;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.Functions;
 
 public class NoChangesToSetsFunction : BaseFunction
 {
-    public NoChangesToSetsFunction(IMessageReceiver receiver) : base(receiver)
+    public NoChangesToSetsFunction(IMessageReceiver receiver, ILogger<NoChangesToSetsFunction> logger) : base(receiver, logger)
     {
     }
 
