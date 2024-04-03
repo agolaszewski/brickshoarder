@@ -94,7 +94,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
         private async Task<LegoScrapperResponse> GetProductAsync(IPage page, string setId)
         {
-            var name = await page.Locator("data-test=product-overview-name").TextContentAsync();
+            var name = await page.Locator("data-test=product-overview-name").GetTextContentIfVisibleAsync();
             var imgUrl = await GetPictureAsync(page, 1);
 
             var container = page.Locator("data-test=product-overview-container");
