@@ -299,7 +299,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 ServerFarmId = appServicePlanFunctionsWindows.Id,
                 SiteConfig = new SiteConfigArgs
                 {
-                    LinuxFxVersion = "DOTNET-ISOLATED|7.0",
+                    LinuxFxVersion = "DOTNET-ISOLATED|8.0",
                     FunctionAppScaleLimit = 1,
                     NumberOfWorkers = 1,
                     AppSettings = new[]
