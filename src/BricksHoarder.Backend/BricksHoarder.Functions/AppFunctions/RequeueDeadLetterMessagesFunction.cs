@@ -1,5 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
 using BricksHoarder.Azure.ServiceBus.Services;
+using BricksHoarder.Core.Commands;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 
 namespace BricksHoarder.Functions.AppFunctions
@@ -20,6 +22,22 @@ namespace BricksHoarder.Functions.AppFunctions
             {
                 await actions.DeadLetterMessageAsync(message, cancellationToken: cancellationToken);
             }
+        }
+    }
+
+    public class ResubmitDeadQueueFunction
+    {
+        private readonly ResubmitDeadQueueService _resubmitDeadQueueService;
+
+        public ResubmitDeadQueueFunction(ResubmitDeadQueueService resubmitDeadQueueService)
+        {
+            _resubmitDeadQueueService = resubmitDeadQueueService;
+        }
+
+        [Function("ResubmitDeadQueueFunction")]
+        public async Task RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+        {
+            await _resubmitDeadQueueService.HandleAsync();
         }
     }
 }

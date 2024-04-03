@@ -35,6 +35,7 @@ namespace BricksHoarder.Azure.ServiceBus
                 builder.AddServiceBusAdministrationClient(credentials.ConnectionString).WithName("ServiceBusAdministrationClient");
             });
             services.AddScoped<DeadLetterQueueRescheduler>();
+            services.AddScoped<ResubmitDeadQueueService>();
 
             services.AddMassTransit(x =>
             {
