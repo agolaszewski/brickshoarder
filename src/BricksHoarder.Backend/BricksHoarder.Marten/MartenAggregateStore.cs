@@ -1,7 +1,6 @@
 ﻿using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Exceptions;
 using BricksHoarder.Core.Services;
-using BricksHoarder.Events;
 using Marten;
 using Marten.Events;
 using MassTransit;
@@ -50,7 +49,7 @@ namespace BricksHoarder.Marten
         public async Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : class, IAggregateRoot
         {
             string streamName = $"{aggregate.GetType().Name}:{aggregate.Id}";
-            
+
             PolicyResult eventStoreOutcome = PolicyResult.Successful(null);
 
             if (aggregate.Events.Any())
@@ -66,9 +65,11 @@ namespace BricksHoarder.Marten
             if (eventStoreOutcome.Outcome == OutcomeType.Successful)
             {
                 aggregate.Version += aggregate.Events.Count();
-
-                var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
-                await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromDays(7));
+                if (aggregate.Version > 0)
+                {
+                    var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
+                    await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromDays(7));
+                }
             }
         }
 
