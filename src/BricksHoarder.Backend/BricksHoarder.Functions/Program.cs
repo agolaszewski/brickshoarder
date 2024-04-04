@@ -96,4 +96,4 @@ if (env.IsDevelopment())
     //await ds.Advanced.ResetAllData();
 }
 
-host.Run();
+await host.RunAsync();
