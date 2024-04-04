@@ -1,21 +1,21 @@
-using BricksHoarder.Domain.SyncRebrickableData;
+using BricksHoarder.Core.Events;
+using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
 using Azure.Messaging.ServiceBus;
 using MassTransit;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.Functions;
 
-public class SetDetailsChangedFunction : BaseFunction
+public class SetDetailsChangedFunction : BaseBatchFunction
 {
-    public SetDetailsChangedFunction(IMessageReceiver receiver, ILogger<SetDetailsChangedFunction> logger) : base(receiver, logger)
+    public SetDetailsChangedFunction(IEventDispatcher eventDispatcher) : base(eventDispatcher)
     {
     }
 
     [Function(SetDetailsChangedMetadata.Consumer)]
-    public async Task RunAsync([ServiceBusTrigger(SetDetailsChangedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString)] ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
+    public async Task RunAsync([ServiceBusTrigger(SetDetailsChangedMetadata.TopicPath, Default, Connection = ServiceBusConnectionString, IsBatched = true)] ServiceBusReceivedMessage[] @events, CancellationToken cancellationToken)
     {
-        await HandleSagaAsync<SyncRebrickableDataSagaState>(@event, SetDetailsChangedMetadata.TopicPath, Default, cancellationToken);
+        await HandleBatchAsync<SetDetailsChanged>(@events);
     }
 }

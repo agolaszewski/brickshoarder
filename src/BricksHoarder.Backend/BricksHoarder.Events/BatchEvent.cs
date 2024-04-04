@@ -2,7 +2,7 @@
 
 namespace BricksHoarder.Events
 {
-    public class BatchEvent<TEvent> : IEvent
+    public class BatchEvent<TEvent> : IEvent where TEvent : IEvent, IBatch
     {
         public Guid CorrelationId { get; set; }
 

@@ -124,6 +124,11 @@ namespace BricksHoarder.Azure.ServiceBus
                         x.SetEntityName(SetReleasedBatchMetadata.TopicPath);
                     });
 
+                    cfg.Message<BatchEvent<SetDetailsChanged>>(x =>
+                    {
+                        x.SetEntityName(SetDetailsChangedBatchMetadata.TopicPath);
+                    });
+
                     cfg.UseServiceBusMessageScheduler();
 
                     cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromMilliseconds(500), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(5)));

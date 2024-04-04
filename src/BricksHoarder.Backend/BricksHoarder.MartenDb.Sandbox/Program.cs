@@ -26,7 +26,7 @@ namespace BricksHoarder.Marten.Sandbox
             var config = new ConfigurationBuilder()
                 .SetBasePath(absolutePath)
                 .AddUserSecrets<Program>()
-                .AddJsonFile("local.settings.json", false)
+                .AddJsonFile("production.settings.json", false)
                 .Build();
 
             services.AddLogging(configure =>
@@ -57,16 +57,24 @@ namespace BricksHoarder.Marten.Sandbox
             //await daemon.RebuildProjection<TestTransformation>(10.Minutes(), CancellationToken.None);
 
             var session = store.LightweightSession();
-            var list = session.Events.QueryRawEventDataOnly<SetReleased>().OrderByDescending(x => x.LastModifiedDate).Skip(3000).Take(500);
-
-            var start = System.DateTime.UtcNow;
+            var list = session.Events
+                .QueryAllRawEvents()
+                .Where(x => x.DotNetTypeName == "BricksHoarder.Events.NewLegoSetDiscovered, BricksHoarder.Events")
+                .OrderByDescending(x => x.Timestamp).ToList()
+                .Select(x => x.Data as NewLegoSetDiscovered)
+                .Where(x => x.Availability != LegoSetAvailability.Discontinued).ToList();
 
             var _sendEndpointProvider = provider.GetRequiredService<IMessageScheduler>();
 
+            var r = new RandomService();
+            var now = System.DateTime.Now;
+            var start = now.Date.AddHours(8).ToUniversalTime();
+            var end = now.Date.AddHours(12).ToUniversalTime();
+
             foreach (var item in list)
             {
-                start = start.AddSeconds(10);
-                await _sendEndpointProvider.ScheduleSend(new Uri("queue:SyncSetLegoDataCommand"), start, new SyncSetLegoDataCommand(item.SetId.Split("-")[0]));
+                var schedule = r.Between(start, end);
+                await _sendEndpointProvider.ScheduleSend(new Uri("queue:SyncSetLegoDataCommand"), schedule, new SyncSetLegoDataCommand(item.SetId.Split("-")[0]), Pipe.Execute<SendContext<SyncSetLegoDataCommand>>(x => x.CorrelationId = Guid.NewGuid()));
             }
         }
     }

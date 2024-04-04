@@ -4,12 +4,12 @@ using BricksHoarder.Functions.Generator.Generators;
 
 var eventsGenerator = new EventGenerator();
 
-eventsGenerator.Initialize();
+//eventsGenerator.Initialize();
 
 eventsGenerator.GenerateMetadata();
 eventsGenerator.GenerateFunctionsForSagas();
 eventsGenerator.GenerateBatchFunctionsForSagas();
 
-var commandsGenerator = new CommandsGenerator();
-commandsGenerator.GenerateMetadata();
-commandsGenerator.GenerateFunctions();
+//var commandsGenerator = new CommandsGenerator();
+//commandsGenerator.GenerateMetadata();
+//commandsGenerator.GenerateFunctions();

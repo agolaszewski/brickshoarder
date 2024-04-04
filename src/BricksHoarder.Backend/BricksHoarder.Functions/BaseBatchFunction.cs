@@ -19,7 +19,7 @@ namespace BricksHoarder.Functions
             _eventDispatcher = eventDispatcher;
         }
 
-        public async Task HandleBatchAsync<TMessage>(ServiceBusReceivedMessage[] @events) where TMessage : class, IBatch
+        public async Task HandleBatchAsync<TMessage>(ServiceBusReceivedMessage[] @events) where TMessage : class, IEvent, IBatch
         {
             try
             {
