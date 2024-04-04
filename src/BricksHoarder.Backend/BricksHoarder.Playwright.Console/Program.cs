@@ -10,8 +10,16 @@ namespace BricksHoarder.Playwright.Console
         {
             var factory = new DebuggingPageFactory();
             var runner = new LegoScrapper(factory, new CookiesFactory(), new DateTimeProvider());
-
-            await runner.RunProductAsync("5005519");
+            try
+            {
+                var xd = await runner.RunProductAsync("5007289");
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e);
+                throw;
+            }
+           
         }
     }
 }

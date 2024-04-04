@@ -15,6 +15,7 @@ namespace BricksHoarder.Playwright
             var options = new BrowserNewPageOptions();
 
             var page = await _browser.NewPageAsync(options);
+            await page.RouteAsync("**/*.{png,jpg,jpeg,svg}*", route => route.AbortAsync());
             return page;
         }
 
