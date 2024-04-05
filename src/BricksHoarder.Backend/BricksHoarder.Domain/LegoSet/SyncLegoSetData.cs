@@ -55,6 +55,11 @@ namespace BricksHoarder.Domain.LegoSet
                 }
 
                 //Update
+                if (set.HasUnknownState(response))
+                {
+                    throw new InvalidOperationException($"Scrapper returned Unknown state for set {set.Id}");
+                }
+
                 var now = _dateTimeProvider.LocalNow(TimeZoneId.Poland);
                 set.CheckAvailability(response, now.Date);
 
@@ -80,7 +85,7 @@ namespace BricksHoarder.Domain.LegoSet
 
                 set.Update(response);
 
-                if (set.Availability is LegoSetAvailability.Awaiting or LegoSetAvailability.Discontinued or LegoSetAvailability.Unknown)
+                if (set.Availability is LegoSetAvailability.Awaiting or LegoSetAvailability.Pending or LegoSetAvailability.Discontinued or LegoSetAvailability.Unknown)
                 {
                     return set;
                 }

@@ -62,19 +62,21 @@ namespace BricksHoarder.Marten.Sandbox
                 .Where(x => x.DotNetTypeName == "BricksHoarder.Events.NewLegoSetDiscovered, BricksHoarder.Events")
                 .OrderByDescending(x => x.Timestamp).ToList()
                 .Select(x => x.Data as NewLegoSetDiscovered)
-                .Where(x => x.Availability != LegoSetAvailability.Discontinued).ToList();
+                .Where(x => x.Availability != LegoSetAvailability.Discontinued)
+                .Where(x => x.SetId.Contains("-"))
+                .ToList();
 
             var _sendEndpointProvider = provider.GetRequiredService<IMessageScheduler>();
 
             var r = new RandomService();
             var now = System.DateTime.Now;
-            var start = now.Date.AddHours(8).ToUniversalTime();
-            var end = now.Date.AddHours(12).ToUniversalTime();
+            var start = now.Date.AddDays(0).AddHours(14).ToUniversalTime();
+            var end = now.Date.AddDays(0).AddHours(16).ToUniversalTime();
 
             foreach (var item in list)
             {
                 var schedule = r.Between(start, end);
-                await _sendEndpointProvider.ScheduleSend(new Uri("queue:SyncSetLegoDataCommand"), schedule, new SyncSetLegoDataCommand(item.SetId.Split("-")[0]), Pipe.Execute<SendContext<SyncSetLegoDataCommand>>(x => x.CorrelationId = Guid.NewGuid()));
+                await _sendEndpointProvider.ScheduleSend(new Uri("queue:SyncSetLegoDataCommand"), schedule, new SyncSetLegoDataCommand(item.SetId), Pipe.Execute<SendContext<SyncSetLegoDataCommand>>(x => x.CorrelationId = Guid.NewGuid()));
             }
         }
     }

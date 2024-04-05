@@ -44,6 +44,11 @@ namespace BricksHoarder.Domain.LegoSet
             return Availability == LegoSetAvailability.Unknown && response.Availability != Websites.Scrappers.Lego.Availability.Unknown;
         }
 
+        public bool HasUnknownState(LegoScrapperResponse response)
+        {
+            return Availability != LegoSetAvailability.Unknown && response.Availability == Websites.Scrappers.Lego.Availability.Unknown;
+        }
+
         public void Update(LegoScrapperResponse response)
         {
             var compare = new ComparerService();

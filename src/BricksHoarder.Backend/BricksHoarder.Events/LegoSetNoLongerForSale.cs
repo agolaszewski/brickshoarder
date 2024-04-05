@@ -2,5 +2,5 @@
 
 namespace BricksHoarder.Events
 {
-    public record LegoSetNoLongerForSale(string SetId, DateTime Dis) : IEvent;
+    public record LegoSetNoLongerForSale(string SetId, DateTime DiscontinuedSince) : IEvent;
 }
