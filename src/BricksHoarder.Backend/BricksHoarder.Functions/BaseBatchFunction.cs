@@ -6,18 +6,12 @@ using BricksHoarder.Events;
 
 namespace BricksHoarder.Functions
 {
-    public abstract class BaseBatchFunction
+    public abstract class BaseBatchFunction(IEventDispatcher eventDispatcher)
     {
-        private readonly IEventDispatcher _eventDispatcher;
         protected const string Default = "default";
         protected const string ServiceBusConnectionString = "ServiceBusConnectionString";
 
-        private static readonly JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
-        protected BaseBatchFunction(IEventDispatcher eventDispatcher)
-        {
-            _eventDispatcher = eventDispatcher;
-        }
+        private static readonly JsonSerializerOptions Options = new() { PropertyNameCaseInsensitive = true };
 
         public async Task HandleBatchAsync<TMessage>(ServiceBusReceivedMessage[] @events) where TMessage : class, IEvent, IBatch
         {
@@ -39,9 +33,9 @@ namespace BricksHoarder.Functions
 
                         using var jsonParse = JsonDocument.Parse(body);
                         var element = jsonParse.RootElement.GetProperty("message");
-                        var msg = element.Deserialize<TMessage>(_options);
+                        var msg = element.Deserialize<TMessage>(Options);
 
-                        messages.Add(msg);
+                        messages.Add(msg!);
                     }
 
                     return new BatchEvent<TMessage>(group.CorrelationId, messages);
@@ -50,7 +44,7 @@ namespace BricksHoarder.Functions
 
                 foreach (var batch in batches)
                 {
-                    await _eventDispatcher.DispatchAsync(batch, batch.CorrelationId);
+                    await eventDispatcher.DispatchAsync(batch, batch.CorrelationId);
                 }
             }
             catch (Exception e)

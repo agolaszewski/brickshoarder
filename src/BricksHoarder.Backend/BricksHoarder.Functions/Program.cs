@@ -9,13 +9,12 @@ using BricksHoarder.Rebrickable;
 using BricksHoarder.Redis;
 using BricksHoarder.Serilog;
 using BricksHoarder.Websites.Scrappers;
-using Marten;
-using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 
 var host = new HostBuilder()
@@ -24,8 +23,22 @@ var host = new HostBuilder()
     {
         builder.AddJsonFile("local.settings.json", optional: true, reloadOnChange: false);
     })
+    //.ConfigureLogging(config =>
+    //{
+    //    config.SetMinimumLevel(LogLevel.Information);
+
+    //    config.Services.Configure<LoggerFilterOptions>(options =>
+    //    {
+    //        options.Rules.Add(new LoggerFilterRule());
+    //    });
+    //})
     .ConfigureServices((builder, services) =>
     {
+        services.Configure<WorkerOptions>(options =>
+        {
+            options.EnableUserCodeException = true;
+        });
+
         var config = builder.Configuration;
 
         if (builder.HostingEnvironment.IsDevelopment())
@@ -54,7 +67,10 @@ void Development(IServiceCollection services, IConfiguration config)
 {
     Common(services, config);
 
-    Log.Logger = Log.Logger.AddSerilog().AddSeq(new Uri("http://localhost:5341/")).CreateLogger();
+    Log.Logger = Log.Logger
+        .AddSerilog()
+        .AddConsole()
+        .AddSeq(new Uri("http://localhost:5341/")).CreateLogger();
 
     services.AddLogging(lb => lb.AddSerilog(Log.Logger, true));
 
@@ -80,7 +96,6 @@ void Common(IServiceCollection services, IConfiguration config)
 
     services.AddScrappers();
     services.AddPlaywright();
-
 
     services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 }

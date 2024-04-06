@@ -19,13 +19,18 @@ namespace BricksHoarder.Azure.ServiceBus
         {
             try
             {
-                _logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.CorrelationId}");
+                _logger.LogDebug("Consuming {Message} {CorrelationId}", context.Message.GetType().FullName, context.CorrelationId);
                 var schedulingDetails = context.Message.SchedulingDetails();
                 await context.ScheduleSend(schedulingDetails.QueueName, schedulingDetails.ScheduleTime, schedulingDetails.Command, Pipe.Execute<SendContext<TCommand>>(x => x.CorrelationId = context.CorrelationId));
             }
+            catch
+            {
+                _logger.LogWarning("Exception In SchedulingConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
+                throw;
+            }
             finally
             {
-                _logger.LogDebug($"Consumed {context.Message.GetType().FullName} {context.CorrelationId}");
+                _logger.LogDebug("Consuming {Message} {CorrelationId}", context.Message.GetType().FullName, context.CorrelationId);
             }
         }
     }

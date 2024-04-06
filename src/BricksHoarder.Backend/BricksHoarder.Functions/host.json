@@ -7,6 +7,16 @@
           "isEnabled": true,
           "excludedTypes": "Request"
         }
+      },
+      "logLevel": {
+        "default": "Warning",
+        "Host.Aggregator": "Trace",
+        "Host.Results": "Information",
+        "Function": "Information",
+        "ThrottlingTroll.ThrottlingTroll": "Error",
+        "MassTransit": "Warning",
+        "Npgsql": "Warning",
+        "Azure.Messaging.ServiceBus": "Warning"
       }
     },
     "serviceBus": {

@@ -127,7 +127,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 },
                 WorkspaceCapping = new WorkspaceCappingArgs()
                 {
-                    DailyQuotaGb = 0.5
+                    DailyQuotaGb = 1
                 }
             });
 
@@ -175,7 +175,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 {
                     LinuxFxVersion = $"DOCKER|{containerImage}",
                     FunctionAppScaleLimit = 1,
-                    NetFrameworkVersion = null,
+                    NetFrameworkVersion = "v8.0",
                     AppSettings = new[]
                     {
                         new PreviewNameValuePairArgs

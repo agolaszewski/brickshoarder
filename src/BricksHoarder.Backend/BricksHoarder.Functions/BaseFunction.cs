@@ -5,6 +5,9 @@ using BricksHoarder.Core.Events;
 using MassTransit;
 using BricksHoarder.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
+using Polly;
+using System.Text.Json;
+using System.Text;
 
 namespace BricksHoarder.Functions;
 
@@ -21,7 +24,8 @@ public abstract class BaseFunction(IMessageReceiver receiver, ILogger<BaseFuncti
         }
         catch (Exception e)
         {
-            logger.LogCritical(e, "Error in Consumer {0}", typeof(TCommand).Name);
+            var details = new MessageEnvelope(command);
+            logger.LogCritical(e, "{Message} {CorrelationId} {Content}", details.MessageType, details.CorrelationId, details.Body);
             throw;
         }
     }
@@ -47,21 +51,43 @@ public abstract class BaseFunction(IMessageReceiver receiver, ILogger<BaseFuncti
         }
         catch (Exception e)
         {
-            logger.LogCritical(e, "Error in Saga {0} {1}", typeof(TSaga).Name, topic);
+            var details = new MessageEnvelope(@event);
+            logger.LogCritical(e, "Unable to process {Message} {CorrelationId} {Content}", details.MessageType, details.CorrelationId, details.Body);
             throw;
         }
     }
 
-    public async Task ScheduleAsync<TCommand, TEvent>(ServiceBusReceivedMessage @event, string topic, string subscription, CancellationToken cancellationToken) where TCommand : class, ICommand where TEvent : class, IEvent, IScheduling<TCommand>    
+    public async Task ScheduleAsync<TCommand, TEvent>(ServiceBusReceivedMessage @event, string topic, string subscription, CancellationToken cancellationToken) where TCommand : class, ICommand where TEvent : class, IEvent, IScheduling<TCommand>
     {
         try
         {
-            await receiver.HandleConsumer<SchedulingConsumer<TCommand,TEvent>>(topic, subscription, @event, cancellationToken);
+            await receiver.HandleConsumer<SchedulingConsumer<TCommand, TEvent>>(topic, subscription, @event, cancellationToken);
         }
         catch (Exception e)
         {
             logger.LogCritical(e, "Error in SchedulingConsumer {0} {1} {2}", typeof(TCommand).Name, typeof(TEvent).Name, topic);
             throw;
         }
+    }
+}
+
+public class MessageEnvelope
+{
+    public string Body { get; }
+
+    public string MessageType { get; set; }
+
+    public string CorrelationId { get; set; }
+
+    public MessageEnvelope(ServiceBusReceivedMessage message)
+    {
+        Body = Encoding.UTF8.GetString(message.Body);
+        using var jsonParse = JsonDocument.Parse(Body);
+
+        MessageType = jsonParse.RootElement.GetProperty("messageType")
+            .Deserialize<List<string>>()!
+            .Select(x => x.Replace("urn:message:", string.Empty)).First();
+
+        CorrelationId = message.CorrelationId;
     }
 }
