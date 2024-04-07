@@ -14,7 +14,7 @@
         "Host.Results": "Information",
         "Function": "Information",
         "ThrottlingTroll.ThrottlingTroll": "Error",
-        "MassTransit": "Warning",
+        "MassTransit": "Error",
         "Npgsql": "Warning",
         "Azure.Messaging.ServiceBus": "Warning"
       }
