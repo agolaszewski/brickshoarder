@@ -1,4 +1,5 @@
 ﻿using BricksHoarder.Commands.Sets;
+using BricksHoarder.Common.DDD.Exception;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
@@ -57,7 +58,7 @@ namespace BricksHoarder.Domain.LegoSet
                 //Update
                 if (set.HasUnknownState(response))
                 {
-                    throw new InvalidOperationException($"Scrapper returned Unknown state for set {set.Id}");
+                    throw new DomainException($"Scrapper returned Unknown state for set {set.Id}");
                 }
 
                 var now = _dateTimeProvider.LocalNow(TimeZoneId.Poland);
