@@ -1,6 +1,7 @@
 ﻿using BricksHoarder.DateTime;
 using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Websites.Scrappers.Lego;
+using BricksHoarder.Websites.Scrappers.Olx;
 
 namespace BricksHoarder.Playwright.Console
 {
@@ -9,10 +10,10 @@ namespace BricksHoarder.Playwright.Console
         private static async Task Main(string[] args)
         {
             var factory = new DebuggingPageFactory();
-            var runner = new LegoScrapper(factory, new CookiesFactory(), new DateTimeProvider());
+            var runner = new OlxScrapper(factory, new CookiesFactory(), new DateTimeProvider());
             try
             {
-                var xd = await runner.RunProductAsync("5007289");
+                await runner.HandleAsync();
             }
             catch (Exception e)
             {

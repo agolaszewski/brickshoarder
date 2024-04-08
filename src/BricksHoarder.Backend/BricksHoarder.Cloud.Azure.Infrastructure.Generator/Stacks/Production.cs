@@ -201,6 +201,11 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         },
                         new PreviewNameValuePairArgs
                         {
+                            Name = "FUNCTIONS_WORKER_RUNTIME",
+                            Value = "dotnet-isolated"
+                        },
+                        new PreviewNameValuePairArgs
+                        {
                             Name = "FUNCTIONS_EXTENSION_VERSION",
                             Value = "~4"
                         },

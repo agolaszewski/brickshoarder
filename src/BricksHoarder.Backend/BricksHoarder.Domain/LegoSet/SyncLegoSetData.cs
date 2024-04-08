@@ -38,15 +38,15 @@ namespace BricksHoarder.Domain.LegoSet
                 if (set.IsGift.HasValue)
                 {
                     response = set.IsGift.Value
-                        ? await _legoScrapper.RunGiftAsync(command.SetId)
-                        : await _legoScrapper.RunProductAsync(command.SetId);
+                        ? await _legoScrapper.RunGiftAsync(new LegoScrapper.LegoSetId(command.SetId))
+                        : await _legoScrapper.RunProductAsync(new LegoScrapper.LegoSetId(command.SetId));
                 }
                 else
                 {
                     response = await Policy<LegoScrapperResponse>
                         .Handle<TimeoutException>()
-                        .FallbackAsync(async _ => await _legoScrapper.RunGiftAsync(command.SetId))
-                        .ExecuteAsync(() => _legoScrapper.RunProductAsync(command.SetId));
+                        .FallbackAsync(async _ => await _legoScrapper.RunGiftAsync(new LegoScrapper.LegoSetId(command.SetId)))
+                        .ExecuteAsync(() => _legoScrapper.RunProductAsync(new LegoScrapper.LegoSetId(command.SetId)));
                 }
 
                 //Insert

@@ -23,15 +23,6 @@ var host = new HostBuilder()
     {
         builder.AddJsonFile("local.settings.json", optional: true, reloadOnChange: false);
     })
-    //.ConfigureLogging(config =>
-    //{
-    //    config.SetMinimumLevel(LogLevel.Information);
-
-    //    config.Services.Configure<LoggerFilterOptions>(options =>
-    //    {
-    //        options.Rules.Add(new LoggerFilterRule());
-    //    });
-    //})
     .ConfigureServices((builder, services) =>
     {
         services.Configure<WorkerOptions>(options =>

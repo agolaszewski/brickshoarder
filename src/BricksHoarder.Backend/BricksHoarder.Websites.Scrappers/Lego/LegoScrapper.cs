@@ -13,6 +13,16 @@ namespace BricksHoarder.Websites.Scrappers.Lego
         private readonly CookiesFactory _cookiesFactory;
         private readonly IDateTimeProvider _dateTimeProvider;
 
+        public record LegoSetId
+        {
+            public LegoSetId(string setId)
+            {
+                Value = setId.Split("-")[0];
+            }
+
+            public string Value { get; }
+        }
+
         public LegoScrapper(IPageFactory pageFactory, CookiesFactory cookiesFactory, IDateTimeProvider dateTimeProvider)
         {
             _pageFactory = pageFactory;
@@ -20,9 +30,9 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<LegoScrapperResponse> RunGiftAsync(string setId)
+        public async Task<LegoScrapperResponse> RunGiftAsync(LegoSetId legoSetId)
         {
-            setId = setId.Split("-")[0];
+            string setId = legoSetId.Value;
 
             IPage page = await _pageFactory.CreatePageAsync();
             var cookies = await _cookiesFactory.CreateCookiesAsync("lego");
@@ -39,9 +49,9 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             return await GetGiftAsync(page, setId);
         }
 
-        public async Task<LegoScrapperResponse> RunProductAsync(string setId)
+        public async Task<LegoScrapperResponse> RunProductAsync(LegoSetId legoSetId)
         {
-            setId = setId.Split("-")[0];
+            var setId = legoSetId.Value;
 
             IPage page = await _pageFactory.CreatePageAsync();
             var cookies = await _cookiesFactory.CreateCookiesAsync("lego");
@@ -99,7 +109,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
             var container = page.Locator("data-test=product-overview-container");
             var availabilityText = await container.Locator("data-test=product-overview-availability").GetTextContentIfVisibleAsync();
-            
+
             var badges = page.Locator("div[class^=ProductOverviewstyles__Badges]");
             var productsStatus = await badges.Locator("data-test=product-flag")
             .Filter(new LocatorFilterOptions() { HasNotTextString = "Nowość", })
@@ -128,7 +138,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
             var price = await container.Locator("data-test=product-price").GetTextContentIfVisibleAsync();
             price = price?.Replace("Price", string.Empty).Replace("zł", string.Empty).Trim();
-            
+
             var maxQuantity = await page.Locator("div[class^=QuantitySelectorstyles__MaxQuantityWrapper] > span").GetTextContentIfVisibleAsync();
             maxQuantity = maxQuantity?.Replace("Ograniczenie", string.Empty);
 
