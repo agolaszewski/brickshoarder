@@ -37,7 +37,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
             });
 
             var serviceBusNamespace = new StandardServiceBusNamespace("Default", "prd", resourceGroup);
-            ServiceBusEndpoint = serviceBusNamespace.ServiceBusEndpoint;
+            ServiceBusEndpoint = serviceBusNamespace.ServiceBusEndpoint.Apply(x => x.Replace("https://", string.Empty).Replace(":443", string.Empty));
             SharedAccessKey = serviceBusNamespace.SharedAccessKey;
             SharedAccessKeyName = serviceBusNamespace.SharedAccessKeyName;
             ServiceBusConnectionString = serviceBusNamespace.ServiceBusConnectionString;
@@ -121,6 +121,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
             {
                 WorkspaceName = "log-appi-brickshoarder-prd",
                 ResourceGroupName = resourceGroup.Name,
+                RetentionInDays = 30,
                 Sku = new WorkspaceSkuArgs
                 {
                     Name = Pulumi.AzureNative.OperationalInsights.WorkspaceSkuNameEnum.PerGB2018
@@ -175,7 +176,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 {
                     LinuxFxVersion = $"DOCKER|{containerImage}",
                     FunctionAppScaleLimit = 1,
-                    NetFrameworkVersion = "v8.0",
+                    NetFrameworkVersion = null,
                     AppSettings = new[]
                     {
                         new PreviewNameValuePairArgs
@@ -246,7 +247,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         new PreviewNameValuePairArgs()
                         {
                             Name = "AzureServiceBus__Endpoint",
-                            Value = serviceBusNamespace.ServiceBusEndpoint.Apply(x => x.Replace("https://",string.Empty))
+                            Value = ServiceBusEndpoint
                         },
                         new PreviewNameValuePairArgs()
                         {
@@ -312,7 +313,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         new NameValuePairArgs()
                         {
                             Name = "AzureServiceBus__Endpoint",
-                            Value = serviceBusNamespace.ServiceBusEndpoint.Apply(x => x.Replace("https://",string.Empty))
+                            Value = ServiceBusEndpoint
                         },
                         new NameValuePairArgs()
                         {
