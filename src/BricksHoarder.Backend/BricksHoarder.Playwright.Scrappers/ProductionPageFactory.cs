@@ -10,12 +10,15 @@ namespace BricksHoarder.Playwright
         public async Task<IPage> CreatePageAsync()
         {
             _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true, Timeout = 10000 });
+            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true, Timeout = 10000, ChromiumSandbox = false });
 
-            var options = new BrowserNewPageOptions();
+            var options = new BrowserNewPageOptions()
+            {
+                JavaScriptEnabled = false
+            };
 
             var page = await _browser.NewPageAsync(options);
-            await page.RouteAsync("**/*.{png,jpg,jpeg,svg}*", route => route.AbortAsync());
+            await page.RouteAsync("**/*.{png,jpg,jpeg,svg,css}*", route => route.AbortAsync());
             return page;
         }
 
