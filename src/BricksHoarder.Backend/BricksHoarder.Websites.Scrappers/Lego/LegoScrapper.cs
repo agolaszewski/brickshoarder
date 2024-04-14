@@ -150,6 +150,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
                 price = salePrice;
             }
 
+            await page.CloseAsync();
             return new LegoScrapperResponse(setId, name, availability, price, maxQuantity, imgUrl, awaitingTill, false);
         }
     }
