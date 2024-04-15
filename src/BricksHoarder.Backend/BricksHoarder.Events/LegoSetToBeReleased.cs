@@ -9,7 +9,7 @@ namespace BricksHoarder.Events
     {
         public SchedulingDetails<SyncSetLegoDataCommand> SchedulingDetails()
         {
-            return new SchedulingDetails<SyncSetLegoDataCommand>(new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, this.ReleaseDate);
+            return new SchedulingDetails<SyncSetLegoDataCommand>($"SyncSetLegoDataCommand-{SetId}", new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, ReleaseDate);
         }
     }
 
@@ -19,7 +19,7 @@ namespace BricksHoarder.Events
     {
         public SchedulingDetails<SyncSetLegoDataCommand> SchedulingDetails()
         {
-            return new SchedulingDetails<SyncSetLegoDataCommand>(new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, NextJobRun);
+            return new SchedulingDetails<SyncSetLegoDataCommand>($"SyncSetLegoDataCommand-{SetId}",new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, NextJobRun);
         }
     }
 
@@ -27,7 +27,7 @@ namespace BricksHoarder.Events
     {
         public SchedulingDetails<SyncSetLegoDataCommand> SchedulingDetails()
         {
-            return new SchedulingDetails<SyncSetLegoDataCommand>(new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, PendingUntil);
+            return new SchedulingDetails<SyncSetLegoDataCommand>($"SyncSetLegoDataCommand-{SetId}", new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, PendingUntil);
         }
     }
 

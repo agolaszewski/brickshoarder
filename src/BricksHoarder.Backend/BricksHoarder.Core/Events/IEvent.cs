@@ -11,19 +11,5 @@ namespace BricksHoarder.Core.Events
         SchedulingDetails<TCommand> SchedulingDetails();
     }
 
-    public record SchedulingDetails<TCommand> where TCommand : ICommand
-    {
-        public SchedulingDetails(TCommand command, Uri queueName, DateTime scheduleTime)
-        {
-            ScheduleTime = scheduleTime;
-            QueueName = queueName;
-            Command = command;
-        }
-
-        public TCommand Command { get; }
-
-        public Uri QueueName { get; }
-
-        public DateTime ScheduleTime { get; }
-    }
+    public record SchedulingDetails<TCommand>(string Id, TCommand Command, Uri QueueName, DateTime ScheduleTime) where TCommand : ICommand;
 }

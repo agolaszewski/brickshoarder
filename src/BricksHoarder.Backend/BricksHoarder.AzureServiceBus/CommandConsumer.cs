@@ -51,7 +51,7 @@ namespace BricksHoarder.Azure.ServiceBus
             }
             catch(Exception ex)
             {
-                _logger.LogWarning(ex, "Exception In CommandConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
+                _logger.LogInformation(ex, "Exception In CommandConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
                 throw;
             }
             finally

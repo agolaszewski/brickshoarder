@@ -30,6 +30,7 @@
                 "Produkt wycofany – zakończono produkcję" => Availability.Discontinued,
                 "Chwilowo niedostępne" => Availability.TemporarilyUnavailable,
                 "Dostępne od" => Availability.Pending,
+                "Wyprzedano" => Availability.Discontinued,
                 _ => Availability.Unknown
             };
         }
