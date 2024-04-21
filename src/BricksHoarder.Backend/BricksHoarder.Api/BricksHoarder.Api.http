@@ -1,0 +1,6 @@
+@BricksHoarder.Api_HostAddress = http://localhost:5008
+
+GET {{BricksHoarder.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

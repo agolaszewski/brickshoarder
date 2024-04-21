@@ -70,8 +70,8 @@ namespace BricksHoarder.Marten.Sandbox
 
             var r = new RandomService();
             var now = System.DateTime.Now;
-            var start = now.Date.AddDays(0).AddHours(14).ToUniversalTime();
-            var end = now.Date.AddDays(0).AddHours(16).ToUniversalTime();
+            var start = now.Date.AddDays(0).AddHours(10).ToUniversalTime();
+            var end = now.Date.AddDays(0).AddHours(12).ToUniversalTime();
 
             foreach (var item in list)
             {

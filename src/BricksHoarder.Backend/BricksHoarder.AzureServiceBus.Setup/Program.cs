@@ -21,7 +21,7 @@ async Task SetupAsync()
     var config = new ConfigurationBuilder()
         .SetBasePath(absolutePath)
         .AddUserSecrets<Program>()
-        .AddJsonFile("local.settings.json", false)
+        .AddJsonFile("production.settings.json", false)
         .Build();
 
     services.AddLogging(configure =>

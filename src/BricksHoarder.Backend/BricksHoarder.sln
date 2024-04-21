@@ -88,6 +88,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Marten.Sandbo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricksHoarder.Functions.Flows.Generator", "BricksHoarder.Functions.Flows.Generator\BricksHoarder.Functions.Flows.Generator.csproj", "{98958E86-6C5D-4F5D-B250-B57E22CCA595}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricksHoarder.Api", "BricksHoarder.Api\BricksHoarder.Api.csproj", "{9CE6A0D5-5BFD-409C-A76F-D8B210FA8540}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -230,6 +232,10 @@ Global
 		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98958E86-6C5D-4F5D-B250-B57E22CCA595}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CE6A0D5-5BFD-409C-A76F-D8B210FA8540}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CE6A0D5-5BFD-409C-A76F-D8B210FA8540}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CE6A0D5-5BFD-409C-A76F-D8B210FA8540}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CE6A0D5-5BFD-409C-A76F-D8B210FA8540}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -264,6 +270,7 @@ Global
 		{BC493C7C-E18C-4C34-8072-27E83D5FBEDC} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
 		{B0D7822B-677F-4279-98B1-17FBB8BC1C4C} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
 		{98958E86-6C5D-4F5D-B250-B57E22CCA595} = {FB389583-9BC4-4CA6-ACFE-900725340AF1}
+		{9CE6A0D5-5BFD-409C-A76F-D8B210FA8540} = {27869AFF-33AB-4FA7-B30B-7BD2729B51F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E820C2F3-08C8-491E-84A1-4E46C6D0C013}
