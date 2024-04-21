@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'src/BricksHoarder.Backend/**'
-      - '.github/workflows/func-brickshoarder-functions-prd.yml'  
+      - '.github/workflows/web-api.yml'  
 defaults:
   run:
     working-directory: ./src/BricksHoarder.Backend/BricksHoarder.Api 
