@@ -35,6 +35,6 @@ RUN apt-get update && \
     rm powershell_7.4.1-1.deb_amd64.deb && \
     apt-get -y remove powershell 
 
-RUN rm appsettings.Development.json
+#RUN rm appsettings.Development.json
 ENV ASPNETCORE_ENVIRONMENT=Staging 
 ENTRYPOINT ["dotnet", "BricksHoarder.Api.dll"]
