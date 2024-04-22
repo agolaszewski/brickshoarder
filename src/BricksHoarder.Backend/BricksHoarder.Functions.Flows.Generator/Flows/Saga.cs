@@ -11,19 +11,26 @@ namespace BricksHoarder.Functions.Flows.Generator.Flows
         private readonly List<IFlowComponent> _events = new List<IFlowComponent>();
         private readonly List<IFlowComponent> _commands = new List<IFlowComponent>();
 
-        public void Event<TEvent>() where TEvent : class, IEvent
+        public SagaEvent<TEvent> Event<TEvent>() where TEvent : class, IEvent
         {
-            _events.Add(new Event<TEvent>());
+            var batch = new SagaEvent<TEvent>();
+            _events.Add(batch);
+            return batch;
         }
 
-        public void Command<TCommand>() where TCommand : class, ICommand
+        public Command<TCommand> Command<TCommand>() where TCommand : class, ICommand
         {
-            _commands.Add(new Command<TCommand>());
+            var command = new Command<TCommand>();
+            _commands.Add(command);
+            return command;
         }
 
         public void Build()
         {
-            throw new NotImplementedException();
+            foreach (var @event in _events)
+            {
+                @event.Build();
+            }
         }
     }
 }

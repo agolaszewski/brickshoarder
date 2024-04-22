@@ -21,6 +21,21 @@ using Microsoft.Extensions.Options;
 
 namespace BricksHoarder.Azure.ServiceBus
 {
+    public static class BusRegistrationConfigurationExtension
+    {
+        public static void AddConsumerSaga<TStateMachine, T>(this IBusRegistrationConfigurator that, RedisCredentials redisCredentials) where TStateMachine : class, SagaStateMachine<T> where T : class, ISagaVersion, SagaStateMachineInstance
+        {
+            that.AddSagaStateMachine<TStateMachine, T>((context, config) =>
+            {
+                config.UseInMemoryOutbox(context);
+            }).RedisRepository(opt =>
+            {
+                opt.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+                opt.DatabaseConfiguration(redisCredentials.ConnectionString);
+            });
+        }
+    }
+
     public static class ServiceCollectionExtensions
     {
         public static void AddAzureServiceBus2(this IServiceCollection services, AzureServiceBusCredentials credentials, RedisCredentials redisCredentials)
@@ -59,15 +74,9 @@ namespace BricksHoarder.Azure.ServiceBus
                     x.AddConsumer(typeof(CommandConsumer<,>).MakeGenericType(typeArguments));
                 }
 
-                //x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>((context, config) =>
-                //{
-                //    config.UseInMemoryOutbox(context);
-
-                //}).RedisRepository(opt =>
-                //{
-                //    opt.ConcurrencyMode = ConcurrencyMode.Pessimistic;
-                //    opt.DatabaseConfiguration(redisCredentials.ConnectionString);
-                //});
+                #region Sagas Consumers
+                x.AddConsumerSaga<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>(redisCredentials);
+                #endregion Saga Consumers
 
                 //x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetInSale>));
                 //x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetToBeReleased>));
