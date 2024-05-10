@@ -75,8 +75,28 @@ namespace BricksHoarder.Azure.ServiceBus
                 }
 
                 #region Sagas Consumers
+
                 x.AddConsumerSaga<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>(redisCredentials);
-                #endregion Saga Consumers
+                x.AddConsumer<BatchEventConsumer<SetReleased>>(config =>
+                {
+                    config.Options<BatchOptions>(options => options
+                        .SetMessageLimit(100)
+                        .SetTimeLimit(s: 1)
+                        .SetTimeLimitStart(BatchTimeLimitStart.FromLast)
+                        .GroupBy<SetReleased, Guid>(x => x.CorrelationId)
+                        .SetConcurrencyLimit(10));
+                });
+                x.AddConsumer<BatchEventConsumer<SetDetailsChanged>>(config =>
+                {
+                    config.Options<BatchOptions>(options => options
+                        .SetMessageLimit(100)
+                        .SetTimeLimit(s: 1)
+                        .SetTimeLimitStart(BatchTimeLimitStart.FromLast)
+                        .GroupBy<SetDetailsChanged, Guid>(x => x.CorrelationId)
+                        .SetConcurrencyLimit(10));
+                });
+
+                #endregion Sagas Consumers
 
                 //x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetInSale>));
                 //x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetToBeReleased>));
@@ -96,6 +116,7 @@ namespace BricksHoarder.Azure.ServiceBus
 
                         cfg.ReceiveEndpoint(command.Name, configureEndpoint =>
                         {
+                            configureEndpoint.ConfigureConsumeTopology = false;
                             configureEndpoint.MaxDeliveryCount = 1;
                             configureEndpoint.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
                             configureEndpoint.ConfigureDeadLetterQueueDeadLetterTransport();
@@ -107,7 +128,6 @@ namespace BricksHoarder.Azure.ServiceBus
                     }
 
                     cfg.Publish<IEvent>(x => x.Exclude = true);
-                    cfg.Publish<IBatch>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
                     cfg.UseMessageRetry(r => r.Intervals(TimeSpan.FromMilliseconds(500), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(5)));
@@ -157,7 +177,6 @@ namespace BricksHoarder.Azure.ServiceBus
                 x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>((context, config) =>
                 {
                     config.UseInMemoryOutbox(context);
-
                 }).RedisRepository(opt =>
                 {
                     opt.ConcurrencyMode = ConcurrencyMode.Pessimistic;
@@ -178,11 +197,10 @@ namespace BricksHoarder.Azure.ServiceBus
                 x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetToBeReleased>));
                 x.AddConsumer(typeof(SchedulingConsumer<SyncSetLegoDataCommand, LegoSetPending>));
 
-
                 x.UsingAzureServiceBus((context, cfg) =>
                 {
                     var options = context.GetRequiredService<IOptions<ServiceBusOptions>>();
-                    options.Value.AutoCompleteMessages = true;
+                    //options.Value.AutoCompleteMessages = true;
 
                     cfg.Host(credentials.ConnectionString, _ =>
                     {
@@ -196,7 +214,6 @@ namespace BricksHoarder.Azure.ServiceBus
                     });
 
                     cfg.Publish<IEvent>(x => x.Exclude = true);
-                    cfg.Publish<IBatch>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
                     cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
@@ -214,12 +231,12 @@ namespace BricksHoarder.Azure.ServiceBus
                         x.SetEntityName(SyncSetRebrickableDataCommandConsumedMetadata.TopicPath);
                     });
 
-                    cfg.Message<BatchEvent<SetReleased>>(x =>
+                    cfg.Message<Batch<SetReleased>>(x =>
                     {
                         x.SetEntityName(SetReleasedBatchMetadata.TopicPath);
                     });
 
-                    cfg.Message<BatchEvent<SetDetailsChanged>>(x =>
+                    cfg.Message<Batch<SetDetailsChanged>>(x =>
                     {
                         x.SetEntityName(SetDetailsChangedBatchMetadata.TopicPath);
                     });
@@ -240,7 +257,7 @@ namespace BricksHoarder.Azure.ServiceBus
             services.AddSingleton<IMessageReceiver, MessageReceiver>();
             services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-            
+
             services.AddAzureClients(builder =>
             {
                 builder.AddServiceBusClient(credentials.ConnectionString).WithName("ServiceBusClient");
@@ -276,7 +293,6 @@ namespace BricksHoarder.Azure.ServiceBus
                 x.AddSagaStateMachine<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>((context, config) =>
                 {
                     config.UseInMemoryOutbox(context);
-
                 }).RedisRepository(opt =>
                 {
                     opt.ConcurrencyMode = ConcurrencyMode.Pessimistic;
@@ -313,7 +329,6 @@ namespace BricksHoarder.Azure.ServiceBus
                     });
 
                     cfg.Publish<IEvent>(x => x.Exclude = true);
-                    cfg.Publish<IBatch>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
                     cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
@@ -331,12 +346,12 @@ namespace BricksHoarder.Azure.ServiceBus
                         x.SetEntityName(SyncSetRebrickableDataCommandConsumedMetadata.TopicPath);
                     });
 
-                    cfg.Message<BatchEvent<SetReleased>>(x =>
+                    cfg.Message<Batch<SetReleased>>(x =>
                     {
                         x.SetEntityName(SetReleasedBatchMetadata.TopicPath);
                     });
 
-                    cfg.Message<BatchEvent<SetDetailsChanged>>(x =>
+                    cfg.Message<Batch<SetDetailsChanged>>(x =>
                     {
                         x.SetEntityName(SetDetailsChangedBatchMetadata.TopicPath);
                     });

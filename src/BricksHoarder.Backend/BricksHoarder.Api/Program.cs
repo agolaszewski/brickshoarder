@@ -2,9 +2,11 @@ using BricksHoarder.Azure.ServiceBus;
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Common;
 using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
 using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Domain;
+using BricksHoarder.Events;
 using BricksHoarder.Marten;
 using BricksHoarder.Playwright;
 using BricksHoarder.Rebrickable;
@@ -15,11 +17,11 @@ using BricksHoarder.Websites.Scrappers.Lego;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
-//var builder = WebApplication.CreateBuilder(args);
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-{
-    ContentRootPath = AppDomain.CurrentDomain.BaseDirectory,
-});
+var builder = WebApplication.CreateBuilder(args);
+//var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+//{
+//    ContentRootPath = AppDomain.CurrentDomain.BaseDirectory,
+//});
 
 if (builder.Environment.IsDevelopment())
 {
@@ -95,11 +97,16 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/lego/{id}", async ([FromServices] LegoScrapper legoScrapper, ICommandDispatcher dispatcher, string id) =>
     {
         await dispatcher.DispatchAsync<SyncSetLegoDataCommand>(new SyncSetLegoDataCommand(id));
-        //var response = await legoScrapper.RunProductAsync(new LegoScrapper.LegoSetId(id));
-        //return response;
     })
-    .WithName("Lego")
-    .WithOpenApi();
+.WithName("Lego")
+.WithOpenApi();
+
+app.MapGet("/saga/sync", async ([FromServices] IEventDispatcher dispatcher) =>
+    {
+        await dispatcher.DispatchAsync<SyncSagaStarted>(new SyncSagaStarted(DateTime.UtcNow.ToGuid()));
+    })
+.WithName("SyncSaga")
+.WithOpenApi();
 
 app.Run();
 

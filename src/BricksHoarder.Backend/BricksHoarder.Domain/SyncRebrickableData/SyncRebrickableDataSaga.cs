@@ -18,7 +18,7 @@ namespace BricksHoarder.Domain.SyncRebrickableData
             Event(() => SyncSetsCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
             Event(() => SetsReleased, x => x.CorrelateById(x => x.CorrelationId!.Value));
             Event(() => SetDetailsChanged, x => x.CorrelateById(x => x.CorrelationId!.Value));
-            Event(() => FetchSetRebrickableDataCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
+            Event(() => SyncSetRebrickableDataCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
             Event(() => NoChangesToSets, x => x.CorrelateById(x => x.CorrelationId!.Value));
 
             Initially(When(SyncSagaStarted)
@@ -49,14 +49,14 @@ namespace BricksHoarder.Domain.SyncRebrickableData
                 .Then(_ => logger.LogDebug("SetDetailsChanged"))
                 .Then(ProcessSetDetailsChanged));
 
-            During(SyncingState, When(FetchSetRebrickableDataCommandConsumed)
+            During(SyncingState, When(SyncSetRebrickableDataCommandConsumed)
                 .Then(_ => logger.LogDebug("FetchSetRebrickableDataCommandConsumed"))
-                .Then(ProcessFetchSetRebrickableDataCommandConsumed),
+                .Then(ProcessSetRebrickableDataCommandConsumed),
 
-                When(FetchSetRebrickableDataCommandConsumed, x => x.Saga.AllSetsProcessed())
+                When(SyncSetRebrickableDataCommandConsumed, x => x.Saga.AllSetsProcessed())
                 .Finalize());
 
-            Finally(x => x.Then(context => logger.LogError("SyncSetsSaga finished {id}", context.Saga.CorrelationId)));
+            Finally(x => x.Then(context => logger.LogInformation("SyncSetsSaga finished {id}", context.Saga.CorrelationId)));
 
             SetCompletedWhenFinalized();
         }
@@ -78,7 +78,7 @@ namespace BricksHoarder.Domain.SyncRebrickableData
 
         public Event<BatchEvent<SetDetailsChanged>> SetDetailsChanged { get; }
 
-        public Event<CommandConsumed<SyncSetRebrickableDataCommand>> FetchSetRebrickableDataCommandConsumed { get; }
+        public Event<CommandConsumed<SyncSetRebrickableDataCommand>> SyncSetRebrickableDataCommandConsumed { get; }
 
         public Event<NoChangesToSets> NoChangesToSets { get; }
 
@@ -133,7 +133,7 @@ namespace BricksHoarder.Domain.SyncRebrickableData
             }
         }
 
-        private void ProcessFetchSetRebrickableDataCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncSetRebrickableDataCommand>> context)
+        private void ProcessSetRebrickableDataCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncSetRebrickableDataCommand>> context)
         {
             context.Saga.FinishProcessing(context.Message.Command.SetId);
 
