@@ -1,5 +1,5 @@
 ﻿using BricksHoarder.Commands.Sets;
-using BricksHoarder.Common.DDD.Exception;
+using BricksHoarder.Common.DDD.Exceptions;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;

@@ -1,13 +1,13 @@
 ﻿using BricksHoarder.Azure.ServiceBus.Services;
-using BricksHoarder.Commands.Metadata;
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
-using BricksHoarder.Domain.LegoSet;
+using BricksHoarder.Domain.RebrickableSet;
 using BricksHoarder.Domain.SyncRebrickableData;
+using BricksHoarder.Domain.ThemesCollection;
 using BricksHoarder.Events;
 using BricksHoarder.Events.Metadata;
 using MassTransit;
@@ -21,21 +21,6 @@ using Microsoft.Extensions.Options;
 
 namespace BricksHoarder.Azure.ServiceBus
 {
-    public static class BusRegistrationConfigurationExtension
-    {
-        public static void AddConsumerSaga<TStateMachine, T>(this IBusRegistrationConfigurator that, RedisCredentials redisCredentials) where TStateMachine : class, SagaStateMachine<T> where T : class, ISagaVersion, SagaStateMachineInstance
-        {
-            that.AddSagaStateMachine<TStateMachine, T>((context, config) =>
-            {
-                config.UseInMemoryOutbox(context);
-            }).RedisRepository(opt =>
-            {
-                opt.ConcurrencyMode = ConcurrencyMode.Pessimistic;
-                opt.DatabaseConfiguration(redisCredentials.ConnectionString);
-            });
-        }
-    }
-
     public static class ServiceCollectionExtensions
     {
         public static void AddAzureServiceBus2(this IServiceCollection services, AzureServiceBusCredentials credentials, RedisCredentials redisCredentials)
@@ -56,6 +41,10 @@ namespace BricksHoarder.Azure.ServiceBus
 
             services.AddMassTransit(x =>
             {
+                x.AddCommandConsumer<SyncThemesCommand, ThemesCollectionAggregate>();
+                x.AddCommandConsumer<SyncSetsCommand, RebrickableSetAggregate>();
+                x.AddCommandConsumer<SyncSetRebrickableDataCommand, RebrickableSetAggregate>();
+
                 var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()
                     .Single(assembly => assembly.GetName().Name == "BricksHoarder.Domain").GetTypes();
 
@@ -73,7 +62,7 @@ namespace BricksHoarder.Azure.ServiceBus
                     var typeArguments = commandHandlerType.GetGenericArguments();
                     x.AddConsumer(typeof(CommandConsumer<,>).MakeGenericType(typeArguments));
                 }
-
+                
                 #region Sagas Consumers
 
                 x.AddConsumerSaga<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>(redisCredentials);
@@ -376,15 +365,6 @@ namespace BricksHoarder.Azure.ServiceBus
             });
 
             //services.RemoveMassTransitHostedService();
-        }
-    }
-
-    public class SyncSetLegoDataCommandDefinition :
-        ConsumerDefinition<CommandConsumer<SyncSetLegoDataCommand, LegoSetAggregate>>
-    {
-        public SyncSetLegoDataCommandDefinition()
-        {
-            EndpointName = SyncSetLegoDataCommandMetadata.QueuePath;
         }
     }
 }

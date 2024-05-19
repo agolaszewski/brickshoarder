@@ -24,7 +24,7 @@ namespace BricksHoarder.Domain.SetsCollection
             _collection.Add(new Set(@event.SetId, @event.LastModifiedDate));
         }
 
-        internal bool HasChanged(LegoSetsListAsyncResponse.Result apiSet)
+        public bool HasChanged(LegoSetsListAsyncResponse.Result apiSet)
         {
             var set = _collection.FirstOrDefault(x => x.SetId == apiSet.SetNum);
 

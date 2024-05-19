@@ -49,14 +49,18 @@ namespace BricksHoarder.Domain.LegoSet
             return Availability != LegoSetAvailability.Unknown && response.Availability == Websites.Scrappers.Lego.Availability.Unknown;
         }
 
+        public bool HasChanged(LegoScrapperResponse response)
+        {
+            return new ComparerService()
+                .Compare(Price, response.Price)
+                .Compare(MaxQuantity, response.MaxQuantity)
+                .Compare(Availability, response.Availability.ToAnother<LegoSetAvailability>())
+                .HasChanged;
+        }
+
         public void Update(LegoScrapperResponse response)
         {
-            var compare = new ComparerService();
-            compare.Compare(Price, response.Price)
-            .Compare(MaxQuantity, response.MaxQuantity)
-            .Compare(Availability, response.Availability.ToAnother<LegoSetAvailability>());
-
-            if (!compare.HasChanged)
+            if (!HasChanged(response))
             {
                 return;
             }
@@ -64,7 +68,7 @@ namespace BricksHoarder.Domain.LegoSet
             AddEvent(new LegoSetUpdated(Id, response.Availability.ToAnother<LegoSetAvailability>(), response.MaxQuantity, response.Price));
         }
 
-        internal void CheckAvailability(LegoScrapperResponse response, System.DateTime date)
+        public void CheckAvailability(LegoScrapperResponse response, System.DateTime date)
         {
             var responseAvailability = response.Availability.ToAnother<LegoSetAvailability>();
 
@@ -107,27 +111,27 @@ namespace BricksHoarder.Domain.LegoSet
             }
         }
 
-        internal void CustomerCanBuyLess(int maxQuantity)
+        public void CustomerCanBuyLess(int maxQuantity)
         {
             AddEvent(new CustomerCanBuyLessLegoSet(Id, maxQuantity));
         }
 
-        internal void CustomerCanBuyMore(int maxQuantity)
+        public void CustomerCanBuyMore(int maxQuantity)
         {
             AddEvent(new CustomerCanBuyMoreLegoSet(Id, maxQuantity));
         }
 
-        internal void NewSetDiscovered(LegoScrapperResponse response)
+        public void NewSetDiscovered(LegoScrapperResponse response)
         {
             AddEvent(new NewLegoSetDiscovered(Id, response.Name!, response.Availability.ToAnother<LegoSetAvailability>(), response.MaxQuantity, response.Price, response.ImageUrl, response.IsGift));
         }
 
-        internal void PriceDecreased(decimal price)
+        public void PriceDecreased(decimal price)
         {
             AddEvent(new LegoSetPriceDecreased(Id, price));
         }
 
-        internal void PriceIncreased(decimal price)
+        public void PriceIncreased(decimal price)
         {
             AddEvent(new LegoSetPriceIncreased(Id, price));
         }

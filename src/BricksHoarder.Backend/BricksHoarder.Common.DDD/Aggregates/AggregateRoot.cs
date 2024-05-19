@@ -3,6 +3,7 @@ using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Core.Exceptions;
+using BricksHoarder.Core.Helpers;
 using BricksHoarder.Core.Specification;
 using FluentValidation;
 using FluentValidation.Results;

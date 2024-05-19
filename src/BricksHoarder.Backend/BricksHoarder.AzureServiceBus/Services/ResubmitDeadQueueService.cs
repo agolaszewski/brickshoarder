@@ -1,28 +1,36 @@
-﻿using Azure.Messaging.ServiceBus;
+﻿using System.Text;
+using System.Text.Json;
+using Azure.Messaging.ServiceBus;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Logging;
-using System.Text;
-using System.Text.Json;
 
 namespace BricksHoarder.Azure.ServiceBus.Services
 {
-    public class DeadLetterQueueRescheduler
+    public class ResubmitDeadQueueService(IAzureClientFactory<ServiceBusClient> serviceBusClientFactory, ILogger<ResubmitDeadQueueService> logger)
     {
-        private readonly IAzureClientFactory<ServiceBusClient> _serviceBusClientFactory;
-        private readonly ILogger<DeadLetterQueueRescheduler> _logger;
+        private readonly ServiceBusClient _serviceBusClient = serviceBusClientFactory.CreateClient("ServiceBusClient");
 
-        public DeadLetterQueueRescheduler(IAzureClientFactory<ServiceBusClient> serviceBusClientFactory, ILogger<DeadLetterQueueRescheduler> logger)
+        public async Task HandleAsync(int amount)
         {
-            _serviceBusClientFactory = serviceBusClientFactory;
-            _logger = logger;
+            logger.LogWarning("ResubmitDeadQueueService invoked");
+
+            var receiver = _serviceBusClient.CreateReceiver("brickshoarder/fault", "default", new ServiceBusReceiverOptions()
+            {
+                SubQueue = SubQueue.DeadLetter
+            });
+
+            var messages = await receiver.ReceiveMessagesAsync(amount);
+            foreach (var message in messages)
+            {
+                await ResendAsync(message);
+                await receiver.CompleteMessageAsync(message);
+            }
         }
 
-        public async Task<bool> HandleAsync(ServiceBusReceivedMessage message)
+        private async Task ResendAsync(ServiceBusReceivedMessage message)
         {
-            _logger.LogWarning("DeadLetterQueueRescheduler invoked");
-
             var body = Encoding.UTF8.GetString(message.Body);
 
             using var jsonParse = JsonDocument.Parse(body);
@@ -31,13 +39,6 @@ namespace BricksHoarder.Azure.ServiceBus.Services
                 .Select(x => x.Replace("urn:message:", string.Empty)).ToList().AsReadOnly();
 
             string type = null;
-
-            //TODO
-            if (messageType.Any(e => e.Contains("SyncSetLegoDataCommand")))
-            {
-                return false;
-            }
-
             if (messageType.Any(e => e.Contains(nameof(ICommand))))
             {
                 type = messageType[0].Split(":")[1];
@@ -61,14 +62,12 @@ namespace BricksHoarder.Azure.ServiceBus.Services
                 }
             }
 
-            _logger.LogWarning("type : {0} MessageId : {1}", type, message.MessageId);
+            logger.LogWarning("ResubmitDeadQueueService type : {type} MessageId : {messageId}", type, message.MessageId);
 
-            ServiceBusClient serviceBusClient = _serviceBusClientFactory.CreateClient("ServiceBusClient");
-            var client = serviceBusClient.CreateSender(type);
+            var client = _serviceBusClient.CreateSender(type);
             await client.SendMessageAsync(new ServiceBusMessage(message));
 
-            _logger.LogWarning("DeadLetterQueueRescheduler finished");
-            return true;
+            logger.LogWarning("DeadLetterQueueRescheduler finished");
         }
     }
 }
