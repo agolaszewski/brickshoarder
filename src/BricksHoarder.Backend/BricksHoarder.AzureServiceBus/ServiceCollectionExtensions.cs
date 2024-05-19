@@ -5,7 +5,9 @@ using BricksHoarder.Common.CQRS;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
+using BricksHoarder.Domain.LegoSet;
 using BricksHoarder.Domain.RebrickableSet;
+using BricksHoarder.Domain.SetsCollection;
 using BricksHoarder.Domain.SyncRebrickableData;
 using BricksHoarder.Domain.ThemesCollection;
 using BricksHoarder.Events;
@@ -42,8 +44,9 @@ namespace BricksHoarder.Azure.ServiceBus
             services.AddMassTransit(x =>
             {
                 x.AddCommandConsumer<SyncThemesCommand, ThemesCollectionAggregate>();
-                x.AddCommandConsumer<SyncSetsCommand, RebrickableSetAggregate>();
+                x.AddCommandConsumer<SyncSetsCommand, SetsCollectionAggregate>();
                 x.AddCommandConsumer<SyncSetRebrickableDataCommand, RebrickableSetAggregate>();
+                x.AddCommandConsumer<SyncSetLegoDataCommand, LegoSetAggregate>();
 
                 var domainAssembly = AppDomain.CurrentDomain.GetAssemblies()
                     .Single(assembly => assembly.GetName().Name == "BricksHoarder.Domain").GetTypes();
@@ -57,15 +60,16 @@ namespace BricksHoarder.Azure.ServiceBus
                     .Where(t => typeof(ICommandHandler<,>).IsAssignableFrom(t.GetGenericTypeDefinition()))
                     .ToList();
 
-                foreach (var commandHandlerType in commandsHandlersTypes)
-                {
-                    var typeArguments = commandHandlerType.GetGenericArguments();
-                    x.AddConsumer(typeof(CommandConsumer<,>).MakeGenericType(typeArguments));
-                }
+                //foreach (var commandHandlerType in commandsHandlersTypes)
+                //{
+                //    var typeArguments = commandHandlerType.GetGenericArguments();
+                //    x.AddConsumer(typeof(CommandConsumer<,>).MakeGenericType(typeArguments));
+                //}
                 
                 #region Sagas Consumers
 
                 x.AddConsumerSaga<SyncRebrickableDataSaga, SyncRebrickableDataSagaState>(redisCredentials);
+
                 x.AddConsumer<BatchEventConsumer<SetReleased>>(config =>
                 {
                     config.Options<BatchOptions>(options => options
@@ -74,7 +78,12 @@ namespace BricksHoarder.Azure.ServiceBus
                         .SetTimeLimitStart(BatchTimeLimitStart.FromLast)
                         .GroupBy<SetReleased, Guid>(x => x.CorrelationId)
                         .SetConcurrencyLimit(10));
+
+                }).Endpoint(config =>
+                {
+                    config.Name = nameof(SetReleasedBatchMetadata.TopicPath);
                 });
+
                 x.AddConsumer<BatchEventConsumer<SetDetailsChanged>>(config =>
                 {
                     config.Options<BatchOptions>(options => options
@@ -83,6 +92,10 @@ namespace BricksHoarder.Azure.ServiceBus
                         .SetTimeLimitStart(BatchTimeLimitStart.FromLast)
                         .GroupBy<SetDetailsChanged, Guid>(x => x.CorrelationId)
                         .SetConcurrencyLimit(10));
+
+                }).Endpoint(config =>
+                {
+                    config.Name = SetDetailsChangedMetadata.TopicPath;
                 });
 
                 #endregion Sagas Consumers
@@ -107,7 +120,6 @@ namespace BricksHoarder.Azure.ServiceBus
                         {
                             configureEndpoint.ConfigureConsumeTopology = false;
                             configureEndpoint.MaxDeliveryCount = 1;
-                            configureEndpoint.ForwardDeadLetteredMessagesTo = "brickshoarder/fault";
                             configureEndpoint.ConfigureDeadLetterQueueDeadLetterTransport();
                             configureEndpoint.ConfigureDeadLetterQueueErrorTransport();
 
@@ -115,6 +127,29 @@ namespace BricksHoarder.Azure.ServiceBus
                             configureEndpoint.ConfigureConsumer(context, consumerType);
                         });
                     }
+
+                    cfg.SubscriptionEndpoint("default", SetReleasedMetadata.TopicPath, configureEndpoint =>
+                    {
+                        configureEndpoint.ConfigureConsumeTopology = false;
+                        configureEndpoint.MaxDeliveryCount = 1;
+                        configureEndpoint.ConfigureDeadLetterQueueDeadLetterTransport();
+                        configureEndpoint.ConfigureDeadLetterQueueErrorTransport();
+                        configureEndpoint.ConfigureConsumer<BatchEventConsumer<SetReleased>>(context);
+                    });
+
+                    cfg.SubscriptionEndpoint("default", SetDetailsChangedMetadata.TopicPath, configureEndpoint =>
+                    {
+                        configureEndpoint.ConfigureConsumeTopology = false;
+                        configureEndpoint.MaxDeliveryCount = 1;
+                        configureEndpoint.ConfigureDeadLetterQueueDeadLetterTransport();
+                        configureEndpoint.ConfigureDeadLetterQueueErrorTransport();
+                        configureEndpoint.ConfigureConsumer<BatchEventConsumer<SetDetailsChanged>>(context);
+                    });
+
+                    cfg.Message<BatchEvent<SetReleased>>(x =>
+                    {
+                        x.SetEntityName(SetReleasedBatchMetadata.TopicPath);
+                    });
 
                     cfg.Publish<IEvent>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
@@ -205,29 +240,34 @@ namespace BricksHoarder.Azure.ServiceBus
                     cfg.Publish<IEvent>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
 
-                    cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
-                    {
-                        x.SetEntityName(SyncThemesCommandConsumedMetadata.TopicPath);
-                    });
+                    //cfg.Message<CommandConsumed<SyncThemesCommand>>(x =>
+                    //{
+                    //    x.SetEntityName(SyncThemesCommandConsumedMetadata.TopicPath);
+                    //});
 
-                    cfg.Message<CommandConsumed<SyncSetsCommand>>(x =>
-                    {
-                        x.SetEntityName(SyncSetsCommandConsumedMetadata.TopicPath);
-                    });
+                    //cfg.Message<CommandConsumed<SyncSetsCommand>>(x =>
+                    //{
+                    //    x.SetEntityName(SyncSetsCommandConsumedMetadata.TopicPath);
+                    //});
 
-                    cfg.Message<CommandConsumed<SyncSetRebrickableDataCommand>>(x =>
-                    {
-                        x.SetEntityName(SyncSetRebrickableDataCommandConsumedMetadata.TopicPath);
-                    });
+                    //cfg.Message<CommandConsumed<SyncSetRebrickableDataCommand>>(x =>
+                    //{
+                    //    x.SetEntityName(SyncSetRebrickableDataCommandConsumedMetadata.TopicPath);
+                    //});
+
+                    //cfg.Message<Batch<SetReleased>>(x =>
+                    //{
+                    //    x.SetEntityName(SetReleasedBatchMetadata.TopicPath);
+                    //});
+
+                    //cfg.Message<Batch<SetDetailsChanged>>(x =>
+                    //{
+                    //    x.SetEntityName(SetDetailsChangedBatchMetadata.TopicPath);
+                    //});
 
                     cfg.Message<Batch<SetReleased>>(x =>
                     {
                         x.SetEntityName(SetReleasedBatchMetadata.TopicPath);
-                    });
-
-                    cfg.Message<Batch<SetDetailsChanged>>(x =>
-                    {
-                        x.SetEntityName(SetDetailsChangedBatchMetadata.TopicPath);
                     });
 
                     cfg.UseServiceBusMessageScheduler();

@@ -37,12 +37,10 @@ namespace BricksHoarder.Domain.RebrickableSet
         public void Apply(RebrickableMinifigureDataSynced @event)
         {
             var minifigure = Minifigures.First(minifigure => minifigure.Id == @event.MinifigureId);
-            minifigure = minifigure with
-            {
-                Name = @event.Name,
-                Quantity = @event.Quantity,
-                ImageUrl = @event.ImageUrl,
-            };
+
+            minifigure.Name = @event.Name;
+            minifigure.Quantity = @event.Quantity;
+            minifigure.ImageUrl = @event.ImageUrl;
         }
 
         public void Apply(RebrickableSetDataSynced @event)
@@ -79,7 +77,7 @@ namespace BricksHoarder.Domain.RebrickableSet
             toDelete.ForEach(minifigure => AddEvent(new RebrickableMinifigureDeletedFromSet(minifigure.Id, Id)));
 
             var toInsert = results.Where(minifigure => Minifigures.All(x => x.Id != minifigure.Id)).ToList();
-            toInsert.ForEach(apiMinifigure => AddEvent(new RebrickableMinifigureDataSynced(Id, apiMinifigure.Id, apiMinifigure.SetName, apiMinifigure.Quantity, apiMinifigure.SetImgUrl)));
+            toInsert.ForEach(apiMinifigure => AddEvent(new RebrickableMinifigureAddedToSet(Id, apiMinifigure.Id, apiMinifigure.SetName, apiMinifigure.Quantity, apiMinifigure.SetImgUrl)));
 
             foreach (var minifigure in Minifigures)
             {
