@@ -1,4 +1,5 @@
 ﻿using BricksHoarder.Domain.SetsCollection;
+using BricksHoarder.Events;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Rebrickable.Api;
@@ -65,6 +66,80 @@ namespace BricksHoarder.Domain.UnitTests
                 hasChange2.Should().BeTrue();
                 _setsCollectionAggregate.Collection.First(x => x.SetId == "1").LastModifiedDate.Should().Be(new System.DateTime(2024, 2, 1, 1, 1, 1));
             }
+
+            [Fact]
+            public void when_set_is_released_it_should_be_added_to_the_collection()
+            {
+                // Arrange
+                var setReleasedEvent = new SetReleased("123", System.DateTime.Now);
+
+                // Act
+                _setsCollectionAggregate.Apply(setReleasedEvent);
+
+                // Assert
+                _setsCollectionAggregate.Collection.Should().ContainSingle(s => s.SetId == "123");
+            }
+
+            [Fact]
+            public void when_set_details_are_changed_it_should_update_the_set()
+            {
+                // Arrange
+                var setReleasedEvent = new SetReleased("123", System.DateTime.Now.AddDays(-1));
+                _setsCollectionAggregate.Apply(setReleasedEvent);
+                var setDetailsChangedEvent = new SetDetailsChanged("123", System.DateTime.Now);
+
+                // Act
+                _setsCollectionAggregate.Apply(setDetailsChangedEvent);
+
+                // Assert
+                var set = _setsCollectionAggregate.Collection.Single(s => s.SetId == "123");
+                set.LastModifiedDate.Should().Be(setDetailsChangedEvent.LastModifiedDate);
+            }
+
+            [Fact]
+            public void when_checking_if_set_has_changed_and_set_does_not_exist_it_should_return_true()
+            {
+                // Arrange
+                var apiSet = new LegoSetsListAsyncResponse.Result("1", "Test Set", 2024, 1, 2137, null, null, new System.DateTime(2024, 1, 1, 1, 1, 1));
+
+                // Act
+                var hasChanged = _setsCollectionAggregate.HasChanged(apiSet);
+
+                // Assert
+                hasChanged.Should().BeTrue();
+            }
+
+            [Fact]
+            public void when_checking_if_set_has_changed_and_set_exists_but_last_modified_date_is_older_it_should_return_true()
+            {
+                // Arrange
+                var setReleasedEvent = new SetReleased("123", DateTimeHelper.Today.AddDays(-1));
+                _setsCollectionAggregate.Apply(setReleasedEvent);
+                var apiSet = new LegoSetsListAsyncResponse.Result("123", "Test Set", 2024, 1, 2137, null, null, DateTimeHelper.Today);
+
+                // Act
+                var hasChanged = _setsCollectionAggregate.HasChanged(apiSet);
+
+                // Assert
+                hasChanged.Should().BeTrue();
+            }
+
+            [Fact]
+            public void when_checking_if_set_has_changed_and_set_exists_and_last_modified_date_is_same_it_should_return_false()
+            {
+                // Arrange
+                var date = System.DateTime.Now;
+                var setReleasedEvent = new SetReleased("123", date);
+                _setsCollectionAggregate.Apply(setReleasedEvent);
+                var apiSet = new LegoSetsListAsyncResponse.Result("1", "Test Set", 2024, 1, 2137, null, null, new System.DateTime(2024, 1, 1, 1, 1, 1));
+
+                // Act
+                var hasChanged = _setsCollectionAggregate.HasChanged(apiSet);
+
+                // Assert
+                hasChanged.Should().BeFalse();
+            }
+
         }
     }
 }

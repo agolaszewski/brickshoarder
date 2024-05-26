@@ -156,5 +156,75 @@ namespace BricksHoarder.Domain.UnitTests
             // Assert
             _rebrickableSetAggregate.Minifigures.Count.Should().Be(1);
         }
+
+        [Fact]
+        public void when_minifigure_is_added_it_should_be_added_to_the_list()
+        {
+            // Arrange
+            var minifigureAddedEvent = new RebrickableMinifigureAddedToSet("123", 1, "Test", 1, "http://example.com");
+
+            // Act
+            _rebrickableSetAggregate.Apply(minifigureAddedEvent);
+
+            // Assert
+            _rebrickableSetAggregate.Minifigures.Should().ContainSingle(m => m.Id == 1);
+            var minifigure = _rebrickableSetAggregate.Minifigures.Single(m => m.Id == 1);
+            minifigure.Name.Should().Be("Test");
+            minifigure.Quantity.Should().Be(1);
+            minifigure.ImageUrl.Should().Be("http://example.com");
+            minifigure.Id.Should().Be(1);
+        }
+
+        [Fact]
+        public void when_minifigure_is_deleted_it_should_be_removed_from_the_list()
+        {
+            // Arrange
+            var minifigureAddedEvent = new RebrickableMinifigureAddedToSet("123", 1, "Test", 1, "http://example.com");
+            _rebrickableSetAggregate.Apply(minifigureAddedEvent);
+            var minifigureDeletedEvent = new RebrickableMinifigureDeletedFromSet(1, "123");
+
+            // Act
+            _rebrickableSetAggregate.Apply(minifigureDeletedEvent);
+
+            // Assert
+            _rebrickableSetAggregate.Minifigures.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void when_minifigure_data_is_synced_it_should_update_the_minifigure()
+        {
+            // Arrange
+            var minifigureAddedEvent = new RebrickableMinifigureAddedToSet("123", 1, "Test", 1, "http://example.com");
+            _rebrickableSetAggregate.Apply(minifigureAddedEvent);
+            var minifigureSyncedEvent = new RebrickableMinifigureDataSynced("123", 1, "Updated", 2, "http://updated.com");
+
+            // Act
+            _rebrickableSetAggregate.Apply(minifigureSyncedEvent);
+
+            // Assert
+            var minifigure = _rebrickableSetAggregate.Minifigures.Single(m => m.Id == 1);
+            minifigure.Name.Should().Be("Updated");
+            minifigure.Quantity.Should().Be(2);
+            minifigure.ImageUrl.Should().Be("http://updated.com");
+            minifigure.Id.Should().Be(1);
+        }
+
+        [Fact]
+        public void when_set_data_is_synced_it_should_update_the_set()
+        {
+            // Arrange
+            var setDataSyncedEvent = new RebrickableSetDataSynced("123", "Updated", 2, 2000, 100, "http://updated.com");
+
+            // Act
+            _rebrickableSetAggregate.Apply(setDataSyncedEvent);
+
+            // Assert
+            _rebrickableSetAggregate.Name.Should().Be("Updated");
+            _rebrickableSetAggregate.ThemeId.Should().Be(2);
+            _rebrickableSetAggregate.Year.Should().Be(2000);
+            _rebrickableSetAggregate.NumParts.Should().Be(100);
+            _rebrickableSetAggregate.SetImgUrl.Should().Be("http://updated.com");
+        }
+
     }
 }

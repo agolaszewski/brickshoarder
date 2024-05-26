@@ -111,6 +111,75 @@ namespace BricksHoarder.Domain.UnitTests
             _legoSetAggregate.Events.Should().ContainSingle(e => e.Event is LegoSetIsAvailable);
         }
 
+        [Fact]
+        public void when_response_of_lego_scrapper_is_awaiting_then_the_lego_set_aggregate_should_add_lego_set_to_be_released_event()
+        {
+            // Arrange
+            var response = new LegoScrapperResponse("10", "Test", Availability.Awaiting, "123", "1", "http://example/123", System.DateTime.Now.AddDays(10), false);
+            var date = System.DateTime.Now;
+
+            // Act
+            _legoSetAggregate.CheckAvailability(response, date);
+
+            // Assert
+            _legoSetAggregate.Events.Should().ContainSingle(e => e.Event is LegoSetToBeReleased);
+        }
+
+        [Fact]
+        public void when_response_of_lego_scrapper_is_pending_then_the_lego_set_aggregate_should_add_lego_set_pending_event()
+        {
+            // Arrange
+            var response = new LegoScrapperResponse("10", "Test", Availability.Pending, "123", "1", "http://example/123", System.DateTime.Now.AddDays(10), false);
+            var date = System.DateTime.Now;
+
+            // Act
+            _legoSetAggregate.CheckAvailability(response, date);
+
+            // Assert
+            _legoSetAggregate.Events.Should().ContainSingle(e => e.Event is LegoSetPending);
+        }
+
+        [Fact]
+        public void when_response_of_lego_scrapper_is_running_out_then_the_lego_set_aggregate_should_add_lego_set_running_out_event()
+        {
+            // Arrange
+            var response = new LegoScrapperResponse("10", "Test", Availability.RunningOut, "123", "1", "http://example/123", null, false);
+            var date = System.DateTime.Now;
+
+            // Act
+            _legoSetAggregate.CheckAvailability(response, date);
+
+            // Assert
+            _legoSetAggregate.Events.Should().ContainSingle(e => e.Event is LegoSetRunningOut);
+        }
+
+        [Fact]
+        public void when_response_of_lego_scrapper_is_temporarily_unavailable_then_the_lego_set_aggregate_should_add_lego_set_temporarily_unavailable_event()
+        {
+            // Arrange
+            var response = new LegoScrapperResponse("10", "Test", Availability.TemporarilyUnavailable, "123", "1", "http://example/123", null, false);
+            var date = System.DateTime.Now;
+
+            // Act
+            _legoSetAggregate.CheckAvailability(response, date);
+
+            // Assert
+            _legoSetAggregate.Events.Should().ContainSingle(e => e.Event is LegoSetTemporarilyUnavailable);
+        }
+
+        [Fact]
+        public void when_response_of_lego_scrapper_is_discontinued_then_the_lego_set_aggregate_should_add_lego_set_no_longer_for_sale_event()
+        {
+            // Arrange
+            var response = new LegoScrapperResponse("10", "Test", Availability.Discontinued, "123", "1", "http://example/123", null, false);
+            var date = System.DateTime.Now;
+
+            // Act
+            _legoSetAggregate.CheckAvailability(response, date);
+
+            // Assert
+            _legoSetAggregate.Events.Should().ContainSingle(e => e.Event is LegoSetNoLongerForSale);
+        }
 
     }
 }
