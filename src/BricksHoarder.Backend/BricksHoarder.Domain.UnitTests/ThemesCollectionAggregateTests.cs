@@ -13,8 +13,10 @@ namespace BricksHoarder.Domain.UnitTests
         };
 
         [Fact]
-        public void AddNonExistingThemeToCollection()
+        public void when_adding_a_non_existing_theme_to_the_collection_then_it_should_be_added()
         {
+            //When adding a non-existing theme to the collection than it should be added
+
             // Arrange
 
             var theme = new LegoThemesListAsyncResponse.Result(1, null, "Test Theme");
@@ -27,9 +29,9 @@ namespace BricksHoarder.Domain.UnitTests
         }
 
         [Fact]
-        public void AddExistingThemeToCollection()
+        public void when_adding_an_existing_theme_to_the_collection_does_not_add_it_again()
         {
-            // Test to verify that adding an existing theme to the collection does not add it again
+            //When adding an existing theme to the collection does not add it again
 
             // Arrange
             var theme = new LegoThemesListAsyncResponse.Result(1, null, "Test Theme");
@@ -43,10 +45,10 @@ namespace BricksHoarder.Domain.UnitTests
         }
 
         [Fact]
-        public void AddThemeWithParentToCollection()
+        public void when_adding_a_theme_with_a_parent_to_the_collection_then_it_should_be_added()
         {
-            // Test to verify adding a theme with a parent to the collection
-
+            // When adding a theme with a parent to the collection than it should be added
+            
             // Arrange
             var parentTheme = new LegoThemesListAsyncResponse.Result(1, null, "Parent Theme");
             var theme = new LegoThemesListAsyncResponse.Result(2, parentTheme.Id, "Child Theme");

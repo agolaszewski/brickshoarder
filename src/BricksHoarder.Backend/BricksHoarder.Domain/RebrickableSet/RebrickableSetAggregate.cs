@@ -12,7 +12,9 @@ namespace BricksHoarder.Domain.RebrickableSet
         IApply<RebrickableMinifigureDataSynced>,
         IApply<RebrickableSetDataSynced>
     {
-        public List<Minifigure> Minifigures { get; } = new();
+        private readonly List<Minifigure> _minifigures = new();
+
+        public IReadOnlyList<Minifigure> Minifigures => _minifigures;
 
         public string Name { get; private set; }
 
@@ -26,12 +28,12 @@ namespace BricksHoarder.Domain.RebrickableSet
 
         public void Apply(RebrickableMinifigureAddedToSet @event)
         {
-            Minifigures.Add(new Minifigure(@event.MinifigureId, @event.Name, @event.Quantity, @event.ImageUrl));
+            _minifigures.Add(new Minifigure(@event.MinifigureId, @event.Name, @event.Quantity, @event.ImageUrl));
         }
 
         public void Apply(RebrickableMinifigureDeletedFromSet @event)
         {
-            Minifigures.RemoveAt(Minifigures.FindIndex(minifigure => minifigure.Id == @event.MinifigureId));
+            _minifigures.RemoveAt(_minifigures.FindIndex(minifigure => minifigure.Id == @event.MinifigureId));
         }
 
         public void Apply(RebrickableMinifigureDataSynced @event)
@@ -63,7 +65,7 @@ namespace BricksHoarder.Domain.RebrickableSet
                 .HasChanged;
         }
 
-        internal void SetData(LegoSetsReadAsyncResponse apiSet)
+        public void SetData(LegoSetsReadAsyncResponse apiSet)
         {
             if (HasChanged(apiSet))
             {
@@ -71,7 +73,7 @@ namespace BricksHoarder.Domain.RebrickableSet
             }
         }
 
-        internal void SetMinifigureData(IReadOnlyList<LegoSetsMinifigsListAsyncResponse.Result> results)
+        public void SetMinifigureData(IReadOnlyList<LegoSetsMinifigsListAsyncResponse.Result> results)
         {
             var toDelete = Minifigures.Where(minifigure => results.All(x => x.Id != minifigure.Id)).ToList();
             toDelete.ForEach(minifigure => AddEvent(new RebrickableMinifigureDeletedFromSet(minifigure.Id, Id)));

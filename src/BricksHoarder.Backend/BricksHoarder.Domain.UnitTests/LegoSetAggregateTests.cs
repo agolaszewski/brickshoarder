@@ -17,7 +17,7 @@ namespace BricksHoarder.Domain.UnitTests
         };
 
         [Fact]
-        public void CheckIfLegoSetIsNewForSystem()
+        public void when_response_of_lego_scrapper_is_different_than_the_current_state_of_lego_set_aggregate_and_the_current_state_is_unknown_then_the_lego_set_aggregate_is_new_for_the_system()
         {
             //When response of LegoScrapper is different than the current state of LegoSetAggregate and the current state is unknown than the LegoSetAggregate is new for the system
 
@@ -32,7 +32,7 @@ namespace BricksHoarder.Domain.UnitTests
         }
 
         [Fact]
-        public void CheckIfLegoSetHasUnknownStateAndUnknownAvailability()
+        public void when_response_of_lego_scrapper_is_unknown_and_current_state_is_unknown_then_the_lego_set_aggregate_has_unknown_state_and_lego_set_is_discontinued_and_no_longer_available_on_lego_website()
         {
             //When response of LegoScrapper is unknown and current state is unknown than the LegoSetAggregate has unknown state and lego set is discontinued and no longer available on lego website.
 
@@ -47,7 +47,7 @@ namespace BricksHoarder.Domain.UnitTests
         }
 
         [Fact]
-        public void HasUnknownState_ShouldReturnTrue_WhenResponseIsUnknownAndCurrentStateIsUnknown()
+        public void when_response_of_lego_scrapper_is_unknown_and_current_state_is_different_than_unknown_that_means_there_is_some_error_on_lego_site_or_lego_set_is_discontinued_and_no_longer_available_on_lego_website()
         {
             //When response of LegoScrapper is unknown and current state is different than unknown that means there is some error on Lego site OR Lego set is discontinued and no longer available on lego website.
 
@@ -63,8 +63,10 @@ namespace BricksHoarder.Domain.UnitTests
         }
 
         [Fact]
-        public void HasChanged_ShouldReturnTrue_WhenResponseDiffersFromCurrentState()
+        public void when_response_of_lego_scrapper_is_different_than_the_current_state_of_lego_set_aggregate_then_the_lego_set_aggregate_has_changed()
         {
+            //When response of LegoScrapper is different than the current state of LegoSetAggregate than the LegoSetAggregate has changed
+
             // Arrange
             var response = new LegoScrapperResponse("10", "Test", Availability.Available, "123", "1", "http://example/123", null, false);
 
@@ -76,8 +78,10 @@ namespace BricksHoarder.Domain.UnitTests
         }
 
         [Fact]
-        public void Update_ShouldAddLegoSetUpdatedEvent_WhenResponseDiffersFromCurrentState()
+        public void when_response_of_lego_scrapper_is_different_than_the_current_state_of_lego_set_aggregate_then_the_lego_set_aggregate_should_be_updated_with_new_data()
         {
+            //When response of LegoScrapper is different than the current state of LegoSetAggregate than the LegoSetAggregate should be updated with new data
+
             // Arrange
             _legoSetAggregate.Apply(new NewLegoSetDiscovered("10", "Test", LegoSetAvailability.Available, 10, 5, null, false));
             var response = new LegoScrapperResponse("10", "Test10", Availability.Awaiting, "123", "1", "http://example/123", null, false);
@@ -92,18 +96,21 @@ namespace BricksHoarder.Domain.UnitTests
         }
 
         [Fact]
-        public void AddLegoSetToBeReleasedEvent_WhenResponseAvailabilityIsAwaiting()
+        public void when_response_of_lego_scrapper_is_available_then_the_lego_set_aggregate_should_add_lego_set_is_available_event()
         {
+            //When response of LegoScrapper is Available than the LegoSetAggregate should add LegoSetIsAvailable event
+
             // Arrange
-            var aggregate = new LegoSetAggregate();
             var response = new LegoScrapperResponse("10", "Test", Availability.Available, "123", "1", "http://example/123", null, false);
             var date = System.DateTime.Now;
 
             // Act
-            aggregate.CheckAvailability(response, date);
+            _legoSetAggregate.CheckAvailability(response, date);
 
             // Assert
-            aggregate.Events.Should().ContainSingle(e => e is LegoSetToBeReleased);
+            _legoSetAggregate.Events.Should().ContainSingle(e => e.Event is LegoSetIsAvailable);
         }
+
+
     }
 }

@@ -15,8 +15,10 @@ namespace BricksHoarder.Domain.UnitTests
             };
 
             [Fact]
-            public void AddNotExistingSet()
+            public void when_set_data_has_changed_the_sets_collection_aggregate_should_return_true()
             {
+                //When set data has changed, the SetsCollectionAggregate should return true
+
                 // Arrange
                 var set = new LegoSetsListAsyncResponse.Result("1", "Test Set", 2024, 1, 2137, null, null, new System.DateTime(2024, 1, 1, 1, 1, 1));
 
@@ -29,8 +31,10 @@ namespace BricksHoarder.Domain.UnitTests
             }
 
             [Fact]
-            public void AddExistingSet()
+            public void when_set_data_has_not_changed_the_sets_collection_aggregate_should_return_false()
             {
+                //When set data has not changed, the SetsCollectionAggregate should return false
+
                 // Arrange
                 var set1 = new LegoSetsListAsyncResponse.Result("1", "Test Set", 2024, 1, 2137, null, null, new System.DateTime(2024, 1, 1, 1, 1, 1));
                 var set2 = new LegoSetsListAsyncResponse.Result("1", "Test Set", 2024, 1, 2137, null, null, new System.DateTime(2024, 1, 1, 1, 1, 1));
@@ -45,8 +49,10 @@ namespace BricksHoarder.Domain.UnitTests
             }
 
             [Fact]
-            public void ExistingSetWithLatestLastModifiedDt()
+            public void when_set_data_has_changed_the_sets_collection_aggregate_should_be_updated_with_new_data()
             {
+                //When set data has changed, the SetsCollectionAggregate should be updated with new data
+
                 // Arrange
                 var set1 = new LegoSetsListAsyncResponse.Result("1", "Test Set", 2024, 1, 2137, null, null, new System.DateTime(2024, 1, 1, 1, 1, 1));
                 var set2 = new LegoSetsListAsyncResponse.Result("1", "Test Set", 2024, 1, 2137, null, null, new System.DateTime(2024, 2, 1, 1, 1, 1));
