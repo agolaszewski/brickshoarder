@@ -2,5 +2,5 @@
 
 namespace BricksHoarder.Commands.Sets
 {
-    public record SyncSetsCommand() : ICommand;
+    public partial record SyncSetsCommand() : ICommand;
 }
