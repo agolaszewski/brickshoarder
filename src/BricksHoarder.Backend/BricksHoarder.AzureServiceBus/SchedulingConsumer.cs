@@ -25,7 +25,7 @@ namespace BricksHoarder.Azure.ServiceBus
             }
             catch
             {
-                _logger.LogWarning("Exception In SchedulingConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
+                _logger.LogError("Exception In SchedulingConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
                 throw;
             }
             finally

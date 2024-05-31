@@ -1,7 +1,6 @@
 ﻿using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Playwright;
 using Microsoft.Playwright;
-using System.Diagnostics;
 using System.Globalization;
 using System.Web;
 
@@ -41,6 +40,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             await page.GotoAsync($"https://www.lego.com/pl-pl/product/{setId}");
 
             var notFoundPage = await page.Locator("data-test=error-link-cta").IsVisibleAsync();
+
             if (notFoundPage)
             {
                 return LegoScrapperResponse.Unknown(setId);

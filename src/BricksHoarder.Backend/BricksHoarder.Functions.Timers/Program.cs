@@ -56,7 +56,7 @@ void Common(IServiceCollection services, IConfiguration config)
     var redisCredentials = new RedisCredentials(new RedisLabCredentialsBase(config));
     services.AddRedis(redisCredentials);
 
-    services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
+    //services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 }
 
 host.Run();

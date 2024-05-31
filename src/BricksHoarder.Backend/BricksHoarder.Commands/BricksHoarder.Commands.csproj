@@ -11,8 +11,4 @@
     <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Metadata\" />
-  </ItemGroup>
-
 </Project>

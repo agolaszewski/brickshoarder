@@ -1,7 +1,6 @@
-﻿using BricksHoarder.Commands.Metadata;
-using BricksHoarder.Commands.Sets;
-using BricksHoarder.Core.Commands;
+﻿using BricksHoarder.Commands.Sets;
 using BricksHoarder.Core.Events;
+using BricksHoarder.Core.Helpers;
 
 namespace BricksHoarder.Events
 {
@@ -9,7 +8,7 @@ namespace BricksHoarder.Events
     {
         public SchedulingDetails<SyncSetLegoDataCommand> SchedulingDetails()
         {
-            return new SchedulingDetails<SyncSetLegoDataCommand>($"SyncSetLegoDataCommand-{SetId}", new SyncSetLegoDataCommand(SetId), SyncSetLegoDataCommandMetadata.QueuePathUri, ReleaseDate);
+            return new SchedulingDetails<SyncSetLegoDataCommand>($"SyncSetLegoDataCommand-{SetId}", new SyncSetLegoDataCommand(SetId), PathHelper.QueuePathUri<SyncSetLegoDataCommand>(), ReleaseDate);
         }
     }
 }

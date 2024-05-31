@@ -47,7 +47,7 @@ namespace BricksHoarder.Marten.Sandbox
             {
                 mapper.AddDomainProfiles();
             });
-            services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
+            //services.Add(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 
             var provider = services.BuildServiceProvider();
 

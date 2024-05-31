@@ -1,5 +1,4 @@
 ﻿using BricksHoarder.Commands.Themes;
-using BricksHoarder.Common.DDD.Exceptions;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Helpers;
@@ -22,13 +21,7 @@ public class SyncThemes
 
         public async Task<ThemesCollectionAggregate> HandleAsync(SyncThemesCommand command)
         {
-            
             var themesFromApi = await GetAllThemesAsync();
-
-            if (themesFromApi.Count > 1)
-            {
-                throw new NotImplementedException("AASdasd");
-            }
 
             var themes = await _aggregateStore.GetByIdOrDefaultAsync<ThemesCollectionAggregate>();
 
