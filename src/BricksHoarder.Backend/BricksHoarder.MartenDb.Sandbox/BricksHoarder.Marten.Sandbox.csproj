@@ -20,6 +20,7 @@
 		<ProjectReference Include="..\BricksHoarder.Common.CQRS\BricksHoarder.Common.CQRS.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Common\BricksHoarder.Common.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
+		<ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Marten\BricksHoarder.Marten.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Projections\BricksHoarder.Projections.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Redis\BricksHoarder.Redis.csproj" />

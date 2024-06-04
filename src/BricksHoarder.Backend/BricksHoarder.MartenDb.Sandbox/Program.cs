@@ -1,5 +1,4 @@
-﻿using BricksHoarder.Azure.ServiceBus;
-using BricksHoarder.Commands.Sets;
+﻿using BricksHoarder.Commands.Sets;
 using BricksHoarder.Common;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;

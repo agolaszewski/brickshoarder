@@ -90,7 +90,7 @@ void Common(IServiceCollection services, IConfiguration config)
     services.AddScrappers();
     services.AddPlaywright();
 
-    services.AddAzureServiceBus2(new AzureServiceBusCredentials(config, "AzureServiceBus"), bus =>
+    services.AddAzureServiceBus(new AzureServiceBusCredentials(config, "AzureServiceBus"), bus =>
     {
         bus.AddCommandConsumer<SyncThemesCommand, ThemesCollectionAggregate>();
         bus.AddCommandConsumer<SyncSetsCommand, SetsCollectionAggregate>();
@@ -101,6 +101,10 @@ void Common(IServiceCollection services, IConfiguration config)
 
         bus.AddConsumerBatch<SetReleased>(msg => msg.CorrelationId);
         bus.AddConsumerBatch<SetDetailsChanged>(msg => msg.CorrelationId);
+
+        bus.AddScheduleCommandConsumer<SyncSetLegoDataCommand, LegoSetInSale>();
+        bus.AddScheduleCommandConsumer<SyncSetLegoDataCommand, LegoSetToBeReleased>();
+        bus.AddScheduleCommandConsumer<SyncSetLegoDataCommand, LegoSetPending>();
     },
     (context, cfg) =>
     {
@@ -109,6 +113,10 @@ void Common(IServiceCollection services, IConfiguration config)
 
         cfg.BatchSubscriptionEndpoint<SetReleased>(context);
         cfg.BatchSubscriptionEndpoint<SetDetailsChanged>(context);
+
+        cfg.ScheduleSubscriptionEndpoint<SyncSetLegoDataCommand, LegoSetInSale>(context);
+        cfg.ScheduleSubscriptionEndpoint<SyncSetLegoDataCommand, LegoSetToBeReleased>(context);
+        cfg.ScheduleSubscriptionEndpoint<SyncSetLegoDataCommand, LegoSetPending>(context);
     });
 }
 

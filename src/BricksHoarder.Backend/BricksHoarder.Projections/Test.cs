@@ -1,7 +1,4 @@
-﻿using System.Security.Principal;
-using BricksHoarder.Events.Metadata;
-
-namespace BricksHoarder.Projections
+﻿namespace BricksHoarder.Projections
 {
     public class Test
     {

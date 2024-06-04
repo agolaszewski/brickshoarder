@@ -38,7 +38,7 @@ namespace BricksHoarder.Azure.ServiceBus
             });
         }
 
-        public static void AddConsumerBatch<TEvent>(this IBusRegistrationConfigurator that, Func<ConsumeContext<TEvent>,Guid?> correlationFn) where TEvent : class, IEvent
+        public static void AddConsumerBatch<TEvent>(this IBusRegistrationConfigurator that, Func<ConsumeContext<TEvent>, Guid?> correlationFn) where TEvent : class, IEvent
         {
             that.AddConsumer<BatchEventConsumer<TEvent>>(config =>
             {
@@ -52,9 +52,8 @@ namespace BricksHoarder.Azure.ServiceBus
                     .SetMessageLimit(1000)
                     .SetTimeLimit(s: 1)
                     .SetTimeLimitStart(BatchTimeLimitStart.FromLast)
-                    .GroupBy<TEvent, Guid>(context => correlationFn(context))
+                    .GroupBy(correlationFn)
                     .SetConcurrencyLimit(10));
-
             }).Endpoint(config => { config.Name = $"brickshoarder.events/{typeof(TEvent).Name}"; });
         }
 
@@ -86,11 +85,36 @@ namespace BricksHoarder.Azure.ServiceBus
                     r.Ignore<DomainException>();
                     r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(3));
                 });
-
             }).Endpoint(config => { config.Name = typeof(TCommand).Name; });
         }
 
-        public static void ConfigureCommandConsumer<TCommand, TAggregateRoot>( this IServiceBusBusFactoryConfigurator that, IBusRegistrationContext context) where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
+        public static void AddScheduleCommandConsumer<TCommand, TEvent>(this IBusRegistrationConfigurator that) where TEvent : class, IEvent, IScheduling<TCommand> where TCommand : class, ICommand
+        {
+            that.AddConsumer<SchedulingConsumer<TCommand, TEvent>>(config =>
+            {
+                config.UseMessageRetry(r =>
+                {
+                    r.Ignore<DomainException>();
+                    r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(30),
+                        TimeSpan.FromSeconds(60));
+                });
+            });
+        }
+
+        public static void ScheduleSubscriptionEndpoint<TCommand, TEvent>(this IServiceBusBusFactoryConfigurator that,
+            IBusRegistrationContext context) where TEvent : class, IEvent, IScheduling<TCommand> where TCommand : class, ICommand
+        {
+            that.SubscriptionEndpoint($"schedule.{typeof(TCommand).Name}", $"brickshoarder.events/{typeof(TEvent).Name}", configureEndpoint =>
+            {
+                configureEndpoint.ConfigureConsumeTopology = false;
+                configureEndpoint.MaxDeliveryCount = 5;
+                configureEndpoint.ConfigureDeadLetterQueueDeadLetterTransport();
+                configureEndpoint.ConfigureDeadLetterQueueErrorTransport();
+                configureEndpoint.ConfigureConsumer<SchedulingConsumer<TCommand, TEvent>>(context);
+            });
+        }
+
+        public static void ConfigureCommandConsumer<TCommand, TAggregateRoot>(this IServiceBusBusFactoryConfigurator that, IBusRegistrationContext context) where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
         {
             that.ReceiveEndpoint(typeof(TCommand).Name, configureEndpoint =>
             {
@@ -101,6 +125,11 @@ namespace BricksHoarder.Azure.ServiceBus
                 configureEndpoint.UseInMemoryOutbox(context);
 
                 configureEndpoint.ConfigureConsumer<CommandConsumer<TCommand, TAggregateRoot>>(context);
+            });
+
+            that.Message<CommandConsumed<TCommand>>(x =>
+            {
+                x.SetEntityName($"brickshoarder.events/consumed/{typeof(TCommand).Name}");
             });
         }
     }

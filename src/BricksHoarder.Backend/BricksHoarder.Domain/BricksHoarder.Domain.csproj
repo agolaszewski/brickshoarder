@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BricksHoarder.AzureServiceBus\BricksHoarder.Azure.ServiceBus.csproj" />
     <ProjectReference Include="..\BricksHoarder.Commands\BricksHoarder.Commands.csproj" />
     <ProjectReference Include="..\BricksHoarder.Common.CQRS\BricksHoarder.Common.CQRS.csproj" />
     <ProjectReference Include="..\BricksHoarder.Common.DDD\BricksHoarder.Common.DDD.csproj" />

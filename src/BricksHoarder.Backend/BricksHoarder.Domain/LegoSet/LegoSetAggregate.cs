@@ -1,5 +1,6 @@
 ﻿using BricksHoarder.Common.DDD.Aggregates;
 using BricksHoarder.Core.Aggregates;
+using BricksHoarder.Core.Events;
 using BricksHoarder.Core.Helpers;
 using BricksHoarder.Domain.RebrickableSet;
 using BricksHoarder.Events;
@@ -83,7 +84,7 @@ namespace BricksHoarder.Domain.LegoSet
                     break;
 
                 case LegoSetAvailability.Awaiting:
-                    AddEvent(new LegoSetToBeReleased(Id, response.AwaitingTill!.Value));
+                    AddEvent(new LegoSetToBeReleased(Id, response.AwaitingTill!.Value.AddHours(14)));
                     break;
 
                 case LegoSetAvailability.Available:
@@ -91,7 +92,7 @@ namespace BricksHoarder.Domain.LegoSet
                     break;
 
                 case LegoSetAvailability.Pending:
-                    AddEvent(new LegoSetPending(Id, response.AwaitingTill!.Value));
+                    AddEvent(new LegoSetPending(Id, response.AwaitingTill!.Value.AddHours(14)));
                     break;
 
                 case LegoSetAvailability.RunningOut:
@@ -134,6 +135,38 @@ namespace BricksHoarder.Domain.LegoSet
         public void PriceIncreased(decimal price)
         {
             AddEvent(new LegoSetPriceIncreased(Id, price));
+        }
+
+        internal void CheckPrice(LegoScrapperResponse response)
+        {
+            if (response.Price > Price)
+            {
+                PriceIncreased(response.Price.Value);
+            }
+
+            if (response.Price < Price)
+            {
+                PriceDecreased(response.Price.Value);
+            }
+        }
+
+        public void CheckQuantity(LegoScrapperResponse response)
+        {
+            if (response.MaxQuantity > MaxQuantity)
+            {
+                CustomerCanBuyMore(response.MaxQuantity.Value);
+            }
+
+            if (response.MaxQuantity < MaxQuantity)
+            {
+                CustomerCanBuyLess(response.MaxQuantity.Value);
+            }
+        }
+
+        public void LegoSetNoLongerForSale(RetryDetails retryDetails)
+        {
+            AddEvent(new LegoSetNoLongerForSale(Id, retryDetails.OriginalOccurrenceDate));
+            AddEvent(new LegoSetUpdated(Id, LegoSetAvailability.Discontinued, MaxQuantity, Price));
         }
     }
 }

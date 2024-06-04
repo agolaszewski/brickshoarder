@@ -1,11 +1,8 @@
-﻿using System;
-using BricksHoarder.Domain.LegoSet;
-using BricksHoarder.Domain.SetsCollection;
+﻿using BricksHoarder.Domain.LegoSet;
 using BricksHoarder.Events;
 using BricksHoarder.Websites.Scrappers.Lego;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace BricksHoarder.Domain.UnitTests
 {
@@ -180,6 +177,5 @@ namespace BricksHoarder.Domain.UnitTests
             // Assert
             _legoSetAggregate.Events.Should().ContainSingle(e => e.Event is LegoSetNoLongerForSale);
         }
-
     }
 }
