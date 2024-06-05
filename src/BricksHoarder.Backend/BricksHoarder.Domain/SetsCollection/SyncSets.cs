@@ -38,11 +38,7 @@ public class SyncSets
 
                 foreach (var apiSet in setsFromApi)
                 {
-                    if (!sets.HasChanged(apiSet))
-                    {
-                        run = false;
-                        break;
-                    }
+                    sets.HasChanged(apiSet);
                 }
 
                 if (string.IsNullOrWhiteSpace(legoSetsListResponse.Next))

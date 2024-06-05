@@ -19,8 +19,7 @@ namespace BricksHoarder.Azure.ServiceBus
                 config.UseDelayedRedelivery(r =>
                 {
                     r.Ignore<DomainException>();
-                    r.Intervals(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(10),
-                        TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(60));
+                    r.Intervals(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(60));
                 });
 
                 config.UseMessageRetry(r =>
@@ -50,10 +49,11 @@ namespace BricksHoarder.Azure.ServiceBus
 
                 config.Options<BatchOptions>(options => options
                     .SetMessageLimit(1000)
-                    .SetTimeLimit(s: 1)
-                    .SetTimeLimitStart(BatchTimeLimitStart.FromLast)
+                    .SetTimeLimit(s: 10)
+                    .SetTimeLimitStart(BatchTimeLimitStart.FromFirst)
                     .GroupBy(correlationFn)
-                    .SetConcurrencyLimit(10));
+                    .SetConcurrencyLimit(5));
+
             }).Endpoint(config => { config.Name = $"brickshoarder.events/{typeof(TEvent).Name}"; });
         }
 
@@ -63,7 +63,14 @@ namespace BricksHoarder.Azure.ServiceBus
             that.SubscriptionEndpoint("batch", $"brickshoarder.events/{typeof(TEvent).Name}", configureEndpoint =>
             {
                 configureEndpoint.ConfigureConsumeTopology = false;
+
+                configureEndpoint.LockDuration = TimeSpan.FromMinutes(5);
+                configureEndpoint.PrefetchCount = 1000;
+                configureEndpoint.MaxConcurrentCalls = 5;
                 configureEndpoint.MaxDeliveryCount = 5;
+
+                configureEndpoint.UseInMemoryOutbox(context);
+
                 configureEndpoint.ConfigureDeadLetterQueueDeadLetterTransport();
                 configureEndpoint.ConfigureDeadLetterQueueErrorTransport();
                 configureEndpoint.ConfigureConsumer<BatchEventConsumer<TEvent>>(context);
@@ -75,11 +82,13 @@ namespace BricksHoarder.Azure.ServiceBus
             });
         }
 
-        public static void AddCommandConsumer<TCommand, TAggregateRoot>(this IBusRegistrationConfigurator that)
+        public static void AddCommandConsumer<TCommand, TAggregateRoot>(this IBusRegistrationConfigurator that, Action<IConsumerConfigurator<CommandConsumer<TCommand, TAggregateRoot>>>? cfgFn = null)
             where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot
         {
             that.AddConsumer<CommandConsumer<TCommand, TAggregateRoot>>(config =>
             {
+                cfgFn?.Invoke(config);
+
                 config.UseMessageRetry(r =>
                 {
                     r.Ignore<DomainException>();
@@ -112,6 +121,8 @@ namespace BricksHoarder.Azure.ServiceBus
                 configureEndpoint.ConfigureDeadLetterQueueErrorTransport();
                 configureEndpoint.ConfigureConsumer<SchedulingConsumer<TCommand, TEvent>>(context);
             });
+
+            that.Publish<IScheduling<TCommand>>(x => x.Exclude = true);
         }
 
         public static void ConfigureCommandConsumer<TCommand, TAggregateRoot>(this IServiceBusBusFactoryConfigurator that, IBusRegistrationContext context) where TCommand : class, ICommand where TAggregateRoot : class, IAggregateRoot

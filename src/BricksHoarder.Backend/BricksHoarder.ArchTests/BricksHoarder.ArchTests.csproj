@@ -5,8 +5,7 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
-
-    <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
+	<Configurations>Debug;Release;</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

@@ -48,13 +48,13 @@ namespace BricksHoarder.Domain.LegoSet
                 if (set.HasUnknownState(response))
                 {
                     var retryDetails = retryCommandService.Get();
-                    if (retryDetails?.RetryCount >= 10)
+                    if (retryDetails?.RetryCount >= 7)
                     {
                         set.LegoSetNoLongerForSale(retryDetails);
                     }
                     else
                     {
-                        throw new CommandFailedException(retryDetails, dateTimeProvider.UtcNow());
+                        throw new DomainException("Lego set status is unknown");
                     }
                 }
 
