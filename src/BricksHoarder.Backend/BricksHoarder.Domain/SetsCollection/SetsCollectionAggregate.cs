@@ -40,7 +40,7 @@ namespace BricksHoarder.Domain.SetsCollection
                 return true;
             }
 
-            return false;
+            return true;
         }
     }
 }

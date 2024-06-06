@@ -1,5 +1,6 @@
 using BricksHoarder.Azure.ServiceBus;
 using BricksHoarder.Common;
+using BricksHoarder.Core.Services;
 using BricksHoarder.Credentials;
 using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Domain;
@@ -9,6 +10,7 @@ using BricksHoarder.Rebrickable;
 using BricksHoarder.Redis;
 using BricksHoarder.Serilog;
 using BricksHoarder.Websites.Scrappers;
+using Marten;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -96,11 +98,11 @@ IWebHostEnvironment env = host.Services.GetRequiredService<IWebHostEnvironment>(
 
 if (env.IsDevelopment())
 {
-    //var cache = host.Services.GetRequiredService<ICacheService>();
-    //await cache.ClearAsync();
+    var cache = host.Services.GetRequiredService<ICacheService>();
+    await cache.ClearAsync();
 
-    //var ds = host.Services.GetRequiredService<IDocumentStore>();
-    //await ds.Advanced.ResetAllData();
+    var ds = host.Services.GetRequiredService<IDocumentStore>();
+    await ds.Advanced.ResetAllData();
 }
 
 await host.RunAsync();

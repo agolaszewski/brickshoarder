@@ -20,7 +20,7 @@
       }
     },
     "serviceBus": {
-      "prefetchCount": 5,
+      "prefetchCount": 1000,
       "maxMessageBatchSize": 1000,
       "minMessageBatchSize": 500,
       "maxBatchWaitTime": "00:00:10",
