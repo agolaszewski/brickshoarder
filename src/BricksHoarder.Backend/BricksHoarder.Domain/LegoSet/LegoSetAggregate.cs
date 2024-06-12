@@ -163,9 +163,9 @@ namespace BricksHoarder.Domain.LegoSet
             }
         }
 
-        public void LegoSetNoLongerForSale(RetryDetails retryDetails)
+        public void LegoSetNoLongerForSale(System.DateTime discontinuedSince)
         {
-            AddEvent(new LegoSetNoLongerForSale(Id, retryDetails.OriginalOccurrenceDate));
+            AddEvent(new LegoSetNoLongerForSale(Id, discontinuedSince));
             AddEvent(new LegoSetUpdated(Id, LegoSetAvailability.Discontinued, MaxQuantity, Price));
         }
     }

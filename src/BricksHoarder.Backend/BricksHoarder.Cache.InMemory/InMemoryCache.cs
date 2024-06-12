@@ -34,5 +34,23 @@ namespace BricksHoarder.Cache.InMemory
         {
             throw new NotImplementedException();
         }
+
+        public Task SetAsync(string key, DateTime value, TimeSpan? expire)
+        {
+            if (expire.HasValue)
+            {
+                _memoryCache.Set(key, value, expire.Value);
+                return Task.CompletedTask;
+            }
+
+            _memoryCache.Set(key, value);
+            return Task.CompletedTask;
+        }
+
+        public Task<T?> GetAsync<T>(string key, Func<string, T?> convertFn)
+        {
+            var result = _memoryCache.Get<T>(key);
+            return Task.FromResult(result);
+        }
     }
 }

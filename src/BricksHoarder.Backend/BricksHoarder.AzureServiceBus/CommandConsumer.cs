@@ -34,6 +34,7 @@ namespace BricksHoarder.Azure.ServiceBus
                 _logger.LogDebug("Consuming {Message} {CorrelationId}", context.Message.GetType().FullName, context.CorrelationId);
 
                 TAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
+
                 await _aggregateStore.SaveAsync(aggregateRoot);
 
                 var tasks = new List<Task>();
@@ -52,7 +53,7 @@ namespace BricksHoarder.Azure.ServiceBus
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, "Exception In CommandConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
+                _logger.LogError(ex, "Exception In CommandConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
                 throw;
             }
             finally

@@ -20,12 +20,14 @@ namespace BricksHoarder.Azure.ServiceBus
         {
             try
             {
+                _logger.LogInformation("Consuming batch {Event} {Number} {CorrelationId}", typeof(TEvent).Name, context.Message.Length, context.CorrelationId);
+
                 BatchEvent<TEvent> batchEvent = new BatchEvent<TEvent>(context.CorrelationId!.Value, context.Message.Select(m => m.Message).ToList());
                 await _eventDispatcher.DispatchAsync(batchEvent, context.CorrelationId!.Value);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, "Exception In BatchEventConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
+                _logger.LogError(ex, "Exception In BatchEventConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
                 throw;
             }
             finally

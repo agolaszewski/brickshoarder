@@ -91,6 +91,7 @@ void Common(IServiceCollection services, IConfiguration config)
 
     var redisCredentials = new RedisCredentials(new RedisLabCredentialsBase(config));
     services.AddRedis(redisCredentials);
+    services.AddMessageLockService();
 
     services.AddScrappers();
     services.AddPlaywright();

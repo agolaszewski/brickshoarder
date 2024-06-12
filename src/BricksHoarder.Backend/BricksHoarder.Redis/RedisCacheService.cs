@@ -7,11 +7,8 @@ using System.Text.Json;
 
 namespace BricksHoarder.Redis
 {
-    public class RedisCacheService : ICacheService
+    public class RedisCacheService(IDatabase cache, ConnectionMultiplexer connection) : ICacheService
     {
-        private readonly IDatabase _cache;
-        private readonly ConnectionMultiplexer _connection;
-       
         private static readonly JsonSerializerOptions SerializeOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -22,21 +19,15 @@ namespace BricksHoarder.Redis
             SerializeOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
         }
 
-        public RedisCacheService(IDatabase cache, ConnectionMultiplexer connection)
-        {
-            _cache = cache;
-            _connection = connection;
-        }
-
         public async Task SetAsync<T>(string key, T value, TimeSpan? expire) where T : class
         {
             byte[] data = MessagePackSerializer.Typeless.Serialize(value);
-            await _cache.StringSetAsync(key, data, expire);
+            await cache.StringSetAsync(key, data, expire);
         }
 
         public async Task<T?> GetAsync<T>(string key) where T : class
         {
-            RedisValue result = await _cache.StringGetAsync(key);
+            RedisValue result = await cache.StringGetAsync(key);
             if (result.HasValue)
             {
                 byte[] bytes = result!;
@@ -49,11 +40,27 @@ namespace BricksHoarder.Redis
 
         public async Task ClearAsync()
         {
-            var servers = _connection.GetServers();
+            var servers = connection.GetServers();
             foreach (var server in servers)
             {
                 await server.FlushAllDatabasesAsync();
             }
+        }
+
+        public async Task SetAsync(string key, System.DateTime value, TimeSpan? expire)
+        {
+            await cache.StringSetAsync(key, value.ToString("s", System.Globalization.CultureInfo.InvariantCulture), expire);
+        }
+
+        public async Task<T?> GetAsync<T>(string key, Func<string, T?> convertFn)
+        {
+            RedisValue result = await cache.StringGetAsync(key);
+            if (result.HasValue)
+            {
+                return convertFn(result!);
+            }
+
+            return default;
         }
     }
 }

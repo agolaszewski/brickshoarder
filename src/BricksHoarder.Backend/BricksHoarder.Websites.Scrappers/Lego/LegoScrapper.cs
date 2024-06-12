@@ -6,12 +6,8 @@ using System.Web;
 
 namespace BricksHoarder.Websites.Scrappers.Lego
 {
-    public class LegoScrapper
+    public class LegoScrapper(IPageFactory pageFactory, CookiesFactory cookiesFactory, IDateTimeProvider dateTimeProvider)
     {
-        private readonly IPageFactory _pageFactory;
-        private readonly CookiesFactory _cookiesFactory;
-        private readonly IDateTimeProvider _dateTimeProvider;
-
         public record LegoSetId
         {
             public LegoSetId(string setId)
@@ -22,19 +18,12 @@ namespace BricksHoarder.Websites.Scrappers.Lego
             public string Value { get; }
         }
 
-        public LegoScrapper(IPageFactory pageFactory, CookiesFactory cookiesFactory, IDateTimeProvider dateTimeProvider)
-        {
-            _pageFactory = pageFactory;
-            _cookiesFactory = cookiesFactory;
-            _dateTimeProvider = dateTimeProvider;
-        }
-
         public async Task<LegoScrapperResponse> RunGiftAsync(LegoSetId legoSetId)
         {
             string setId = legoSetId.Value;
 
-            IPage page = await _pageFactory.CreatePageAsync();
-            var cookies = await _cookiesFactory.CreateCookiesAsync("lego");
+            IPage page = await pageFactory.CreatePageAsync();
+            var cookies = await cookiesFactory.CreateCookiesAsync("lego");
             await page.Context.AddCookiesAsync(cookies);
 
             await page.GotoAsync($"https://www.lego.com/pl-pl/product/{setId}");
@@ -53,8 +42,8 @@ namespace BricksHoarder.Websites.Scrappers.Lego
         {
             var setId = legoSetId.Value;
 
-            IPage page = await _pageFactory.CreatePageAsync();
-            var cookies = await _cookiesFactory.CreateCookiesAsync("lego");
+            IPage page = await pageFactory.CreatePageAsync();
+            var cookies = await cookiesFactory.CreateCookiesAsync("lego");
             await page.Context.AddCookiesAsync(cookies);
 
             await page.GotoAsync($"https://www.lego.com/pl-pl/product/{setId}");
@@ -120,7 +109,7 @@ namespace BricksHoarder.Websites.Scrappers.Lego
 
             if (availability is Availability.Unknown or Availability.Discontinued)
             {
-                return new LegoScrapperResponse(setId, name, availability, null, null, imgUrl, _dateTimeProvider.UtcNow(), false);
+                return new LegoScrapperResponse(setId, name, availability, null, null, imgUrl, dateTimeProvider.UtcNow(), false);
             }
 
             System.DateTime? awaitingTill = null;

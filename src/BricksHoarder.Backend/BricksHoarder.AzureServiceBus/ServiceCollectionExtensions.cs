@@ -19,8 +19,7 @@ namespace BricksHoarder.Azure.ServiceBus
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-            services.AddScoped<IRetryCommandService, RetryCommandService>();
-
+           
             services.AddAzureClients(builder =>
             {
                 builder.AddServiceBusClient(credentials.ConnectionString).WithName("ServiceBusClient");

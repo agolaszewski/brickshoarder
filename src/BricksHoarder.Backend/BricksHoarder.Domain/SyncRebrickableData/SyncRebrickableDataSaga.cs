@@ -80,23 +80,18 @@ namespace BricksHoarder.Domain.SyncRebrickableData
 
         private async Task ProcessSetDetailsChanged(BehaviorContext<SyncRebrickableDataSagaState, BatchEvent<SetDetailsChanged>> context)
         {
-            SetDetailsChanged? first = null;
-
-            lock (context.Saga.SetsToProcess)
+            foreach (var msg in context.Message.Collection)
             {
-                foreach (var msg in context.Message.Collection)
-                {
-                    context.Saga.AddSetToBeProcessed(msg.SetId);
-                }
-
-                if (context.Saga.AnySetIsCurrentlyProcessing())
-                {
-                    return;
-                }
-
-                first = context.Message.Collection.First();
-                context.Saga.MarkSetAsCurrentlyProcessing(first.SetId);
+                context.Saga.AddSetToBeProcessed(msg.SetId);
             }
+
+            if (context.Saga.AnySetIsCurrentlyProcessing())
+            {
+                return;
+            }
+
+            var first = context.Message.Collection.First();
+            context.Saga.MarkSetAsCurrentlyProcessing(first.SetId);
 
             await SendAsync(context, new SyncSetRebrickableDataCommand(first.SetId));
             await SendAsync(context, new SyncSetLegoDataCommand(first.SetId));
@@ -104,25 +99,25 @@ namespace BricksHoarder.Domain.SyncRebrickableData
 
         private async Task ProcessSetRebrickableDataCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncSetRebrickableDataCommand>> context)
         {
-            ProcessingItem? set;
+            context.Saga.FinishProcessing(context.Message.Command.SetId);
 
-            lock (context.Saga.SetsToProcess)
+            if (context.Saga.AllSetsProcessed())
             {
-                context.Saga.FinishProcessing(context.Message.Command.SetId);
-
-                if (context.Saga.AllSetsProcessed())
-                {
-                    return;
-                }
-
-                set = context.Saga.GetNextUnprocessedSet();
-                if (set == null)
-                {
-                    return;
-                }
-
-                context.Saga.MarkSetAsCurrentlyProcessing(set.Id);
+                return;
             }
+
+            if (context.Saga.AnySetIsCurrentlyProcessing())
+            {
+                return;
+            }
+
+            var set = context.Saga.GetNextUnprocessedSet();
+            if (set == null)
+            {
+                return;
+            }
+
+            context.Saga.MarkSetAsCurrentlyProcessing(set.Id);
 
             await SendAsync(context, new SyncSetRebrickableDataCommand(set.Id));
             await SendAsync(context, new SyncSetLegoDataCommand(set.Id));
@@ -130,23 +125,18 @@ namespace BricksHoarder.Domain.SyncRebrickableData
 
         private async Task ProcessSetReleased(BehaviorContext<SyncRebrickableDataSagaState, BatchEvent<SetReleased>> context)
         {
-            SetReleased? first;
-
-            lock (context.Saga.SetsToProcess)
+            foreach (var msg in context.Message.Collection)
             {
-                foreach (var msg in context.Message.Collection)
-                {
-                    context.Saga.AddSetToBeProcessed(msg.SetId);
-                }
-
-                if (context.Saga.AnySetIsCurrentlyProcessing())
-                {
-                    return;
-                }
-
-                first = context.Message.Collection.First();
-                context.Saga.MarkSetAsCurrentlyProcessing(first.SetId);
+                context.Saga.AddSetToBeProcessed(msg.SetId);
             }
+
+            if (context.Saga.AnySetIsCurrentlyProcessing())
+            {
+                return;
+            }
+
+            var first = context.Message.Collection.First();
+            context.Saga.MarkSetAsCurrentlyProcessing(first.SetId);
 
             await SendAsync(context, new SyncSetRebrickableDataCommand(first.SetId));
             await SendAsync(context, new SyncSetLegoDataCommand(first.SetId));

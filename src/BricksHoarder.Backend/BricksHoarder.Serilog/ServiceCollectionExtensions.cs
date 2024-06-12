@@ -10,7 +10,7 @@ namespace BricksHoarder.Serilog
             return new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Marten", LogEventLevel.Warning)
-                .MinimumLevel.Override("ThrottlingTroll.ThrottlingTroll", LogEventLevel.Error)
+                //.MinimumLevel.Override("ThrottlingTroll.ThrottlingTroll", LogEventLevel.Error)
                 .MinimumLevel.Override("MassTransit", LogEventLevel.Warning)
                 .MinimumLevel.Override("Npgsql",LogEventLevel.Warning)
                 .MinimumLevel.Override("Azure.Messaging.ServiceBus", LogEventLevel.Warning)
@@ -28,7 +28,7 @@ namespace BricksHoarder.Serilog
         {
             const string format = "{Timestamp:yyyy} {SourceContext} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}{NewLine}";
 
-            return loggerConfiguration.WriteTo.Console(outputTemplate: format, restrictedToMinimumLevel: LogEventLevel.Warning);
+            return loggerConfiguration.WriteTo.Console();
         }
 
         public static LoggerConfiguration AddSeq(this LoggerConfiguration loggerConfiguration, Uri seqUrl)

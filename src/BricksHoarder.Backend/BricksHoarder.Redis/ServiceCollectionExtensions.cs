@@ -25,5 +25,10 @@ namespace BricksHoarder.Redis
 
             services.AddScoped<ICacheService, RedisCacheService>();
         }
+
+        public static void AddMessageLockService(this IServiceCollection services)
+        {
+            services.AddScoped<IMessageLockService, MessageLockService>();
+        }
     }
 }

@@ -10,9 +10,7 @@ namespace BricksHoarder.Azure.ServiceBus
 {
     public static class BusRegistrationConfigurationExtension
     {
-        public static void AddConsumerSaga<TStateMachine, T>(this IBusRegistrationConfigurator that,
-            RedisCredentials redisCredentials) where TStateMachine : class, SagaStateMachine<T>
-            where T : class, ISagaVersion, SagaStateMachineInstance
+        public static void AddConsumerSaga<TStateMachine, T>(this IBusRegistrationConfigurator that, RedisCredentials redisCredentials) where TStateMachine : class, SagaStateMachine<T> where T : class, ISagaVersion, SagaStateMachineInstance
         {
             that.AddSagaStateMachine<TStateMachine, T>((context, config) =>
             {
@@ -25,8 +23,7 @@ namespace BricksHoarder.Azure.ServiceBus
                 config.UseMessageRetry(r =>
                 {
                     r.Ignore<DomainException>();
-                    r.Intervals(TimeSpan.FromMilliseconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(3),
-                        TimeSpan.FromSeconds(5));
+                    r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(5));
                 });
 
                 config.UseInMemoryOutbox(context);
@@ -52,8 +49,7 @@ namespace BricksHoarder.Azure.ServiceBus
                     .SetTimeLimit(s: 10)
                     .SetTimeLimitStart(BatchTimeLimitStart.FromFirst)
                     .GroupBy(correlationFn)
-                    .SetConcurrencyLimit(5));
-
+                    .SetConcurrencyLimit(10));
             }).Endpoint(config => { config.Name = $"brickshoarder.events/{typeof(TEvent).Name}"; });
         }
 
@@ -65,8 +61,8 @@ namespace BricksHoarder.Azure.ServiceBus
                 configureEndpoint.ConfigureConsumeTopology = false;
 
                 configureEndpoint.LockDuration = TimeSpan.FromMinutes(5);
-                configureEndpoint.PrefetchCount = 1000;
-                configureEndpoint.MaxConcurrentCalls = 5;
+                configureEndpoint.PrefetchCount = 300;
+                configureEndpoint.MaxConcurrentCalls = 10;
                 configureEndpoint.MaxDeliveryCount = 5;
 
                 configureEndpoint.UseInMemoryOutbox(context);
@@ -133,7 +129,7 @@ namespace BricksHoarder.Azure.ServiceBus
                 configureEndpoint.MaxDeliveryCount = 3;
                 configureEndpoint.ConfigureDeadLetterQueueDeadLetterTransport();
                 configureEndpoint.ConfigureDeadLetterQueueErrorTransport();
-                configureEndpoint.UseInMemoryOutbox(context);
+                //configureEndpoint.UseInMemoryOutbox(context);
 
                 configureEndpoint.ConfigureConsumer<CommandConsumer<TCommand, TAggregateRoot>>(context);
             });

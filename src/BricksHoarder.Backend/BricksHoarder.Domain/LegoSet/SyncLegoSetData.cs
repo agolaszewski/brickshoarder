@@ -1,37 +1,46 @@
-﻿using BricksHoarder.Azure.ServiceBus.Services;
-using BricksHoarder.Commands.Sets;
+﻿using BricksHoarder.Commands.Sets;
 using BricksHoarder.Common.DDD.Exceptions;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
+using BricksHoarder.Core.Services;
 using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Events;
 using BricksHoarder.Websites.Scrappers.Lego;
+using MassTransit;
+using Microsoft.Extensions.Logging;
 using Polly;
 
 namespace BricksHoarder.Domain.LegoSet
 {
     public class SyncLegoSetData
     {
-        public class Handler(IAggregateStore aggregateStore, LegoScrapper legoScrapper, IDateTimeProvider dateTimeProvider, IRetryCommandService retryCommandService, IIntegrationEventsQueue integrationEventsQueue) : ICommandHandler<SyncSetLegoDataCommand, LegoSetAggregate>
+        public class Handler(IMessageLockService messageLockService, IAggregateStore aggregateStore, LegoScrapper legoScrapper, IDateTimeProvider dateTimeProvider, ConsumeContext consumeContext, IIntegrationEventsQueue integrationEventsQueue, ILogger<Handler> logger) : ICommandHandler<SyncSetLegoDataCommand, LegoSetAggregate>
         {
             public async Task<LegoSetAggregate> HandleAsync(SyncSetLegoDataCommand command)
             {
-                var set = await aggregateStore.GetByIdOrDefaultAsync<LegoSetAggregate>(command.SetId);
+                var legoId = new LegoScrapper.LegoSetId(command.SetId);
+
+                if (messageLockService.Lock($"SyncSetLegoDataCommand:{legoId.Value}", consumeContext.MessageId!.Value, dateTimeProvider.UtcNow().Date.AddDays(1)))
+                {
+                    logger.LogInformation($"SyncSetLegoDataCommand:{legoId.Value} was already scanned today");
+                }
+
+                var set = await aggregateStore.GetByIdOrDefaultAsync<LegoSetAggregate>(legoId.Value);
                 LegoScrapperResponse response;
 
                 if (set.IsGift.HasValue)
                 {
                     response = set.IsGift.Value
-                        ? await legoScrapper.RunGiftAsync(new LegoScrapper.LegoSetId(command.SetId))
-                        : await legoScrapper.RunProductAsync(new LegoScrapper.LegoSetId(command.SetId));
+                        ? await legoScrapper.RunGiftAsync(legoId)
+                        : await legoScrapper.RunProductAsync(legoId);
                 }
                 else
                 {
                     response = await Policy<LegoScrapperResponse>
                         .Handle<TimeoutException>()
-                        .FallbackAsync(async _ => await legoScrapper.RunGiftAsync(new LegoScrapper.LegoSetId(command.SetId)))
-                        .ExecuteAsync(() => legoScrapper.RunProductAsync(new LegoScrapper.LegoSetId(command.SetId)));
+                        .FallbackAsync(async _ => await legoScrapper.RunGiftAsync(legoId))
+                        .ExecuteAsync(() => legoScrapper.RunProductAsync(legoId));
                 }
 
                 //Insert
@@ -47,10 +56,9 @@ namespace BricksHoarder.Domain.LegoSet
                 //Update
                 if (set.HasUnknownState(response))
                 {
-                    var retryDetails = retryCommandService.Get();
-                    if (retryDetails?.RetryCount >= 7)
+                    if (consumeContext.GetRedeliveryCount() >= 6)
                     {
-                        set.LegoSetNoLongerForSale(retryDetails);
+                        set.LegoSetNoLongerForSale(now);
                     }
                     else
                     {
