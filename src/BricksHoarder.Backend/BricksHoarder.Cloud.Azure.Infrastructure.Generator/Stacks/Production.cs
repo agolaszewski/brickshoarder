@@ -91,7 +91,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             var storageAccountFunctions = new StorageAccount("StorageAccount", new Pulumi.AzureNative.Storage.StorageAccountArgs
             {
-                AccountName = "stbrickshoarderdev",
+                AccountName = "stbrickshoarderprd",
                 ResourceGroupName = resourceGroup.Name,
                 Location = resourceGroup.Location,
                 Sku = new Pulumi.AzureNative.Storage.Inputs.SkuArgs

@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Commands.Sets;
+﻿using BricksHoarder.Azure.ServiceBus;
+using BricksHoarder.Commands.Sets;
 using BricksHoarder.Common.DDD.Exceptions;
 using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
@@ -21,7 +22,7 @@ namespace BricksHoarder.Domain.LegoSet
             {
                 var legoId = new LegoScrapper.LegoSetId(command.SetId);
 
-                if (messageLockService.Lock($"SyncSetLegoDataCommand:{legoId.Value}", consumeContext.MessageId!.Value, dateTimeProvider.UtcNow().Date.AddDays(1)))
+                if (messageLockService.Check($"SyncSetLegoDataCommand:{legoId.Value}"))
                 {
                     logger.LogInformation($"SyncSetLegoDataCommand:{legoId.Value} was already scanned today");
                 }
@@ -81,6 +82,17 @@ namespace BricksHoarder.Domain.LegoSet
 
                 return set;
             }
+        }
+    }
+
+    public class CommandConsumedSyncSetLegoDataCommand(IMessageLockService messageLockService, IDateTimeProvider dateTimeProvider, ILogger<EventConsumer<CommandConsumed<SyncSetLegoDataCommand>>> logger) : EventConsumer<CommandConsumed<SyncSetLegoDataCommand>>(logger)
+    {
+        public override Task<IReadOnlyList<ICommand>> HandleAsync(CommandConsumed<SyncSetLegoDataCommand> @event)
+        {
+            var legoId = new LegoScrapper.LegoSetId(@event.Command.SetId);
+
+            messageLockService.Lock($"SyncSetLegoDataCommand:{legoId.Value}", dateTimeProvider.UtcNow().Date.AddDays(1));
+            return Task.FromResult<IReadOnlyList<ICommand>>(new List<ICommand>());
         }
     }
 }

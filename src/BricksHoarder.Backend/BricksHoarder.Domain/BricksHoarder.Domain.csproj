@@ -48,4 +48,8 @@
     <ProjectReference Include="..\BricksHoarder.Websites.Scrappers\BricksHoarder.Websites.Scrappers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ValueObjects\" />
+  </ItemGroup>
+
 </Project>

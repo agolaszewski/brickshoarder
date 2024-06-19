@@ -1,38 +1,35 @@
 ﻿using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
+using BricksHoarder.Core.Helpers;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace BricksHoarder.Azure.ServiceBus;
 
-public class EventConsumer<TEvent> : IConsumer<TEvent> where TEvent : class, IEvent
+public abstract class EventConsumer<TEvent>(ILogger<EventConsumer<TEvent>> logger) : IConsumer<TEvent> where TEvent : class, IEvent
 {
-    private readonly IEventHandler<TEvent> _handler;
-    private readonly ILogger<EventConsumer<TEvent>> _logger;
-
-    public EventConsumer(
-        IEventHandler<TEvent> handler,
-        ILogger<EventConsumer<TEvent>> logger)
-    {
-        _logger = logger;
-        _handler = handler;
-    }
+    public abstract Task<IReadOnlyList<ICommand>> HandleAsync(TEvent @event);
 
     public async Task Consume(ConsumeContext<TEvent> context)
     {
         try
         {
-            _logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.CorrelationId}");
-            IReadOnlyList<ICommand> commands = await _handler.HandleAsync(context.Message);
+            logger.LogDebug($"Consuming {context.Message.GetType().FullName} {context.CorrelationId}");
+            IReadOnlyList<ICommand> commands = await HandleAsync(context.Message);
 
             foreach (var command in commands)
             {
-                await context.Send(new Uri("queue:commands"), command, x => x.CorrelationId = context.CorrelationId);
+                await context.Send(PathHelper.QueuePathUri(command), command, x => x.CorrelationId = context.CorrelationId);
             }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Exception In CommandConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
+            throw;
         }
         finally
         {
-            _logger.LogDebug($"Consumed {context.Message.GetType().FullName} {context.CorrelationId}");
+            logger.LogDebug($"Consumed {context.Message.GetType().FullName} {context.CorrelationId}");
         }
     }
 }

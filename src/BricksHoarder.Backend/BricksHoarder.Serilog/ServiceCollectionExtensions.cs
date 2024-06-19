@@ -10,7 +10,7 @@ namespace BricksHoarder.Serilog
             return new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Marten", LogEventLevel.Warning)
-                //.MinimumLevel.Override("ThrottlingTroll.ThrottlingTroll", LogEventLevel.Error)
+                .MinimumLevel.Override("ThrottlingTroll.ThrottlingTroll", LogEventLevel.Error)
                 .MinimumLevel.Override("MassTransit", LogEventLevel.Warning)
                 .MinimumLevel.Override("Npgsql",LogEventLevel.Warning)
                 .MinimumLevel.Override("Azure.Messaging.ServiceBus", LogEventLevel.Warning)

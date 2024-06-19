@@ -29,9 +29,6 @@ namespace BricksHoarder.Marten
                 options.Connection(connectionString);
                 options.AutoCreateSchemaObjects = AutoCreate.All;
                 options.Events.StreamIdentity = StreamIdentity.AsString;
-
-                options.Projections.Add<TestTransformation>(ProjectionLifecycle.Inline);
-                options.Events.Subscribe(new TestSubscription());
             })
             .AddAsyncDaemon(DaemonMode.HotCold);
 

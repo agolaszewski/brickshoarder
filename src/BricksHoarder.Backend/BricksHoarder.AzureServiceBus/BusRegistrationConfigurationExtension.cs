@@ -106,8 +106,34 @@ namespace BricksHoarder.Azure.ServiceBus
             });
         }
 
-        public static void ScheduleSubscriptionEndpoint<TCommand, TEvent>(this IServiceBusBusFactoryConfigurator that,
-            IBusRegistrationContext context) where TEvent : class, IEvent, IScheduling<TCommand> where TCommand : class, ICommand
+        public static void AddEventConsumer<TEventConsumer,TEvent>(this IBusRegistrationConfigurator that) where TEventConsumer : class, IConsumer<TEvent> where TEvent : class, IEvent
+        {
+            that.AddConsumer<TEventConsumer>(config =>
+            {
+                config.UseMessageRetry(r =>
+                {
+                    r.Ignore<DomainException>();
+                    r.Intervals(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10));
+                });
+            });
+        }
+
+        public static void CommandConsumedSubscriptionEndpoint<TEventConsumer, TCommand>(this IServiceBusBusFactoryConfigurator that, IBusRegistrationContext context, string subscriptionName) where TEventConsumer : class, IConsumer<CommandConsumed<TCommand>> where TCommand : class, ICommand
+        {
+            that.SubscriptionEndpoint(subscriptionName, $"brickshoarder.events/consumed/{typeof(TCommand).Name}", configureEndpoint =>
+            {
+                configureEndpoint.ConfigureConsumeTopology = false;
+                configureEndpoint.MaxDeliveryCount = 3;
+                configureEndpoint.ConfigureDeadLetterQueueDeadLetterTransport();
+                configureEndpoint.ConfigureDeadLetterQueueErrorTransport();
+
+                configureEndpoint.UseInMemoryOutbox(context);
+
+                configureEndpoint.ConfigureConsumer<TEventConsumer>(context);
+            });
+        }
+
+        public static void ScheduleSubscriptionEndpoint<TCommand, TEvent>(this IServiceBusBusFactoryConfigurator that, IBusRegistrationContext context) where TEvent : class, IEvent, IScheduling<TCommand> where TCommand : class, ICommand
         {
             that.SubscriptionEndpoint($"schedule.{typeof(TCommand).Name}", $"brickshoarder.events/{typeof(TEvent).Name}", configureEndpoint =>
             {
@@ -129,8 +155,11 @@ namespace BricksHoarder.Azure.ServiceBus
                 configureEndpoint.MaxDeliveryCount = 3;
                 configureEndpoint.ConfigureDeadLetterQueueDeadLetterTransport();
                 configureEndpoint.ConfigureDeadLetterQueueErrorTransport();
-                //configureEndpoint.UseInMemoryOutbox(context);
-
+                configureEndpoint.UseInMemoryOutbox(context, configure =>
+                {
+                    configure.ConcurrentMessageDelivery = true;
+                });
+                
                 configureEndpoint.ConfigureConsumer<CommandConsumer<TCommand, TAggregateRoot>>(context);
             });
 

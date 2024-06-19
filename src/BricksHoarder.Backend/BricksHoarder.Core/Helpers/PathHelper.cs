@@ -8,5 +8,10 @@ namespace BricksHoarder.Core.Helpers
         {
             return new Uri($"queue:{typeof(TCommand).Name}");
         }
+
+        public static Uri QueuePathUri(ICommand command)
+        {
+            return new Uri($"queue:{command.GetType().Name}");
+        }
     }
 }

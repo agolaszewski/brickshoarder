@@ -10,8 +10,12 @@ namespace BricksHoarder.Domain.SyncRebrickableData
 {
     public class SyncRebrickableDataSaga : MassTransitStateMachine<SyncRebrickableDataSagaState>
     {
+        private readonly ILogger<SyncRebrickableDataSaga> _logger;
+
         public SyncRebrickableDataSaga(ILogger<SyncRebrickableDataSaga> logger)
         {
+            _logger = logger;
+
             InstanceState(x => x.CurrentState, SyncingState);
 
             Event(() => SyncSagaStarted, x => x.CorrelateById(x => x.Message.Id));
@@ -51,7 +55,7 @@ namespace BricksHoarder.Domain.SyncRebrickableData
                 .ThenAsync(ProcessSetDetailsChanged));
 
             During(SyncingState, When(SyncSetRebrickableDataCommandConsumed)
-                .Then(_ => logger.LogDebug("FetchSetRebrickableDataCommandConsumed"))
+                .Then(_ => logger.LogDebug("SyncSetRebrickableDataCommandConsumed"))
                 .ThenAsync(ProcessSetRebrickableDataCommandConsumed),
 
                 When(SyncSetRebrickableDataCommandConsumed, x => x.Saga.AllSetsProcessed())
@@ -100,6 +104,8 @@ namespace BricksHoarder.Domain.SyncRebrickableData
         private async Task ProcessSetRebrickableDataCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncSetRebrickableDataCommand>> context)
         {
             context.Saga.FinishProcessing(context.Message.Command.SetId);
+
+            _logger.LogDebug($"Synced {context.Saga.SetsToProcess.Count(x => x.State == ProcessingState.Finished)} of {context.Saga.SetsToProcess.Count}");
 
             if (context.Saga.AllSetsProcessed())
             {

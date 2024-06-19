@@ -61,13 +61,6 @@ namespace BricksHoarder.Domain
                     .WithScopedLifetime()
             );
 
-            services.Scan(scan =>
-                scan.FromAssemblies(domainAssembly!)
-                    .AddClasses(filter => filter.Where(implementation => typeof(IQuery).IsAssignableFrom(implementation) && typeof(IRequest).IsAssignableFrom(implementation)))
-                    .AsSelf()
-                    .WithScopedLifetime()
-            );
-
             services.AddScoped(typeof(IAggregateSnapshot<>), typeof(DefaultAggregateSnapshot<>));
             services.AddScoped<IAggregateSnapshot<ThemesCollectionAggregate>, ThemesCollectionAggregateSnapshot>();
         }

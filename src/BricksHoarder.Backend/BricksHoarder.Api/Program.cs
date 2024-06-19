@@ -118,6 +118,8 @@ void Common(IServiceCollection services, IConfiguration config)
         bus.AddScheduleCommandConsumer<SyncSetLegoDataCommand, LegoSetInSale>();
         bus.AddScheduleCommandConsumer<SyncSetLegoDataCommand, LegoSetToBeReleased>();
         bus.AddScheduleCommandConsumer<SyncSetLegoDataCommand, LegoSetPending>();
+
+        bus.AddEventConsumer<CommandConsumedSyncSetLegoDataCommand, CommandConsumed<SyncSetLegoDataCommand>>();
     },
     (context, cfg) =>
     {
@@ -132,6 +134,8 @@ void Common(IServiceCollection services, IConfiguration config)
         cfg.ScheduleSubscriptionEndpoint<SyncSetLegoDataCommand, LegoSetInSale>(context);
         cfg.ScheduleSubscriptionEndpoint<SyncSetLegoDataCommand, LegoSetToBeReleased>(context);
         cfg.ScheduleSubscriptionEndpoint<SyncSetLegoDataCommand, LegoSetPending>(context);
+
+        cfg.CommandConsumedSubscriptionEndpoint<CommandConsumedSyncSetLegoDataCommand, SyncSetLegoDataCommand>(context, "lock");
     });
 }
 
@@ -161,7 +165,6 @@ app.MapGet("/saga/sync", async ([FromServices] IEventDispatcher dispatcher, ICac
 
 if (app.Environment.IsDevelopment())
 {
-    
 }
 
 app.Run();

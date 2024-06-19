@@ -7,7 +7,7 @@ namespace BricksHoarder.Redis
 {
     public class MessageLockService(IDatabase cache, IDateTimeProvider dateTimeProvider) : IMessageLockService
     {
-        public bool Lock(string key, Guid lockedToMessageId, System.DateTime expireAtUtc)
+        public bool Lock(string key, System.DateTime expireAtUtc)
         {
             var expire = expireAtUtc - dateTimeProvider.UtcNow();
             if (expire.Ticks <= 0)
@@ -15,15 +15,13 @@ namespace BricksHoarder.Redis
                 return false;
             }
 
-            var isSuccess = cache.StringSet(key, lockedToMessageId.ToString(), expire, When.NotExists);
-            if (isSuccess)
-            {
-                return false;
-            }
+            var isSuccess = cache.StringSet(key, string.Empty, expire, When.NotExists);
+            return !isSuccess;
+        }
 
-            var value = (string?)cache.StringGet(key);
-            Guid? guid = value.ToGuid();
-            return guid != lockedToMessageId;
+        public bool Check(string key)
+        {
+            return cache.KeyExists(key);
         }
 
         public void Unlock(string key)

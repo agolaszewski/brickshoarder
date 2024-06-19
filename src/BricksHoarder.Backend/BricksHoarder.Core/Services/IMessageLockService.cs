@@ -2,7 +2,9 @@
 {
     public interface IMessageLockService
     {
-        bool Lock(string key, Guid lockedToMessageId, DateTime expireAtUtc);
+        bool Lock(string key, DateTime expireAtUtc);
+
+        bool Check(string key);
 
         void Unlock(string key);
     }
