@@ -1,3 +1,4 @@
+using Azure.Identity;
 using BricksHoarder.Azure.ServiceBus;
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
@@ -25,7 +26,7 @@ using BricksHoarder.Websites.Scrappers.Lego;
 using Marten;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Amqp.Framing;
+using Microsoft.Extensions.Azure;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -103,6 +104,8 @@ void Common(IServiceCollection services, IConfiguration config)
         bus.AddCommandConsumer<SyncSetRebrickableDataCommand, RebrickableSetAggregate>();
         bus.AddCommandConsumer<SyncSetLegoDataCommand, LegoSetAggregate>(cfg =>
         {
+            cfg.ConcurrentMessageLimit = 5;
+
             cfg.UseDelayedRedelivery(r =>
             {
                 r.Handle<DomainException>();

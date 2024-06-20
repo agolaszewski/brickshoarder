@@ -10,9 +10,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Pulumi" Version="3.*" />
-    <PackageReference Include="Pulumi.AzureNative" Version="2.35.0" />
-    <PackageReference Include="Pulumi.Random" Version="4.16.0" />
+    <PackageReference Include="Pulumi" Version="3.64.0" />
+    <PackageReference Include="Pulumi.AzureNative" Version="2.45.0" />
+    <PackageReference Include="Pulumi.Random" Version="4.16.2" />
   </ItemGroup>
 
   <ItemGroup>
