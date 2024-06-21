@@ -1,10 +1,20 @@
 using BricksHoarder.Azure.ServiceBus;
+using BricksHoarder.Commands.Sets;
+using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common;
+using BricksHoarder.Common.DDD.Exceptions;
 using BricksHoarder.Credentials;
 using BricksHoarder.DateTime;
 using BricksHoarder.DateTime.Noda;
+using BricksHoarder.Domain.LegoSet;
+using BricksHoarder.Domain.RebrickableSet;
+using BricksHoarder.Domain.SetsCollection;
+using BricksHoarder.Domain.SyncRebrickableData;
+using BricksHoarder.Domain.ThemesCollection;
+using BricksHoarder.Events;
 using BricksHoarder.Redis;
 using BricksHoarder.Serilog;
+using MassTransit;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,10 +63,12 @@ void Common(IServiceCollection services, IConfiguration config)
     services.CommonServices();
     services.AddDateTimeProvider();
 
-    var redisCredentials = new RedisCredentials(new RedisLabCredentialsBase(config));
-    services.AddRedis(redisCredentials);
-
-    //services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
+    //services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), bus =>
+    //{
+    //},
+    //(context, cfg) =>
+    //{
+    //});
 }
 
 host.Run();

@@ -51,5 +51,32 @@ namespace BricksHoarder.Azure.ServiceBus
                 });
             });
         }
+
+        public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, Action<IBusRegistrationConfigurator> busRegistrationConfigurator, Action<IBusRegistrationContext, IServiceBusBusFactoryConfigurator> busConfiguration)
+        {
+            services.AddScoped<IEventDispatcher, EventDispatcher>();
+
+            services.AddMassTransitForAzureFunctions(x =>
+            {
+                busRegistrationConfigurator(x);
+
+                x.AddServiceBusMessageScheduler();
+
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    var options = context.GetRequiredService<IOptions<ServiceBusOptions>>();
+                    cfg.Host(credentials.ConnectionString, _ => { });
+
+                    cfg.UseServiceBusMessageScheduler();
+
+                    busConfiguration(context, cfg);
+
+                    cfg.Publish<IEvent>(x => x.Exclude = true);
+                    cfg.Publish<ICommand>(x => x.Exclude = true);
+
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+        }
     }
 }

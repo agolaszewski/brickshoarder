@@ -7,7 +7,10 @@ using Newtonsoft.Json.Linq;
 using Pulumi;
 using Pulumi.AzureNative.App;
 using Pulumi.AzureNative.App.Inputs;
+using Pulumi.AzureNative.Authorization;
 using Pulumi.AzureNative.Insights;
+using Pulumi.AzureNative.KeyVault;
+using Pulumi.AzureNative.KeyVault.Inputs;
 using Pulumi.AzureNative.OperationalInsights.Inputs;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Storage;
@@ -26,123 +29,165 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
     {
         public Production()
         {
-            var config = new ConfigurationBuilder()
-                .AddUserSecrets<Program>()
-                .Build();
+            var config = new Config();
+            var tenantId = config.Require("tenantId");
+            var subscriptionId = config.Require("subscription");
 
             var resourceGroup = new ResourceGroup("ResourceGroup", new ResourceGroupArgs
             {
                 ResourceGroupName = "rg-brickshoarder-prd"
             });
 
-            //var serviceBusNamespace = new StandardServiceBusNamespace("Default", "prd", resourceGroup);
-            //ServiceBusEndpoint = serviceBusNamespace.ServiceBusEndpoint.Apply(x => x.Replace("https://", string.Empty).Replace(":443", string.Empty));
-            //SharedAccessKey = serviceBusNamespace.SharedAccessKey;
-            //SharedAccessKeyName = serviceBusNamespace.SharedAccessKeyName;
-            //ServiceBusConnectionString = serviceBusNamespace.ServiceBusConnectionString;
+            var managedIdentity = new Pulumi.AzureNative.ManagedIdentity.UserAssignedIdentity("ManagedIdentity.UserAssignedIdentity", new Pulumi.AzureNative.ManagedIdentity.UserAssignedIdentityArgs
+            {
+                ResourceName = "mi-brickshoarder-prd",
+                ResourceGroupName = resourceGroup.Name,
+                Location = resourceGroup.Location
+            });
 
-            //#region PostgreSQL
+            #region Key Vault
 
-            //var dBForPostgreSqlAdministratorLoginPassword = new Pulumi.Random.RandomPassword("DBforPostgreSQL.AdministratorLoginPassword", new()
-            //{
-            //    Length = 20,
-            //});
-            //DbForPostgreSqlAdminPassword = Output.Unsecret(dBForPostgreSqlAdministratorLoginPassword.Result);
+            var keyVault = new Vault("KeyVault", new VaultArgs
+            {
+                VaultName = "kv-brickshoarder-prd",
+                ResourceGroupName = resourceGroup.Name,
+                Location = resourceGroup.Location,
+                Properties = new VaultPropertiesArgs
+                {
+                    Sku = new SkuArgs
+                    {
+                        Family = SkuFamily.A,
+                        Name = Pulumi.AzureNative.KeyVault.SkuName.Standard
+                    },
+                    TenantId = tenantId,
+                    EnableRbacAuthorization = true,
+                }
+            });
 
-            //var dBForPostgreSqlServer = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Server("DBforPostgreSQL.Server", new()
-            //{
-            //    ResourceGroupName = resourceGroup.Name,
-            //    ServerName = "psql-brickshoarder-prd",
-            //    AdministratorLogin = "brickshoarder_admin",
-            //    AdministratorLoginPassword = dBForPostgreSqlAdministratorLoginPassword.Result,
-            //    CreateMode = Pulumi.AzureNative.DBforPostgreSQL.V20221201.CreateMode.Default,
-            //    Version = Pulumi.AzureNative.DBforPostgreSQL.V20221201.ServerVersion.ServerVersion_14,
-            //    Sku = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Inputs.SkuArgs()
-            //    {
-            //        Name = "Standard_B1ms",
-            //        Tier = Pulumi.AzureNative.DBforPostgreSQL.V20221201.SkuTier.Burstable
-            //    },
-            //    Storage = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Inputs.StorageArgs()
-            //    {
-            //        StorageSizeGB = 32
-            //    }
-            //});
+            var keyVaultSecretsUserRoleId = "4633458b-17de-408a-b874-0445c86b69e6";
+            var keyVaultRoleAssignment = new RoleAssignment("KeyVault.RoleAssignment", new RoleAssignmentArgs
+            {
+                PrincipalId = managedIdentity.PrincipalId,
+                RoleDefinitionId = Output.Format($"/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/{keyVaultSecretsUserRoleId}"),
+                Scope = Output.Format($"/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup.Name}/providers/Microsoft.KeyVault/vaults/{keyVault.Name}"),
+                PrincipalType = PrincipalType.ServicePrincipal
+            });
 
-            //new Pulumi.AzureNative.DBforPostgreSQL.V20221201.FirewallRule("DBforPostgreSQL.Server.FirewallRule", new Pulumi.AzureNative.DBforPostgreSQL.V20221201.FirewallRuleArgs
-            //{
-            //    EndIpAddress = "255.255.255.255",
-            //    ResourceGroupName = resourceGroup.Name,
-            //    ServerName = dBForPostgreSqlServer.Name,
-            //    StartIpAddress = "0.0.0.0",
-            //    FirewallRuleName = "DevAllAccess"
-            //});
+            #endregion Key Vault
 
-            //var dBForPostgreSqlDatabase = new Pulumi.AzureNative.DBforPostgreSQL.V20221201.Database("DBforPostgreSQL.Server.Database", new()
-            //{
-            //    ServerName = dBForPostgreSqlServer.Name,
-            //    ResourceGroupName = resourceGroup.Name,
-            //    DatabaseName = "brickshoarder"
-            //});
 
-            //#endregion PostgreSQL
+            #region Service Bus
 
-            //#region Storage Account
+            var serviceBusNamespace = new StandardServiceBusNamespace("Default", "prd", resourceGroup);
+            ServiceBusEndpoint = serviceBusNamespace.ServiceBusEndpoint.Apply(x => x.Replace("https://", string.Empty).Replace(":443", string.Empty));
+            SharedAccessKey = serviceBusNamespace.SharedAccessKey;
+            SharedAccessKeyName = serviceBusNamespace.SharedAccessKeyName;
+            ServiceBusConnectionString = serviceBusNamespace.ServiceBusConnectionString;
 
-            //var storageAccountFunctions = new StorageAccount("StorageAccount", new Pulumi.AzureNative.Storage.StorageAccountArgs
-            //{
-            //    AccountName = "stbrickshoarderprd",
-            //    ResourceGroupName = resourceGroup.Name,
-            //    Location = resourceGroup.Location,
-            //    Sku = new Pulumi.AzureNative.Storage.Inputs.SkuArgs
-            //    {
-            //        Name = "Standard_LRS"
-            //    },
-            //    Kind = Pulumi.AzureNative.Storage.Kind.StorageV2
-            //});
+            #endregion Service Bus
 
-            //Output<string> listStorageAccountKeysOutput = Output.All(storageAccountFunctions.Name).Apply(async x =>
-            //{
-            //    var keys = await ListStorageAccountKeys.InvokeAsync(new ListStorageAccountKeysArgs()
-            //    {
-            //        ResourceGroupName = resourceGroup.Name.Convert(),
-            //        AccountName = storageAccountFunctions.Name.Convert(),
-            //    });
-            //    return keys.Keys[0].Value;
-            //});
+            #region PostgreSQL
 
-            //StorageAccountConnectionString = Output.Format($"DefaultEndpointsProtocol=https;AccountName={storageAccountFunctions.Name};AccountKey={listStorageAccountKeysOutput.Apply(x => x)};EndpointSuffix=core.windows.net");
+            var dBForPostgreSqlAdministratorLoginPassword = new Pulumi.Random.RandomPassword("DBforPostgreSQL.AdministratorLoginPassword", new()
+            {
+                Length = 20,
+            });
+            DbForPostgreSqlAdminPassword = Output.Unsecret(dBForPostgreSqlAdministratorLoginPassword.Result);
 
-            //#endregion Storage Account
+            var dBForPostgreSqlServer = new Pulumi.AzureNative.DBforPostgreSQL.Server("DBforPostgreSQL.Server", new()
+            {
+                ResourceGroupName = resourceGroup.Name,
+                ServerName = "psql-brickshoarder-prd",
+                AdministratorLogin = "brickshoarder_admin",
+                AdministratorLoginPassword = dBForPostgreSqlAdministratorLoginPassword.Result,
+                CreateMode = Pulumi.AzureNative.DBforPostgreSQL.CreateMode.Default,
+                Version = Pulumi.AzureNative.DBforPostgreSQL.ServerVersion.ServerVersion_14,
+                Sku = new Pulumi.AzureNative.DBforPostgreSQL.Inputs.SkuArgs()
+                {
+                    Name = "Standard_B1ms",
+                    Tier = Pulumi.AzureNative.DBforPostgreSQL.SkuTier.Burstable
+                },
+                Storage = new Pulumi.AzureNative.DBforPostgreSQL.Inputs.StorageArgs()
+                {
+                    StorageSizeGB = 32
+                }
+            });
 
-            //#region Application Insight
+            new Pulumi.AzureNative.DBforPostgreSQL.FirewallRule("DBforPostgreSQL.Server.FirewallRule", new Pulumi.AzureNative.DBforPostgreSQL.FirewallRuleArgs
+            {
+                EndIpAddress = "255.255.255.255",
+                ResourceGroupName = resourceGroup.Name,
+                ServerName = dBForPostgreSqlServer.Name,
+                StartIpAddress = "0.0.0.0",
+                FirewallRuleName = "DevAllAccess"
+            });
 
-            //var workspace = new Pulumi.AzureNative.OperationalInsights.Workspace("Workspace", new()
-            //{
-            //    WorkspaceName = "log-appi-brickshoarder-prd",
-            //    ResourceGroupName = resourceGroup.Name,
-            //    RetentionInDays = 30,
-            //    Sku = new WorkspaceSkuArgs
-            //    {
-            //        Name = Pulumi.AzureNative.OperationalInsights.WorkspaceSkuNameEnum.PerGB2018
-            //    },
-            //    WorkspaceCapping = new WorkspaceCappingArgs()
-            //    {
-            //        DailyQuotaGb = 1
-            //    }
-            //});
+            var dBForPostgreSqlDatabase = new Pulumi.AzureNative.DBforPostgreSQL.Database("DBforPostgreSQL.Server.Database", new()
+            {
+                ServerName = dBForPostgreSqlServer.Name,
+                ResourceGroupName = resourceGroup.Name,
+                DatabaseName = "brickshoarder"
+            });
 
-            //var appInsights = new Component("AppInsights", new ComponentArgs
-            //{
-            //    ResourceName = "appi-brickshoarder-prd",
-            //    ResourceGroupName = resourceGroup.Name,
-            //    ApplicationType = "web",
-            //    FlowType = "Bluefield",
-            //    Kind = "web",
-            //    RequestSource = "rest",
-            //    WorkspaceResourceId = workspace.Id
-            //});
+            #endregion PostgreSQL
 
-            //#endregion Application Insight
+            #region Storage Account
+
+            var storageAccountFunctions = new StorageAccount("StorageAccount", new Pulumi.AzureNative.Storage.StorageAccountArgs
+            {
+                AccountName = "stbrickshoarderprd",
+                ResourceGroupName = resourceGroup.Name,
+                Location = resourceGroup.Location,
+                Sku = new Pulumi.AzureNative.Storage.Inputs.SkuArgs
+                {
+                    Name = "Standard_LRS"
+                },
+                Kind = Pulumi.AzureNative.Storage.Kind.StorageV2
+            });
+
+            Output<string> listStorageAccountKeysOutput = Output.All(storageAccountFunctions.Name).Apply(async x =>
+            {
+                var keys = await ListStorageAccountKeys.InvokeAsync(new ListStorageAccountKeysArgs()
+                {
+                    ResourceGroupName = resourceGroup.Name.Convert(),
+                    AccountName = storageAccountFunctions.Name.Convert(),
+                });
+                return keys.Keys[0].Value;
+            });
+
+            StorageAccountConnectionString = Output.Format($"DefaultEndpointsProtocol=https;AccountName={storageAccountFunctions.Name};AccountKey={listStorageAccountKeysOutput.Apply(x => x)};EndpointSuffix=core.windows.net");
+
+            #endregion Storage Account
+
+            #region Application Insight
+
+            var workspace = new Pulumi.AzureNative.OperationalInsights.Workspace("Workspace", new()
+            {
+                WorkspaceName = "log-appi-brickshoarder-prd",
+                ResourceGroupName = resourceGroup.Name,
+                RetentionInDays = 30,
+                Sku = new WorkspaceSkuArgs
+                {
+                    Name = Pulumi.AzureNative.OperationalInsights.WorkspaceSkuNameEnum.PerGB2018
+                },
+                WorkspaceCapping = new WorkspaceCappingArgs()
+                {
+                    DailyQuotaGb = 1
+                }
+            });
+
+            var appInsights = new Component("AppInsights", new ComponentArgs
+            {
+                ResourceName = "appi-brickshoarder-prd",
+                ResourceGroupName = resourceGroup.Name,
+                ApplicationType = "web",
+                FlowType = "Bluefield",
+                Kind = "web",
+                RequestSource = "rest",
+                WorkspaceResourceId = workspace.Id
+            });
+
+            #endregion Application Insight
 
             //#region Functions Linux
 
@@ -283,102 +328,72 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             //#region Functions Windows
 
-            //var appServicePlanFunctionsWindows = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
-            //{
-            //    Name = "asp-func-linux-brickshoarder-prd",
-            //    ResourceGroupName = resourceGroup.Name,
-            //    Location = resourceGroup.Location,
-            //    Kind = "Linux",
-            //    Reserved = true,
-            //    Sku = new SkuDescriptionArgs
-            //    {
-            //        Name = "Y1",
-            //        Tier = "Dynamic"
-            //    },
-            //});
+            var appServicePlanFunctionsWindows = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
+            {
+                Name = "asp-func-linux-brickshoarder-prd",
+                ResourceGroupName = resourceGroup.Name,
+                Location = resourceGroup.Location,
+                Kind = "Linux",
+                Reserved = true,
+                Sku = new SkuDescriptionArgs
+                {
+                    Name = "Y1",
+                    Tier = "Dynamic"
+                },
+            });
 
-            //var functionAppWindows = new WebApp("WebApp.Functions.BricksHoarder.Functions.Timers", new WebAppArgs
-            //{
-            //    Name = "func-brickshoarder-timers-prd",
-            //    ResourceGroupName = resourceGroup.Name,
-            //    ServerFarmId = appServicePlanFunctionsWindows.Id,
-            //    SiteConfig = new SiteConfigArgs
-            //    {
-            //        LinuxFxVersion = "DOTNET-ISOLATED|8.0",
-            //        FunctionAppScaleLimit = 1,
-            //        NumberOfWorkers = 1,
-            //        AppSettings = new[]
-            //        {
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
-            //                Value = appInsights.ConnectionString
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "AzureServiceBus__Endpoint",
-            //                Value = ServiceBusEndpoint
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "AzureServiceBus__SharedAccessKeyName",
-            //                Value = serviceBusNamespace.SharedAccessKeyName
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "AzureServiceBus__SharedAccessKey",
-            //                Value = serviceBusNamespace.SharedAccessKey
-            //            },
-            //            new NameValuePairArgs
-            //            {
-            //                Name = "AzureWebJobsStorage",
-            //                Value = StorageAccountConnectionString
-            //            },
-            //            new NameValuePairArgs
-            //            {
-            //                Name = "FUNCTIONS_EXTENSION_VERSION",
-            //                Value = "~4"
-            //            },
-            //            new NameValuePairArgs
-            //            {
-            //                Name = "FUNCTIONS_WORKER_RUNTIME",
-            //                Value = "dotnet-isolated"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "MartenAzure__Host",
-            //                Value = "psql-brickshoarder-prd.postgres.database.azure.com"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "MartenAzure__Database",
-            //                Value = dBForPostgreSqlDatabase.Name
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "MartenAzure__Username",
-            //                Value = "brickshoarder_admin"
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "MartenAzure__Password",
-            //                Value = DbForPostgreSqlAdminPassword
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "Redis__ConnectionString",
-            //                Value = config["Redis:ConnectionString"]
-            //            },
-            //            new NameValuePairArgs()
-            //            {
-            //                Name = "ServiceBusConnectionString",
-            //                Value = ServiceBusConnectionString
-            //            },
-            //        }
-            //    },
-            //    Kind = "functionapp",
-            //    HttpsOnly = true
-            //});
+            var functionAppWindows = new WebApp("WebApp.Functions.BricksHoarder.Functions.Timers", new WebAppArgs
+            {
+                Name = "func-brickshoarder-timers-prd",
+                ResourceGroupName = resourceGroup.Name,
+                ServerFarmId = appServicePlanFunctionsWindows.Id,
+                SiteConfig = new SiteConfigArgs
+                {
+                    LinuxFxVersion = "DOTNET-ISOLATED|8.0",
+                    FunctionAppScaleLimit = 1,
+                    NumberOfWorkers = 1,
+                    AppSettings = new[]
+                    {
+                        new NameValuePairArgs()
+                        {
+                            Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                            Value = appInsights.ConnectionString
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__Endpoint",
+                            Value = ServiceBusEndpoint
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__SharedAccessKeyName",
+                            Value = serviceBusNamespace.SharedAccessKeyName
+                        },
+                        new NameValuePairArgs()
+                        {
+                            Name = "AzureServiceBus__SharedAccessKey",
+                            Value = serviceBusNamespace.SharedAccessKey
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "AzureWebJobsStorage",
+                            Value = StorageAccountConnectionString
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "FUNCTIONS_EXTENSION_VERSION",
+                            Value = "~4"
+                        },
+                        new NameValuePairArgs
+                        {
+                            Name = "FUNCTIONS_WORKER_RUNTIME",
+                            Value = "dotnet-isolated"
+                        },
+                    }
+                },
+                Kind = "functionapp",
+                HttpsOnly = true
+            });
 
             //#endregion Functions Windows
 
