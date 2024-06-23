@@ -8,7 +8,7 @@ namespace BricksHoarder.Domain.Set
     {
         internal void SetMinifigureData(LegoSetsMinifigsListAsyncResponse.Result minifigureApi)
         {
-            AddEvent(new RebrickableMinifigureDataSynced(Id, minifigureApi.SetNum, minifigureApi.SetName, minifigureApi.Quantity, minifigureApi.SetImgUrl));
+            AddEvent(new RebrickableMinifigureDataSynced(Id, minifigureApi.Id, minifigureApi.SetName, minifigureApi.Quantity, minifigureApi.SetImgUrl));
         }
 
         internal void SetData(LegoSetsReadAsyncResponse apiSet)
