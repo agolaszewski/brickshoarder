@@ -1,0 +1,16 @@
+﻿{{namespaces}}
+
+namespace BricksHoarder.Functions;
+
+public class {{command}}Function : BaseFunction
+{
+    public {{command}}Function(IMessageReceiver receiver) : base(receiver)
+    {
+    }
+
+    [Function({{command}}Metadata.Consumer)]
+    public async Task RunAsync([ServiceBusTrigger({{command}}Metadata.QueuePath, Connection = ServiceBusConnectionString)] ServiceBusReceivedMessage command, CancellationToken cancellationToken)
+    {
+        await HandleCommandAsync<{{command}}, {{aggregate}}>(command, cancellationToken);
+    }
+}

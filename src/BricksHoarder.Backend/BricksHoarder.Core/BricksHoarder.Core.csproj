@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Jobs\**" />
+    <EmbeddedResource Remove="Jobs\**" />
+    <None Remove="Jobs\**" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="11.9.0" />
+		<PackageReference Include="MassTransit" Version="8.2.0" />
+		<PackageReference Include="NodaTime" Version="3.1.11" />
+	</ItemGroup>
+
+</Project>

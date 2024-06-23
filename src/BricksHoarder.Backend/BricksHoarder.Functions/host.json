@@ -1,0 +1,30 @@
+{
+  "version": "2.0",
+  "extensions": {
+    "logging": {
+      "applicationInsights": {
+        "samplingSettings": {
+          "isEnabled": true,
+          "excludedTypes": "Request"
+        }
+      },
+      "logLevel": {
+        "default": "Warning",
+        "Host.Aggregator": "Trace",
+        "Host.Results": "Information",
+        "Function": "Information",
+        "ThrottlingTroll.ThrottlingTroll": "Error",
+        "MassTransit": "Error",
+        "Npgsql": "Warning",
+        "Azure.Messaging.ServiceBus": "Warning"
+      }
+    },
+    "serviceBus": {
+      "prefetchCount": 5,
+      "maxMessageBatchSize": 1000,
+      "minMessageBatchSize": 500,
+      "maxBatchWaitTime": "00:00:10",
+      "maxConcurrentCalls": "5"
+    }
+  }
+}

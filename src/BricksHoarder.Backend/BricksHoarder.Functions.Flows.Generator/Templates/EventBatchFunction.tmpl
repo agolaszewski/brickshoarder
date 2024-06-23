@@ -1,0 +1,16 @@
+﻿{{namespaces}}
+
+namespace BricksHoarder.Functions;
+
+public class {{event}}Function : BaseBatchFunction
+{
+    public {{event}}Function(IEventDispatcher eventDispatcher) : base(eventDispatcher)
+    {
+    }
+
+    [Function({{event}}Metadata.Consumer)]
+    public async Task RunAsync([ServiceBusTrigger({{event}}Metadata.TopicPath, Default, Connection = ServiceBusConnectionString, IsBatched = true)] ServiceBusReceivedMessage[] @events, CancellationToken cancellationToken)
+    {
+        await HandleBatchAsync<{{event}}>(@events);
+    }
+}

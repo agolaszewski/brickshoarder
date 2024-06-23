@@ -1,0 +1,16 @@
+﻿{{namespaces}}
+
+namespace BricksHoarder.Functions;
+
+public class {{event}}Function : BaseFunction
+{
+    public {{event}}Function(IMessageReceiver receiver, ILogger<{{event}}Function> logger) : base(receiver, logger)
+    {
+    }
+
+    [Function({{event}}Metadata.Consumer)]
+    public async Task RunAsync([ServiceBusTrigger({{event}}Metadata.TopicPath, Default, Connection = ServiceBusConnectionString)] ServiceBusReceivedMessage @event, CancellationToken cancellationToken)
+    {
+        await ScheduleAsync<{{command}},{{event}}>(@event,{{event}}Metadata.TopicPath, Default, cancellationToken);
+    }
+}

@@ -1,0 +1,212 @@
+﻿[
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 2744135182,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "eupubconsent-v2",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "CP8vunAP8vunAAcABBENAvE8AP_gAAAAAAYgJ9NX_H_fbX9j8Xp0aft0eY1f99j7rsQxBhfJk-4FyLvW_JwX32EzNA16pqYKmRIEu3bBIQFlHIDUDUigaogVrTDMakWMgTNKJ6BEiFMRe2dYCF5vmQFD-QKY5tptd3d52Te9_dv83dzyz4Vnn3Kp_2e1WJCdA5cgAAAAAAAAAAAAAAAQAAAAAAAAAQAIAAAAAAAAAAAAAAAAAAAAF_cAAAMAAABQSCEAAgABcAFAAVAA4AB4AEEALwAwgBkAGoAPAAiABMACqAGYAN4AegA_ACEgEMARIAjgBLACaAGAAMOAZQBlgDZAHPAO4A74B7AHxAPsA_YB_gIAARSAi4CMAEaAJLAT8BQYCoAKuAXMAvQBigDRAG0ANwAcSBHoEiAJ2AUOAo8BSIC2AFyALvAXmAwYBhsDIwMkAZOAy4BmYDOYGrgayA2MBt4DdQHBAOTAcuEALAAOABIAEcAg4BHACaAF9ASsAm0BSACuQFhALEAXkAxABiwDIQGjANTAbQA24Bug4BWAAiABwAHgAXABIAD8AI4AUAA0ACOAHIAQCAg4CEAERAI4ATQAqABxwDpAIQASsAmIBMoCbQFJwK5ArsBYgC1AF0AMEAYgAxYBkIDJgGjANTAa8A2gBtgDbgG6AOPActA50Dnx0EsABcAFAAVAA4ACCAFwAagA8ACIAEwAKsAXABdADEAGYAN4AegA_QCGAIkASwAmgBRgDAAGGAMoAaIA2QBzwDuAO8Ae0A-wD9AH_ARQBGICOgJLAT8BQYCogKuAWIAucBeQF6AMUAbQA3ABxADqAH2ARfAj0CRAEyAJ2AUPAo8CkAFNAKsAWKAtgBboC4AFyALtAXeAvMBfQDBgGGgMegZGBkgDJwGVQMsAy4BmYDOQGmwNXA1gBt4DdQHFgOTAcuQAKgAIAAeAGgAcgBHACxAF9ATaApMBXICxAF5AMEAZ4A0YBqYDbAG3AN0AcsA58hAiAAWABQAFwAMQAagBMACqAFwAMQAbwA9ACOAGAAOeAdwB3gD_AIoASkAoMBUQFXALmAYoA2gB1AEegKaAVYAsUBaIC4AFyAMjAZOAzklAiAAQAAsACgAHIAYABiADwAIgATAAqgBcADFAIYAiQBHACjAGAANkAd4A_ICogKuAXMAxQB1AETAIvgR6BIgCjwFigLYAXnAyMDJAGTgM5AawA28kARAAuAEcAdwBAACDgEcAKgAlYBMQCbQFJgMWAZYAzwBuQDdAHLFIHYAC4AKAAqABwAEEAMAAxgBoAGoAPAAiABMACqAGIAMwAfoBDAESAKMAYAAygBogDZAHOAO-AfgB-gEWAIxAR0BJQCgwFRAVcAuYBeQDFAG0ANwAdQA9oB9gETAIvgR6BIgCdgFDgKQAVYAsUBbAC4AFyALtAXmAvoBhsDIwMkAZPAywDLgGcwNYA1kBt4DdQHBAOTKAHwALgAkABcADIAI4AjgByADuAH2AQAAg4BYgC6gGvAO2Af8BMQCbQFSAK7AXQAvIBggDFgGTAM8AaMA1MBrwDdAHLAAA.f_wAAAAAAAAA",
+    "id": 23
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 2744135182,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "laquesis",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "cars-50908@b#cars-51545@b#cou-1428@b#de-2283@a#er-2808@a#euads-5168@a#jobs-6478@a#jobs-6825@b#jobs-6827@b#jobs-7111@a#olxeu-41102@a#olxeu-41514@b#olxeu-41515@b#olxeu-41634@b#olxeu-41699@c#recs-64@a#recs-75@b",
+    "id": 24
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 2744135182,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "laquesisff",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "a2b-000#aut-1425#aut-388#buy-2279#buy-2489#buy-4390#buy-4410#cou-1670#dat-2874#de-1514#de-1927#de-1928#de-2559#decision-256#do-2963#do-3418#euit-2250#euonb-114#f8nrp-1779#grw-124#kuna-307#kuna-554#kuna-603#mart-1341#mou-1052#oesx-1437#oesx-2063#oesx-2630#oesx-2797#oesx-2798#oesx-2864#oesx-2926#oesx-3069#oesx-3150#oesx-3713#oesx-645#oesx-867#olxeu-0000#posting-1419#psm-308#psm-402#psm-457#psm-574#sd-2240#sd-570#sd-854#ser-126#ser-311#ser-386#ser-429#ser-566#ser-80#ser-87#srt-1289#srt-1346#srt-1434#srt-1593#srt-1758#srt-683#uacc-529#uacc-561#up-90",
+    "id": 25
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 2744135182,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "laquesissu",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "299@jobs_cp|0#299@jobs_save_basic_info|0#299@jobs_save_education|0#299@jobs_save_experience|0#299@jobs_save_driving_licence|0#299@jobs_save_language|0#299@jobs_save_interests|0#299@jobs_save_preferred_notifications|0#690@ad_page|1#690@listing|1",
+    "id": 26
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 1712600712,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "ldTd",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "true",
+    "id": 27
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 2744136406,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "lqstatus",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "1712601726|18ebeddaddcx1982d13a|de-2283#euads-5168#recs-64|1715191642|690",
+    "id": 28
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 1728151149.339795,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "observed_aui",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "561962ee620f448ba185b84a0c50b9bd",
+    "id": 29
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 1743704684,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "onap",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "18ebeddaddcx1982d13a-1-18ebeddaddcx1982d13a-179-1712602485",
+    "id": 30
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 2744135182,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "OptanonAlertBoxClosed",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "2024-04-08T17:59:42.560Z",
+    "id": 31
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 2744136683,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "OptanonConsent",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "isGpcEnabled=0&datestamp=Mon+Apr+08+2024+20%3A24%3A43+GMT%2B0200+(Central+European+Summer+Time)&version=202401.2.0&browserGpcFlag=0&isIABGlobal=false&hosts=&genVendors=V10%3A0%2C&consentId=112d33c3-dc89-44bb-96d4-33c0aba04c8e&interactionCount=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1%2Cgad%3A1&geolocation=PL%3B20&AwaitingReconsent=false",
+    "id": 32
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 2744135182,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "OTAdditionalConsentString",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "1~89.320.1421.1423.1659.1985.1987.2008.2072.2135.2322.2465.2501.2958.2999.3028.3225.3226.3231.3234.3235.3236.3237.3238.3240.3244.3245.3250.3251.3253.3257.3260.3270.3272.3281.3288.3290.3292.3293.3296.3299.3300.3306.3307.3309.3314.3315.3316.3318.3324.3328.3330.3331.3531.3731.3831.3931.4131.4531.4631.4731.4831.5231.6931.7031.7235.7831.7931.8931.9731.10231.10631.10831.11031.11531.12831.13632.13731.14237.14332.15731.16831.21233.23031.24431.25731.25931.26031.26831.27731.28031",
+    "id": 33
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 1712602749.141307,
+    "hostOnly": false,
+    "httpOnly": true,
+    "name": "PHPSESSID",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "vkvkii342719ln2ldaie3tnpkh",
+    "id": 34
+  },
+  {
+    "domain": ".olx.pl",
+    "expirationDate": 1747160684.279693,
+    "hostOnly": false,
+    "httpOnly": false,
+    "name": "user_business_status",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "private",
+    "id": 35
+  },
+  {
+    "domain": "www.olx.pl",
+    "expirationDate": 2744142383,
+    "hostOnly": true,
+    "httpOnly": false,
+    "name": "__rtbh.lid",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "%7B%22eventType%22%3A%22lid%22%2C%22id%22%3A%22maYFmLurQ6W1SIOWyJmm%22%7D",
+    "id": 38
+  },
+  {
+    "domain": "www.olx.pl",
+    "expirationDate": 2744143615,
+    "hostOnly": true,
+    "httpOnly": false,
+    "name": "__rtbh.uid",
+    "path": "/",
+    
+    "secure": true,
+    "session": false,
+    "storeId": "1",
+    "value": "%7B%22eventType%22%3A%22uid%22%2C%22id%22%3A%22undefined%22%7D",
+    "id": 39
+  }
+]

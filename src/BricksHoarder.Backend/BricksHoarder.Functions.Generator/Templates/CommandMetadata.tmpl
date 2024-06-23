@@ -1,0 +1,8 @@
+﻿namespace BricksHoarder.Commands.Metadata;
+
+public static class {{command}}Metadata
+{
+    public const string Consumer = "{{command}}Consumer";
+    public const string QueuePath = "{{command}}";
+    public static readonly Uri QueuePathUri = new Uri($"queue:{QueuePath}");
+}

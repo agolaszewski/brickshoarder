@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MessagePack" Version="2.5.140" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+		<PackageReference Include="NodaTime" Version="3.1.11" />
+		<PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+		<PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
+	  <ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
+	</ItemGroup>
+
+</Project>

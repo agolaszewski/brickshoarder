@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BricksHoarder.Functions.Generator": {
+      "commandName": "Project",
+      "workingDirectory": "$(SolutionDir)"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+#docker-compose -p brickshoarder -f "docker-compose.yaml" up -d --build
+
+version: "3.9"
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - BricksHoarder-data-redis:/var/lib/redis/data
+      - BricksHoarder-data-redis-data:/data/
+  postgresql:
+    image: "ionx/postgres-plv8:12.8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - BricksHoarder-data-postgresql:/var/lib/postgresql/data  
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: brickshoarder
+      NAMEDATALEN: 100
+  seq:
+    image: datalust/seq:latest
+    ports:
+      - "5341:5341"
+      - "80:80"
+    environment:
+      ACCEPT_EULA: "Y"
+    restart: unless-stopped
+    volumes:
+      - BricksHoarder-data-seq:/data
+volumes:
+  BricksHoarder-data-redis:
+  BricksHoarder-data-postgresql:
+  BricksHoarder-data-redis-data:
+  BricksHoarder-data-seq:

@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Scrutor" Version="4.2.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
+    <ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.Noda.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Tables\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Queries\CleanCache\CleanCache.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Marten" Version="7.5.0" />
+    <PackageReference Include="MassTransit.Abstractions" Version="8.2.0" />
+    <PackageReference Include="Polly" Version="8.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Events\BricksHoarder.Events.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Projections\BricksHoarder.Projections.csproj" />
+  </ItemGroup>
+
+</Project>
