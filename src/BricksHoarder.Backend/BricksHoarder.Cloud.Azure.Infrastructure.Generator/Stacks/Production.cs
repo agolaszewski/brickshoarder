@@ -86,6 +86,10 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
             SharedAccessKeyName = serviceBusNamespace.SharedAccessKeyName;
             ServiceBusConnectionString = serviceBusNamespace.ServiceBusConnectionString;
 
+            var serviceBusEndpointSecret = new KeyVaultSecret(keyVault.Name, resourceGroup.Name, "ServiceBusEndpoint", ServiceBusEndpoint);
+            var sharedAccessKeySecret = new KeyVaultSecret(keyVault.Name, resourceGroup.Name, "SharedAccessKey", SharedAccessKey);
+            var sharedAccessKeyNameSecret = new KeyVaultSecret(keyVault.Name, resourceGroup.Name, "SharedAccessKeyName", SharedAccessKeyName);
+
             #endregion Service Bus
 
             #region PostgreSQL
@@ -191,18 +195,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             #endregion Application Insight
 
-            var secret = new Secret("KeyVault.Secret.MySecret", new SecretArgs()
-            {
-                SecretName = "MySecret",
-                ResourceGroupName = resourceGroup.Name,
-                VaultName = keyVault.Name,
-                Properties = new SecretPropertiesArgs
-                {
-                    Value = "my-secret-value"
-                }
-            });
-
-
+            
             //#region Functions Linux
 
             //var containerAppEnv = new ManagedEnvironment("ContainerAppsEnvironment", new ManagedEnvironmentArgs
@@ -340,9 +333,9 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             //#endregion Functions Linux
 
-            //#region Functions Windows
+            #region Functions Timers
 
-            var appServicePlanFunctionsWindows = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
+            var appServicePlanFunctionsLinux = new AppServicePlan("AppServicePlan.Functions.Linux", new AppServicePlanArgs
             {
                 Name = "asp-func-linux-brickshoarder-prd",
                 ResourceGroupName = resourceGroup.Name,
@@ -356,11 +349,11 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 },
             });
 
-            var functionAppWindows = new WebApp("WebApp.Functions.BricksHoarder.Functions.Timers", new WebAppArgs
+            var functionTimers = new WebApp("WebApp.Functions.BricksHoarder.Functions.Timers", new WebAppArgs
             {
                 Name = "func-timers-brickshoarder-prd",
                 ResourceGroupName = resourceGroup.Name,
-                ServerFarmId = appServicePlanFunctionsWindows.Id,
+                ServerFarmId = appServicePlanFunctionsLinux.Id,
                 SiteConfig = new SiteConfigArgs
                 {
                     LinuxFxVersion = "DOTNET-ISOLATED|8.0",
@@ -376,27 +369,22 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         new NameValuePairArgs()
                         {
                             Name = "AzureServiceBus__Endpoint",
-                            Value = ServiceBusEndpoint
+                            Value = serviceBusEndpointSecret.KeyVaultReference
                         },
                         new NameValuePairArgs()
                         {
                             Name = "AzureServiceBus__SharedAccessKeyName",
-                            Value = serviceBusNamespace.SharedAccessKeyName
+                            Value = sharedAccessKeyNameSecret.KeyVaultReference
                         },
                         new NameValuePairArgs()
                         {
                             Name = "AzureServiceBus__SharedAccessKey",
-                            Value = serviceBusNamespace.SharedAccessKey
+                            Value = sharedAccessKeySecret.KeyVaultReference
                         },
                         new NameValuePairArgs
                         {
                             Name = "AzureWebJobsStorage",
                             Value = StorageAccountConnectionString
-                        },
-                        new NameValuePairArgs
-                        {
-                            Name = "Test",
-                            Value = Output.Format($"@Microsoft.KeyVault(SecretUri={secret.Properties.Apply(x => x.SecretUri)})")
                         },
                         new NameValuePairArgs
                         {
@@ -420,7 +408,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 }
             });
 
-            //#endregion Functions Windows
+            #endregion Functions Linux
 
             //Output.All(ServiceBusEndpoint, SharedAccessKey, SharedAccessKeyName, ServiceBusConnectionString).Apply(_ =>
             //{

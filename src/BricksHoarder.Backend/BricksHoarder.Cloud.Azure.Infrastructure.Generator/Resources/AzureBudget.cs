@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Pulumi;
+using Pulumi.AzureNative.App.Inputs;
 using Pulumi.AzureNative.Consumption;
 using Pulumi.AzureNative.Consumption.Inputs;
+using Pulumi.AzureNative.KeyVault.Inputs;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources
 {
