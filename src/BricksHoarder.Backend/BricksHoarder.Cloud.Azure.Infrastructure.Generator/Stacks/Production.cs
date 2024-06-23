@@ -15,11 +15,13 @@ using Pulumi.AzureNative.OperationalInsights.Inputs;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Storage;
 using Pulumi.AzureNative.Web;
+using ManagedServiceIdentityArgs = Pulumi.AzureNative.Web.Inputs.ManagedServiceIdentityArgs;
 using NameValuePairArgs = Pulumi.AzureNative.Web.Inputs.NameValuePairArgs;
 using PreviewNameValuePairArgs = Pulumi.AzureNative.Web.V20230101.Inputs.NameValuePairArgs;
 using PreviewSiteConfigArgs = Pulumi.AzureNative.Web.V20230101.Inputs.SiteConfigArgs;
 using PreviewWebApp = Pulumi.AzureNative.Web.V20230101.WebApp;
 using PreviewWebAppArgs = Pulumi.AzureNative.Web.V20230101.WebAppArgs;
+using SecretArgs = Pulumi.AzureNative.KeyVault.SecretArgs;
 using SiteConfigArgs = Pulumi.AzureNative.Web.Inputs.SiteConfigArgs;
 using SkuDescriptionArgs = Pulumi.AzureNative.Web.Inputs.SkuDescriptionArgs;
 
@@ -29,9 +31,9 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
     {
         public Production()
         {
-            var config = new Config();
-            var tenantId = config.Require("tenantId");
-            var subscriptionId = config.Require("subscription");
+            var clientConfig = Output.Create(Pulumi.AzureNative.Authorization.GetClientConfig.InvokeAsync());
+            var subscriptionId = clientConfig.Apply(x => x.SubscriptionId);
+            var tenantId = clientConfig.Apply(x => x.TenantId);
 
             var resourceGroup = new ResourceGroup("ResourceGroup", new ResourceGroupArgs
             {
@@ -49,7 +51,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             var keyVault = new Vault("KeyVault", new VaultArgs
             {
-                VaultName = "kv-brickshoarder-prd",
+                VaultName = "kv-as1-brickshoarder-prd",
                 ResourceGroupName = resourceGroup.Name,
                 Location = resourceGroup.Location,
                 Properties = new VaultPropertiesArgs
@@ -188,6 +190,18 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
             });
 
             #endregion Application Insight
+
+            var secret = new Secret("KeyVault.Secret.MySecret", new SecretArgs()
+            {
+                SecretName = "MySecret",
+                ResourceGroupName = resourceGroup.Name,
+                VaultName = keyVault.Name,
+                Properties = new SecretPropertiesArgs
+                {
+                    Value = "my-secret-value"
+                }
+            });
+
 
             //#region Functions Linux
 
@@ -344,7 +358,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             var functionAppWindows = new WebApp("WebApp.Functions.BricksHoarder.Functions.Timers", new WebAppArgs
             {
-                Name = "func-brickshoarder-timers-prd",
+                Name = "func-timers-brickshoarder-prd",
                 ResourceGroupName = resourceGroup.Name,
                 ServerFarmId = appServicePlanFunctionsWindows.Id,
                 SiteConfig = new SiteConfigArgs
@@ -381,6 +395,11 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                         },
                         new NameValuePairArgs
                         {
+                            Name = "Test",
+                            Value = Output.Format($"@Microsoft.KeyVault(SecretUri={secret.Properties.Apply(x => x.SecretUri)})")
+                        },
+                        new NameValuePairArgs
+                        {
                             Name = "FUNCTIONS_EXTENSION_VERSION",
                             Value = "~4"
                         },
@@ -392,7 +411,13 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                     }
                 },
                 Kind = "functionapp",
-                HttpsOnly = true
+                HttpsOnly = true,
+                KeyVaultReferenceIdentity = managedIdentity.Id,
+                Identity = new ManagedServiceIdentityArgs()
+                {
+                    Type = Pulumi.AzureNative.Web.ManagedServiceIdentityType.UserAssigned,
+                    UserAssignedIdentities = { managedIdentity.Id }
+                }
             });
 
             //#endregion Functions Windows

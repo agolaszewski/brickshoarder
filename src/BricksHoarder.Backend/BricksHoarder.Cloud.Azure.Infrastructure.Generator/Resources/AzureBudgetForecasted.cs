@@ -8,12 +8,12 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources
 {
     public class AzureBudgetForecasted : ComponentResource
     {
-        public AzureBudgetForecasted(string subscription, string name, double amount, string email) : base("Custom:Consumption:Budget:AzureBudgetForecasted", name, null, null)
+        public AzureBudgetForecasted(Output<string> subscription, string name, double amount, string email) : base("Custom:Consumption:Budget:AzureBudgetForecasted", name, null, null)
         {
             _ = new Budget($"Budget.{name}", new BudgetArgs
             {
                 BudgetName = name,
-                Scope = $"/subscriptions/{subscription}",
+                Scope = Output.Format($"/subscriptions/{subscription}"),
                 Amount = amount,
                 TimeGrain = TimeGrainType.Monthly,
                 Category = CategoryType.Cost,

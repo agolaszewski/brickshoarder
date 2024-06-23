@@ -1,5 +1,4 @@
 ﻿using BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources;
-using Microsoft.Extensions.Configuration;
 using Pulumi;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
@@ -9,13 +8,14 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
         public Subscription()
         {
             var config = new Config();
-            var subscription = config.Require("subscription");
+            var clientConfig = Output.Create(Pulumi.AzureNative.Authorization.GetClientConfig.InvokeAsync());
+            var subscriptionId = clientConfig.Apply(x => x.SubscriptionId);
             var email = config.Require("email");
 
-            _ = new AzureBudget(subscription,"biedactwo", 5, email);
-            _ = new AzureBudget(subscription, "bogactwo", 10, email);
-            _ = new AzureBudget(subscription, "o-kurwa", 20, email);
-            _ = new AzureBudgetForecasted(subscription, "o-kurwa-zprzyszlosci", 30, email);
+            _ = new AzureBudget(subscriptionId, "biedactwo", 5, email);
+            _ = new AzureBudget(subscriptionId, "bogactwo", 10, email);
+            _ = new AzureBudget(subscriptionId, "o-kurwa", 20, email);
+            _ = new AzureBudgetForecasted(subscriptionId, "o-kurwa-z-przyszlosci", 30, email);
         }
     }
 }
