@@ -4,6 +4,7 @@ using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Credentials;
 using MassTransit;
+using MassTransit.AzureServiceBusTransport;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,7 @@ namespace BricksHoarder.Azure.ServiceBus
             services.AddScoped<ICommandDispatcher, CommandDispatcher>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IIntegrationEventsQueue, IntegrationEventsQueue>();
-           
+
             services.AddAzureClients(builder =>
             {
                 builder.AddServiceBusClient(credentials.ConnectionString).WithName("ServiceBusClient");
@@ -32,7 +33,6 @@ namespace BricksHoarder.Azure.ServiceBus
             services.AddMassTransit(x =>
             {
                 busRegistrationConfigurator(x);
-
                 x.AddServiceBusMessageScheduler();
 
                 x.UsingAzureServiceBus((context, cfg) =>
@@ -46,7 +46,7 @@ namespace BricksHoarder.Azure.ServiceBus
 
                     cfg.Publish<IEvent>(x => x.Exclude = true);
                     cfg.Publish<ICommand>(x => x.Exclude = true);
-                    
+
                     cfg.ConfigureEndpoints(context);
                 });
             });
@@ -55,21 +55,32 @@ namespace BricksHoarder.Azure.ServiceBus
         public static void AddAzureServiceBusForAzureFunction(this IServiceCollection services, AzureServiceBusCredentials credentials, Action<IBusRegistrationConfigurator> busRegistrationConfigurator, Action<IBusRegistrationContext, IServiceBusBusFactoryConfigurator> busConfiguration)
         {
             services.AddScoped<IEventDispatcher, EventDispatcher>();
+            services.AddSingleton<IMessageReceiver, MessageReceiver>();
+            services.AddSingleton<IAsyncBusHandle, AsyncBusHandle>();
 
-            services.AddMassTransitForAzureFunctions(x =>
+            services.AddMassTransit(x =>
             {
                 busRegistrationConfigurator(x);
                 x.AddServiceBusMessageScheduler();
-                
-            }, connectionStringConfigurationKey:credentials.ConnectionString, (context, cfg) =>
-            {
-                busConfiguration(context, cfg);
 
-                cfg.Publish<IEvent>(x => x.Exclude = true);
-                cfg.Publish<ICommand>(x => x.Exclude = true);
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    var options = context.GetRequiredService<IOptions<ServiceBusOptions>>();
+                    cfg.Host(credentials.ConnectionString, _ => { });
 
-                cfg.ConfigureEndpoints(context);
+                    options.Value.AutoCompleteMessages = true;
+                    cfg.UseServiceBusMessageScheduler();
+
+                    busConfiguration(context, cfg);
+
+                    cfg.Publish<IEvent>(x => x.Exclude = true);
+                    cfg.Publish<ICommand>(x => x.Exclude = true);
+
+                    cfg.ConfigureEndpoints(context);
+                });
             });
+
+            services.RemoveMassTransitHostedService();
         }
     }
 }

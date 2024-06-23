@@ -51,12 +51,12 @@ void Common(IServiceCollection services, IConfiguration config)
     services.CommonServices();
     services.AddDateTimeProvider();
 
-    //services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), bus =>
-    //{
-    //},
-    //(context, cfg) =>
-    //{
-    //});
+    services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), bus =>
+    {
+    },
+    (context, cfg) =>
+    {
+    });
 }
 
 host.Run();
