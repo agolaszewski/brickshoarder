@@ -71,20 +71,5 @@ namespace BricksHoarder.Common.DDD.Aggregates
 
             _events.Add(new EventComposite(@event));
         }
-
-        public virtual async Task CommitAsync(IAggregateStore aggregateStore)
-        {
-            if (ToDelete)
-            {
-                await aggregateStore.DeleteAsync(this as TAggregate);
-                return;
-            }
-            await aggregateStore.SaveAsync(this as TAggregate);
-        }
-
-        public virtual void Delete()
-        {
-            ToDelete = true;
-        }
     }
 }

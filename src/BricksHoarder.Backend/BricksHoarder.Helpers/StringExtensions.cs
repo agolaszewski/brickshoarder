@@ -2,6 +2,14 @@
 
 namespace BricksHoarder.Helpers;
 
+public static class BoolExtensions
+{
+    public static bool IsFalse(this bool source)
+    {
+        return source == false;
+    }
+}
+
 public static class StringExtensions
 {
     public static T To<T>(this string source)
@@ -24,6 +32,16 @@ public static class StringExtensions
         if (!string.IsNullOrWhiteSpace(source))
         {
             return (T)Convert.ChangeType(source, typeof(T), cultureInfo);
+        }
+
+        return null;
+    }
+
+    public static Guid? ToGuid(this string? source)
+    {
+        if (Guid.TryParse(source, out Guid value))
+        {
+            return value;
         }
 
         return null;

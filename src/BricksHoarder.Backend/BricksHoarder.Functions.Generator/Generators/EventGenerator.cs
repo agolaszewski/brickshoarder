@@ -76,26 +76,26 @@ namespace BricksHoarder.Functions.Generator.Generators
             }
         }
 
-        public void GenerateBatchFunctionsForSagas()
-        {
-            foreach (var @event in _batchEvent)
-            {
-                var batchEvent = typeof(BatchEvent<>);
-                var genericBatch = batchEvent.MakeGenericType(@event);
+        //public void GenerateBatchFunctionsForSagas()
+        //{
+        //    foreach (var @event in _batchEvent)
+        //    {
+        //        var batchEvent = typeof(BatchEvent<>);
+        //        var genericBatch = batchEvent.MakeGenericType(@event);
 
-                var eventType = typeof(Event<>);
-                var genericEventType = eventType.MakeGenericType(genericBatch);
+        //        var eventType = typeof(Event<>);
+        //        var genericEventType = eventType.MakeGenericType(genericBatch);
 
-                var saga = _sagas.FirstOrDefault(s => IsUsedBySaga(s, genericEventType));
-                if (saga is null)
-                {
-                    continue;
-                }
+        //        var saga = _sagas.FirstOrDefault(s => IsUsedBySaga(s, genericEventType));
+        //        if (saga is null)
+        //        {
+        //            continue;
+        //        }
 
-                BatchFunction(@event);
-                BatchConsumerFunction(saga,@event);
-            }
-        }
+        //        BatchFunction(@event);
+        //        BatchConsumerFunction(saga,@event);
+        //    }
+        //}
 
         private void BatchFunction(Type @event)
         {

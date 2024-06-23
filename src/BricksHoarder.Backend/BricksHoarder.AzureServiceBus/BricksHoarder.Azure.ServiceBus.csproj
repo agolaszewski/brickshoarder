@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
+	<Configurations>Debug;Release;</Configurations>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -19,11 +19,11 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\BricksHoarder.Common.CQRS\BricksHoarder.Common.CQRS.csproj" />
+		<ProjectReference Include="..\BricksHoarder.Common.DDD\BricksHoarder.Common.DDD.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Core\BricksHoarder.Core.csproj" />
 		<ProjectReference Include="..\BricksHoarder.Credentials\BricksHoarder.Credentials.csproj" />
 		<ProjectReference Include="..\BricksHoarder.DateTime\BricksHoarder.DateTime.Noda.csproj" />
-		<ProjectReference Include="..\BricksHoarder.Domain\BricksHoarder.Domain.csproj" />
-		<ProjectReference Include="..\BricksHoarder.MassTransit\BricksHoarder.MassTransit.csproj" />
+		<ProjectReference Include="..\BricksHoarder.Events\BricksHoarder.Events.csproj" />
 	</ItemGroup>
 
 </Project>

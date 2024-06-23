@@ -1,11 +1,9 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources;
 using Newtonsoft.Json.Linq;
 using Pulumi;
 using Pulumi.AzureNative.Resources;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 {
@@ -26,7 +24,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             Output.All(ServiceBusEndpoint, SharedAccessKey, SharedAccessKeyName, ServiceBusConnectionString).Apply(_ =>
             {
-                string json = File.ReadAllText("..//BricksHoarder.Functions//local.settings.json");
+                string json = File.ReadAllText("..//BricksHoarder.Api//appsettings.Development.json");
 
                 JObject jObject = Newtonsoft.Json.JsonConvert.DeserializeObject(json) as JObject;
 
@@ -34,7 +32,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 serviceBusConnectionStringToken.Replace(ServiceBusConnectionString.Convert());
 
                 JToken azureServiceBusEndpoint = jObject!.SelectToken("AzureServiceBus.Endpoint")!;
-                azureServiceBusEndpoint.Replace(ServiceBusEndpoint.Convert().Replace("https://",string.Empty));
+                azureServiceBusEndpoint.Replace(ServiceBusEndpoint.Convert().Replace("https://", string.Empty));
 
                 JToken azureServiceBusSharedAccessKeyName = jObject!.SelectToken("AzureServiceBus.SharedAccessKeyName")!;
                 azureServiceBusSharedAccessKeyName.Replace(SharedAccessKeyName.Convert());
@@ -43,12 +41,10 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
                 azureServiceBusSharedAccessKey.Replace(SharedAccessKey.Convert());
 
                 string updatedJsonString = jObject.ToString();
-                File.WriteAllText("..//BricksHoarder.Functions//local.settings.json", updatedJsonString);
+                File.WriteAllText("..//BricksHoarder.Api//appsettings.Development.json", updatedJsonString);
 
                 return Task.CompletedTask;
             });
-
-
         }
 
         [Output]

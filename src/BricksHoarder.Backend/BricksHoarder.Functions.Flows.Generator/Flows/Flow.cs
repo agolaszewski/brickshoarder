@@ -24,6 +24,11 @@ namespace BricksHoarder.Functions.Flows.Generator.Flows
 
         internal void Build()
         {
+            foreach (var saga in _sagas)
+            {
+                saga.Build();
+            }
+
             foreach (var command in _commands)
             {
                 command.Build();

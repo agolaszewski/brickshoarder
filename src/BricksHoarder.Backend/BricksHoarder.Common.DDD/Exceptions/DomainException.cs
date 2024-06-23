@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BricksHoarder.Common.DDD.Exception
+﻿namespace BricksHoarder.Common.DDD.Exceptions
 {
-    public class DomainException : System.Exception
+    public class DomainException : Exception
     {
-        public DomainException(string message) : base(message)
+        public DomainException(string message, string? code = null) : base(message)
         {
-
+            Code = code;
         }
+
+        public string? Code { get; }
     }
 }

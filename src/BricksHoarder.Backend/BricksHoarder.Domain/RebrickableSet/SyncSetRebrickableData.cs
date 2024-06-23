@@ -7,29 +7,17 @@ namespace BricksHoarder.Domain.RebrickableSet
 {
     public class SyncSetRebrickableData
     {
-        public class Handler : ICommandHandler<SyncSetRebrickableDataCommand, RebrickableSetAggregate>
+        public class Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore) : ICommandHandler<SyncSetRebrickableDataCommand, RebrickableSetAggregate>
         {
-            private readonly IRebrickableClient _rebrickableClient;
-            private readonly IAggregateStore _aggregateStore;
-
-            public Handler(IRebrickableClient rebrickableClient, IAggregateStore aggregateStore)
-            {
-                _rebrickableClient = rebrickableClient;
-                _aggregateStore = aggregateStore;
-            }
-
             public async Task<RebrickableSetAggregate> HandleAsync(SyncSetRebrickableDataCommand command)
             {
-                var set = await _aggregateStore.GetByIdOrDefaultAsync<RebrickableSetAggregate>(command.SetId);
+                var set = await aggregateStore.GetByIdOrDefaultAsync<RebrickableSetAggregate>(command.SetId);
 
-                var apiSet = await _rebrickableClient.LegoSetsReadAsync(command.SetId);
+                var apiSet = await rebrickableClient.LegoSetsReadAsync(command.SetId);
                 set.SetData(apiSet);
 
-                var minifigures = await _rebrickableClient.LegoSetsMinifigsListAsync(command.SetId);
-                foreach (var minifigure in minifigures.Results)
-                {
-                    set.SetMinifigureData(minifigure);
-                }
+                var minifigures = await rebrickableClient.LegoSetsMinifigsListAsync(command.SetId);
+                set.SetMinifigureData(minifigures.Results);
 
                 return set;
             }

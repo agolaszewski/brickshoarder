@@ -2,5 +2,5 @@
 
 namespace BricksHoarder.Commands.Sets
 {
-    public record SyncSetRebrickableDataCommand(string SetId) : ICommand;
+    public partial record SyncSetRebrickableDataCommand(string SetId) : ICommand;
 }

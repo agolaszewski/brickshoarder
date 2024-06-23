@@ -1,5 +1,4 @@
-﻿using BricksHoarder.Azure.ServiceBus;
-using BricksHoarder.Commands.Sets;
+﻿using BricksHoarder.Commands.Sets;
 using BricksHoarder.Common;
 using BricksHoarder.Credentials;
 using BricksHoarder.Domain;
@@ -47,7 +46,7 @@ namespace BricksHoarder.Marten.Sandbox
             {
                 mapper.AddDomainProfiles();
             });
-            services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
+            //services.Add(new AzureServiceBusCredentials(config, "AzureServiceBus"), redisCredentials);
 
             var provider = services.BuildServiceProvider();
 
@@ -70,8 +69,8 @@ namespace BricksHoarder.Marten.Sandbox
 
             var r = new RandomService();
             var now = System.DateTime.Now;
-            var start = now.Date.AddDays(0).AddHours(14).ToUniversalTime();
-            var end = now.Date.AddDays(0).AddHours(16).ToUniversalTime();
+            var start = now.Date.AddDays(0).AddHours(10).ToUniversalTime();
+            var end = now.Date.AddDays(0).AddHours(12).ToUniversalTime();
 
             foreach (var item in list)
             {

@@ -2,5 +2,5 @@
 
 namespace BricksHoarder.Events
 {
-    public record SetDetailsChanged(string SetId, DateTime LastModifiedDate) : IEvent, IBatch;
+    public record SetDetailsChanged(string SetId, DateTime LastModifiedDate) : IEvent;
 }

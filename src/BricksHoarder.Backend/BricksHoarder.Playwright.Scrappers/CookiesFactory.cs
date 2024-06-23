@@ -7,7 +7,9 @@ namespace BricksHoarder.Playwright
     {
         public async Task<IReadOnlyList<Cookie>> CreateCookiesAsync(string page)
         {
-            var content = await File.ReadAllTextAsync($"Cookies/{page}.json");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Cookies/{page}.json");
+            var content = await File.ReadAllTextAsync(path);
+
             var cookies = JsonSerializer.Deserialize<List<Cookie>>(content)!.ToList();
             return cookies;
         }

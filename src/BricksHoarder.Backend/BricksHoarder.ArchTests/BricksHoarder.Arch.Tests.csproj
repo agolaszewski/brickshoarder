@@ -6,7 +6,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
+    <Configurations>Debug;Release;</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BricksHoarder.Functions\BricksHoarder.Functions.csproj" />
+    <ProjectReference Include="..\BricksHoarder.Api\BricksHoarder.Api.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
-﻿using BricksHoarder.Commands.Metadata;
-using BricksHoarder.Commands.Sets;
+﻿using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
+using BricksHoarder.Core.Commands;
+using BricksHoarder.Core.Helpers;
 using BricksHoarder.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -9,8 +10,12 @@ namespace BricksHoarder.Domain.SyncRebrickableData
 {
     public class SyncRebrickableDataSaga : MassTransitStateMachine<SyncRebrickableDataSagaState>
     {
+        private readonly ILogger<SyncRebrickableDataSaga> _logger;
+
         public SyncRebrickableDataSaga(ILogger<SyncRebrickableDataSaga> logger)
         {
+            _logger = logger;
+
             InstanceState(x => x.CurrentState, SyncingState);
 
             Event(() => SyncSagaStarted, x => x.CorrelateById(x => x.Message.Id));
@@ -18,7 +23,7 @@ namespace BricksHoarder.Domain.SyncRebrickableData
             Event(() => SyncSetsCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
             Event(() => SetsReleased, x => x.CorrelateById(x => x.CorrelationId!.Value));
             Event(() => SetDetailsChanged, x => x.CorrelateById(x => x.CorrelationId!.Value));
-            Event(() => FetchSetRebrickableDataCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
+            Event(() => SyncSetRebrickableDataCommandConsumed, x => x.CorrelateById(x => x.CorrelationId!.Value));
             Event(() => NoChangesToSets, x => x.CorrelateById(x => x.CorrelationId!.Value));
 
             Initially(When(SyncSagaStarted)
@@ -31,7 +36,7 @@ namespace BricksHoarder.Domain.SyncRebrickableData
 
             During(SyncingState, When(SyncThemesCommandConsumed)
                 .Then(_ => logger.LogDebug("SyncThemesCommandConsumed"))
-                .Then(ProcessSyncThemesCommandConsumed));
+                .ThenAsync(ProcessSyncThemesCommandConsumedAsync));
 
             During(SyncingState, When(SyncSetsCommandConsumed)
                 .Then(_ => logger.LogDebug("SyncSetsCommandConsumed"))
@@ -43,101 +48,71 @@ namespace BricksHoarder.Domain.SyncRebrickableData
 
             During(SyncingState, When(SetsReleased)
                 .Then(_ => logger.LogDebug("SetReleased"))
-                .Then(ProcessSetReleased));
+                .ThenAsync(ProcessSetReleased));
 
             During(SyncingState, When(SetDetailsChanged)
                 .Then(_ => logger.LogDebug("SetDetailsChanged"))
-                .Then(ProcessSetDetailsChanged));
+                .ThenAsync(ProcessSetDetailsChanged));
 
-            During(SyncingState, When(FetchSetRebrickableDataCommandConsumed)
-                .Then(_ => logger.LogDebug("FetchSetRebrickableDataCommandConsumed"))
-                .Then(ProcessFetchSetRebrickableDataCommandConsumed),
+            During(SyncingState, When(SyncSetRebrickableDataCommandConsumed)
+                .Then(_ => logger.LogDebug("SyncSetRebrickableDataCommandConsumed"))
+                .ThenAsync(ProcessSetRebrickableDataCommandConsumed),
 
-                When(FetchSetRebrickableDataCommandConsumed, x => x.Saga.AllSetsProcessed())
+                When(SyncSetRebrickableDataCommandConsumed, x => x.Saga.AllSetsProcessed())
                 .Finalize());
 
-            Finally(x => x.Then(context => logger.LogError("SyncSetsSaga finished {id}", context.Saga.CorrelationId)));
+            Finally(x => x.Then(context => logger.LogInformation("SyncSetsSaga finished {id}", context.Saga.CorrelationId)));
 
             SetCompletedWhenFinalized();
         }
 
-        private void ProcessSyncSetsCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncSetsCommand>> context)
-        {
-            context.Saga.SyncingSetsFinished = true;
-        }
+        public Event<NoChangesToSets> NoChangesToSets { get; }
+
+        public Event<BatchEvent<SetDetailsChanged>> SetDetailsChanged { get; }
+
+        public Event<BatchEvent<SetReleased>> SetsReleased { get; }
 
         public State SyncingState { get; }
 
         public Event<SyncSagaStarted> SyncSagaStarted { get; }
 
-        public Event<CommandConsumed<SyncThemesCommand>> SyncThemesCommandConsumed { get; }
+        public Event<CommandConsumed<SyncSetRebrickableDataCommand>> SyncSetRebrickableDataCommandConsumed { get; }
 
         public Event<CommandConsumed<SyncSetsCommand>> SyncSetsCommandConsumed { get; }
 
-        public Event<BatchEvent<SetReleased>> SetsReleased { get; }
+        public Event<CommandConsumed<SyncThemesCommand>> SyncThemesCommandConsumed { get; }
 
-        public Event<BatchEvent<SetDetailsChanged>> SetDetailsChanged { get; }
-
-        public Event<CommandConsumed<SyncSetRebrickableDataCommand>> FetchSetRebrickableDataCommandConsumed { get; }
-
-        public Event<NoChangesToSets> NoChangesToSets { get; }
-
-        private async Task SendSyncThemesCommandAsync(BehaviorContext<SyncRebrickableDataSagaState, SyncSagaStarted> action)
+        private async Task ProcessSetDetailsChanged(BehaviorContext<SyncRebrickableDataSagaState, BatchEvent<SetDetailsChanged>> context)
         {
-            await action.Send(SyncThemesCommandMetadata.QueuePathUri, new SyncThemesCommand(), x => x.CorrelationId = action.Saga.CorrelationId);
-        }
-
-        private void ProcessSyncThemesCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncThemesCommand>> context)
-        {
-            context.Send(SyncSetsCommandMetadata.QueuePathUri, new SyncSetsCommand(), x => x.CorrelationId = context.Saga.CorrelationId);
-        }
-
-        private void ProcessSetReleased(BehaviorContext<SyncRebrickableDataSagaState, BatchEvent<SetReleased>> context)
-        {
-            lock (context.Saga.SetsToProcess)
+            foreach (var msg in context.Message.Collection)
             {
-                foreach (var msg in context.Message.Collection)
-                {
-                    context.Saga.AddSetToBeProcessed(msg.SetId);
-                    context.Send(SyncSetLegoDataCommandMetadata.QueuePathUri, new SyncSetLegoDataCommand(msg.SetId), x => x.CorrelationId = context.Saga.CorrelationId);
-                }
-
-                if (!context.Saga.AnySetIsCurrentlyProcessing())
-                {
-                    var first = context.Message.Collection.First();
-                    context.Saga.MarkSetAsCurrentlyProcessing(first.SetId);
-                    context.Send(SyncSetRebrickableDataCommandMetadata.QueuePathUri, new SyncSetRebrickableDataCommand(first.SetId), x => x.CorrelationId = context.Saga.CorrelationId);
-                }
+                context.Saga.AddSetToBeProcessed(msg.SetId);
             }
-        }
 
-        private void ProcessSetDetailsChanged(BehaviorContext<SyncRebrickableDataSagaState, BatchEvent<SetDetailsChanged>> context)
-        {
-            lock (context.Saga.SetsToProcess)
+            if (context.Saga.AnySetIsCurrentlyProcessing())
             {
-                foreach (var msg in context.Message.Collection)
-                {
-                    context.Saga.AddSetToBeProcessed(msg.SetId);
-                    //context.Send(SyncSetLegoDataCommandMetadata.QueuePathUri, new SyncSetLegoDataCommand(msg.SetId), x => x.CorrelationId = context.Saga.CorrelationId);
-                }
-
-                if (!context.Saga.AnySetIsCurrentlyProcessing())
-                {
-                    var first = context.Message.Collection.First();
-
-                    context.Saga.MarkSetAsCurrentlyProcessing(first.SetId);
-                    context.Send(SyncSetRebrickableDataCommandMetadata.QueuePathUri,
-                        new SyncSetRebrickableDataCommand(first.SetId),
-                        x => x.CorrelationId = context.Saga.CorrelationId);
-                }
+                return;
             }
+
+            var first = context.Message.Collection.First();
+            context.Saga.MarkSetAsCurrentlyProcessing(first.SetId);
+
+            await SendAsync(context, new SyncSetRebrickableDataCommand(first.SetId));
+            await SendAsync(context, new SyncSetLegoDataCommand(first.SetId));
         }
 
-        private void ProcessFetchSetRebrickableDataCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncSetRebrickableDataCommand>> context)
+        private async Task ProcessSetRebrickableDataCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncSetRebrickableDataCommand>> context)
         {
             context.Saga.FinishProcessing(context.Message.Command.SetId);
 
+            _logger.LogDebug($"Synced {context.Saga.SetsToProcess.Count(x => x.State == ProcessingState.Finished)} of {context.Saga.SetsToProcess.Count}");
+
             if (context.Saga.AllSetsProcessed())
+            {
+                return;
+            }
+
+            if (context.Saga.AnySetIsCurrentlyProcessing())
             {
                 return;
             }
@@ -149,7 +124,48 @@ namespace BricksHoarder.Domain.SyncRebrickableData
             }
 
             context.Saga.MarkSetAsCurrentlyProcessing(set.Id);
-            context.Send(SyncSetRebrickableDataCommandMetadata.QueuePathUri, new SyncSetRebrickableDataCommand(set.Id), x => x.CorrelationId = context.Saga.CorrelationId);
+
+            await SendAsync(context, new SyncSetRebrickableDataCommand(set.Id));
+            await SendAsync(context, new SyncSetLegoDataCommand(set.Id));
+        }
+
+        private async Task ProcessSetReleased(BehaviorContext<SyncRebrickableDataSagaState, BatchEvent<SetReleased>> context)
+        {
+            foreach (var msg in context.Message.Collection)
+            {
+                context.Saga.AddSetToBeProcessed(msg.SetId);
+            }
+
+            if (context.Saga.AnySetIsCurrentlyProcessing())
+            {
+                return;
+            }
+
+            var first = context.Message.Collection.First();
+            context.Saga.MarkSetAsCurrentlyProcessing(first.SetId);
+
+            await SendAsync(context, new SyncSetRebrickableDataCommand(first.SetId));
+            await SendAsync(context, new SyncSetLegoDataCommand(first.SetId));
+        }
+
+        private void ProcessSyncSetsCommandConsumed(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncSetsCommand>> context)
+        {
+            context.Saga.SyncingSetsFinished = true;
+        }
+
+        private async Task ProcessSyncThemesCommandConsumedAsync(BehaviorContext<SyncRebrickableDataSagaState, CommandConsumed<SyncThemesCommand>> context)
+        {
+            await SendAsync(context, new SyncSetsCommand());
+        }
+
+        private async Task SendAsync<TCommand>(BehaviorContext<SyncRebrickableDataSagaState> context, TCommand command) where TCommand : ICommand
+        {
+            await context.Send(PathHelper.QueuePathUri<TCommand>(), command, x => x.CorrelationId = context.Saga.CorrelationId);
+        }
+
+        private async Task SendSyncThemesCommandAsync(BehaviorContext<SyncRebrickableDataSagaState, SyncSagaStarted> context)
+        {
+            await SendAsync(context, new SyncThemesCommand());
         }
     }
 }

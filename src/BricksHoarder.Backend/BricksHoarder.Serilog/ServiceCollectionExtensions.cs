@@ -28,7 +28,7 @@ namespace BricksHoarder.Serilog
         {
             const string format = "{Timestamp:yyyy} {SourceContext} [{Level:u3}] {NewLine}{Message:lj}{NewLine}{Exception}{NewLine}";
 
-            return loggerConfiguration.WriteTo.Console(outputTemplate: format, restrictedToMinimumLevel: LogEventLevel.Warning);
+            return loggerConfiguration.WriteTo.Console();
         }
 
         public static LoggerConfiguration AddSeq(this LoggerConfiguration loggerConfiguration, Uri seqUrl)

@@ -1,4 +1,6 @@
-﻿namespace BricksHoarder.Core.Aggregates
+﻿using BricksHoarder.Core.Events;
+
+namespace BricksHoarder.Core.Aggregates
 {
     public interface IAggregateStore
     {

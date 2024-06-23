@@ -1,35 +1,15 @@
 ﻿using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Exceptions;
-using BricksHoarder.Core.Services;
 using Marten;
 using Marten.Events;
-using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 
 namespace BricksHoarder.Marten
 {
-    public class MartenAggregateStore : IAggregateStore
+    public class MartenAggregateStore(IDocumentStore eventStore, IServiceProvider context) : IAggregateStore
     {
-        private readonly ICacheService _cache;
-        private readonly IServiceProvider _context;
-        private readonly IPublishEndpoint _publishEndpoint;
-        private readonly IDocumentStore _eventStore;
-
-        public MartenAggregateStore(
-            IDocumentStore eventStore,
-            ICacheService cache,
-            IServiceProvider context,
-            IPublishEndpoint publishEndpoint)
-        {
-            _eventStore = eventStore;
-            _cache = cache;
-            _context = context;
-            _publishEndpoint = null;
-        }
-
-        public async Task<TAggregate> GetByIdAsync<TAggregate>(string aggregateId)
-            where TAggregate : class, IAggregateRoot, new()
+        public async Task<TAggregate> GetByIdAsync<TAggregate>(string aggregateId) where TAggregate : class, IAggregateRoot, new()
         {
             var aggregate = await GetByIdOrDefaultAsync<TAggregate>(aggregateId, 0);
             if (aggregate is null)
@@ -42,7 +22,7 @@ namespace BricksHoarder.Marten
 
         public TAggregate GetNew<TAggregate>() where TAggregate : class, IAggregateRoot, new()
         {
-            var model = new TAggregate { Context = _context, Version = 0 };
+            var model = new TAggregate { Context = context, Version = 0 };
             return model;
         }
 
@@ -56,7 +36,7 @@ namespace BricksHoarder.Marten
             {
                 eventStoreOutcome = await Policies.EventStoreRetryPolicy.ExecuteAndCaptureAsync(async () =>
                 {
-                    await using var session = _eventStore.LightweightSession();
+                    await using var session = eventStore.LightweightSession();
                     session.Events.Append(streamName, aggregate.Version + aggregate.Events.Count(), aggregate.Events.Select(a => a.Event).ToList());
                     await session.SaveChangesAsync();
                 });
@@ -67,7 +47,7 @@ namespace BricksHoarder.Marten
                 aggregate.Version += aggregate.Events.Count();
                 if (aggregate.Version > 0)
                 {
-                    var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
+                    var aggregateSnapshot = context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
                     await aggregateSnapshot.SaveAsync(streamName, aggregate, TimeSpan.FromDays(7));
                 }
             }
@@ -105,7 +85,7 @@ namespace BricksHoarder.Marten
                 Version = 0
             };
 
-            var aggregateSnapshot = _context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
+            var aggregateSnapshot = context.GetRequiredService<IAggregateSnapshot<TAggregate>>();
 
             var aggregateFromCache = await aggregateSnapshot.LoadAsync(streamName);
             if (aggregateFromCache is not null)
@@ -115,7 +95,7 @@ namespace BricksHoarder.Marten
 
             long sliceStart = aggregate.Version + 1;
 
-            using var session = _eventStore.LightweightSession();
+            using var session = eventStore.LightweightSession();
             var events = await session.Events.FetchStreamAsync(streamName, version: version, fromVersion: sliceStart);
 
             foreach (var @event in events)
@@ -131,7 +111,7 @@ namespace BricksHoarder.Marten
             }
 
             aggregate.Id = aggregateId;
-            aggregate.Context = _context;
+            aggregate.Context = context;
             return aggregate;
         }
 

@@ -358,3 +358,7 @@ MigrationBackup/
 /src/BricksHoarder.Backend/BricksHoarder.Functions/production.settings.json
 /src/BricksHoarder.Backend/BricksHoarder.Projections.Rebuilder/local.settings.json
 /src/BricksHoarder.Backend/BricksHoarder.Api/appsettings.Development.json
+/src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/Pulumi.Subscription.yaml
+/src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/Pulumi.Production.yaml
+/src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/Pulumi.dev.yaml
+/src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/Pulumi.Subscription.yaml

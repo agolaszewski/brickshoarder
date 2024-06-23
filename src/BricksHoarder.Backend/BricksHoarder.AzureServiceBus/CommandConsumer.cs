@@ -1,4 +1,5 @@
-﻿using BricksHoarder.Core.Aggregates;
+﻿using BricksHoarder.Common.DDD.Aggregates;
+using BricksHoarder.Core.Aggregates;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using BricksHoarder.Events;
@@ -31,8 +32,9 @@ namespace BricksHoarder.Azure.ServiceBus
             try
             {
                 _logger.LogDebug("Consuming {Message} {CorrelationId}", context.Message.GetType().FullName, context.CorrelationId);
-               
+
                 TAggregateRoot aggregateRoot = await _handler.HandleAsync(context.Message);
+
                 await _aggregateStore.SaveAsync(aggregateRoot);
 
                 var tasks = new List<Task>();
@@ -49,9 +51,9 @@ namespace BricksHoarder.Azure.ServiceBus
                     await context.Publish(@event, @event.GetType(), x => x.CorrelationId = context.CorrelationId);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogInformation(ex, "Exception In CommandConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
+                _logger.LogError(ex, "Exception In CommandConsumer {Message} {CorrelationId} {Content}", context.Message.GetType().FullName, context.CorrelationId, System.Text.Json.JsonSerializer.Serialize(context.Message));
                 throw;
             }
             finally

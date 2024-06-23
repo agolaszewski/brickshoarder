@@ -22,6 +22,7 @@ public class SyncThemes
         public async Task<ThemesCollectionAggregate> HandleAsync(SyncThemesCommand command)
         {
             var themesFromApi = await GetAllThemesAsync();
+
             var themes = await _aggregateStore.GetByIdOrDefaultAsync<ThemesCollectionAggregate>();
 
             foreach (var themeApi in themesFromApi)

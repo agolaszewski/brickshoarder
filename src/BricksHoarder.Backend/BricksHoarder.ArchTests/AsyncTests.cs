@@ -1,8 +1,8 @@
-using System.Threading.Tasks;
 using ArchUnitNET.Domain;
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnit;
-using BricksHoarder.Functions;
+using System.Threading.Tasks;
+using BricksHoarder.Api;
 using Xunit;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
@@ -11,7 +11,7 @@ namespace BricksHoarder.Arch.Tests
     public class AsyncTests
     {
         private static readonly Architecture Architecture =
-            new ArchLoader().LoadAssemblyIncludingDependencies(typeof(BaseFunction).Assembly)
+            new ArchLoader().LoadAssemblyIncludingDependencies(typeof(Pointer).Assembly)
                 .Build();
 
         private static readonly IObjectProvider<MethodMember> BricksHoarderMethods =

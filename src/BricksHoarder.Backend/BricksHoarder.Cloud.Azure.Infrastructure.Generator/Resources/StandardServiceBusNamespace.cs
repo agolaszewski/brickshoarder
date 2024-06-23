@@ -3,6 +3,7 @@ using Pulumi;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.ServiceBus;
 using Pulumi.AzureNative.ServiceBus.Inputs;
+using PrivateEndpointConnectionArgs = Pulumi.AzureNative.ServiceBus.Inputs.PrivateEndpointConnectionArgs;
 using ResourceArgs = Pulumi.ResourceArgs;
 
 namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources
@@ -31,7 +32,8 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Resources
                     Name = SkuName.Standard,
                     Tier = SkuTier.Standard
                 },
-                NamespaceName = $"sb-brickshoarder-{env}"
+                NamespaceName = $"sb-brickshoarder-{env}",
+                PrivateEndpointConnections = new InputList<PrivateEndpointConnectionArgs>()
             });
 
             var serviceBusNamespaceNamespaceAuthorizationRule = new NamespaceAuthorizationRule($"ServiceBus.Namespace.NamespaceAuthorizationRule.{name}", new NamespaceAuthorizationRuleArgs()

@@ -4,7 +4,23 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Configurations>Debug;Release;Debug - Local;Debug - Azure</Configurations>
+   <Configurations>Debug;Release;</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Local|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Azure|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BricksHoarder.AzureServiceBus\BricksHoarder.Azure.ServiceBus.csproj" />
     <ProjectReference Include="..\BricksHoarder.Commands\BricksHoarder.Commands.csproj" />
     <ProjectReference Include="..\BricksHoarder.Common.CQRS\BricksHoarder.Common.CQRS.csproj" />
     <ProjectReference Include="..\BricksHoarder.Common.DDD\BricksHoarder.Common.DDD.csproj" />
@@ -29,6 +46,10 @@
     <ProjectReference Include="..\BricksHoarder.Events\BricksHoarder.Events.csproj" />
     <ProjectReference Include="..\BricksHoarder.Helpers\BricksHoarder.Helpers.csproj" />
     <ProjectReference Include="..\BricksHoarder.Websites.Scrappers\BricksHoarder.Websites.Scrappers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ValueObjects\" />
   </ItemGroup>
 
 </Project>

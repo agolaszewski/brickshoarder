@@ -22,5 +22,15 @@ namespace BricksHoarder.Cache.NoCache
         {
             return Task.CompletedTask;
         }
+
+        public Task SetAsync(string key, DateTime value, TimeSpan? expire)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<T?> GetAsync<T>(string key, Func<string, T?> convertFn)
+        {
+            return Task.FromResult<T?>(default);
+        }
     }
 }

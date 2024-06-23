@@ -4,6 +4,26 @@ using BricksHoarder.Functions.Flows.Generator.Generators;
 
 namespace BricksHoarder.Functions.Flows.Generator.Flows
 {
+    public class SagaEvent<TEvent> : IFlowComponent where TEvent : class, IEvent
+    {
+        private bool _isBatch;
+        public Type Type { get; } = typeof(TEvent);
+
+        public SagaEvent<TEvent> AsBatch()
+        {
+            _isBatch = true;
+            return this;
+        }
+
+        public void Build()
+        {
+            if (_isBatch)
+            {
+
+            }
+        }
+    }
+
     public class Event<TEvent> : IFlowComponent where TEvent : class, IEvent
     {
         private readonly List<IFlowComponent> _commandsToSchedule = new List<IFlowComponent>();

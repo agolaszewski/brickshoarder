@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BricksHoarder.Core.Helpers
+﻿namespace BricksHoarder.Core.Helpers
 {
     public class ComparerService
     {
         public bool HasChanged { get; private set; } = false;
 
-
-        public ComparerService Compare<T>(T? a, T? b) 
+        public ComparerService Compare<T>(T? a, T? b)
         {
             if (HasChanged)
             {
@@ -47,6 +40,5 @@ namespace BricksHoarder.Core.Helpers
             HasChanged = true;
             return this;
         }
-
     }
 }

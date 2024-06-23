@@ -15,6 +15,7 @@ internal class Program
         {
             "Dev" => Deployment.RunAsync<Dev>(),
             "Production" => Deployment.RunAsync<Production>(),
+            "Subscription" => Deployment.RunAsync<Subscription>(),
             _ => Task.FromResult(0)
         };
     }
