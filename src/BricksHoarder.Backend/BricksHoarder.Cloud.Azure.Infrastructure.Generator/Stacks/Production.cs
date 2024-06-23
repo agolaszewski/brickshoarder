@@ -351,7 +351,7 @@ namespace BricksHoarder.Cloud.Azure.Infrastructure.Generator.Stacks
 
             var functionTimers = new WebApp("WebApp.Functions.BricksHoarder.Functions.Timers", new WebAppArgs
             {
-                Name = "func-timers-brickshoarder-prd",
+                Name = "func-as1-brickshoarder-timers-prd",
                 ResourceGroupName = resourceGroup.Name,
                 ServerFarmId = appServicePlanFunctionsLinux.Id,
                 SiteConfig = new SiteConfigArgs

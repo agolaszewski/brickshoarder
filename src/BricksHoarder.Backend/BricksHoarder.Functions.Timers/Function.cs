@@ -1,14 +1,15 @@
 using BricksHoarder.Core.Events;
 using BricksHoarder.DateTime.Noda;
 using BricksHoarder.Events;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 
 namespace BricksHoarder.Functions.Timers
 {
-    public class SyncThemesFunction(IEventDispatcher eventDispatcher, IDateTimeProvider dataTimeProvider)
+    public class Function(IEventDispatcher eventDispatcher, IDateTimeProvider dataTimeProvider)
     {
-        [Function("SyncSagaFunction")]
-        public async Task RunAsync([TimerTrigger("0 0 3 * * *")] TimerInfo trigger)
+        [Function("Function")]
+        public async Task Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
         {
             await eventDispatcher.DispatchAsync(new SyncSagaStarted(dataTimeProvider.UtcNow().Date.ToGuid()));
         }

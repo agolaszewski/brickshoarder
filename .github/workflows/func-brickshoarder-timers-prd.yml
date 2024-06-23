@@ -6,7 +6,7 @@ on:
       - 'src/BricksHoarder.Backend/**'
       - '.github/workflows/func-brickshoarder-timers-prd.yml' 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'func-brickshoarder-timers-prd'   
+  AZURE_FUNCTIONAPP_NAME: 'func-as1-brickshoarder-timers-prd'   
   WORKING_DIRECTORY: ./src/BricksHoarder.Backend/BricksHoarder.Functions.Timers
   DOTNET_VERSION: '8.0.x'
 
