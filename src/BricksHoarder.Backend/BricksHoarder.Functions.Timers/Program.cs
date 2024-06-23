@@ -18,15 +18,7 @@ var host = new HostBuilder()
     .ConfigureServices((builder, services) =>
     {
         var config = builder.Configuration;
-
-        if (builder.HostingEnvironment.IsDevelopment())
-        {
-            Development(services, config);
-        }
-        else
-        {
-            Production(services, config);
-        }
+        Production(services, config);
     })
     .Build();
 
@@ -51,12 +43,12 @@ void Common(IServiceCollection services, IConfiguration config)
     services.CommonServices();
     services.AddDateTimeProvider();
 
-    services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), bus =>
-    {
-    },
-    (context, cfg) =>
-    {
-    });
+    //services.AddAzureServiceBusForAzureFunction(new AzureServiceBusCredentials(config, "AzureServiceBus"), bus =>
+    //{
+    //},
+    //(context, cfg) =>
+    //{
+    //});
 }
 
 host.Run();
