@@ -361,3 +361,4 @@ MigrationBackup/
 /src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/Pulumi.Subscription.yaml
 /src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/Pulumi.Production.yaml
 /src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/Pulumi.dev.yaml
+/src/BricksHoarder.Backend/BricksHoarder.Cloud.Azure.Infrastructure.Generator/Pulumi.Subscription.yaml
