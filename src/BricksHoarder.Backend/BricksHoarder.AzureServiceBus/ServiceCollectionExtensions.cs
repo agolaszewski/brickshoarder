@@ -59,23 +59,16 @@ namespace BricksHoarder.Azure.ServiceBus
             services.AddMassTransitForAzureFunctions(x =>
             {
                 busRegistrationConfigurator(x);
-
                 x.AddServiceBusMessageScheduler();
+                
+            }, connectionStringConfigurationKey:credentials.ConnectionString, (context, cfg) =>
+            {
+                busConfiguration(context, cfg);
 
-                x.UsingAzureServiceBus((context, cfg) =>
-                {
-                    var options = context.GetRequiredService<IOptions<ServiceBusOptions>>();
-                    cfg.Host(credentials.ConnectionString, _ => { });
+                cfg.Publish<IEvent>(x => x.Exclude = true);
+                cfg.Publish<ICommand>(x => x.Exclude = true);
 
-                    cfg.UseServiceBusMessageScheduler();
-
-                    busConfiguration(context, cfg);
-
-                    cfg.Publish<IEvent>(x => x.Exclude = true);
-                    cfg.Publish<ICommand>(x => x.Exclude = true);
-
-                    cfg.ConfigureEndpoints(context);
-                });
+                cfg.ConfigureEndpoints(context);
             });
         }
     }

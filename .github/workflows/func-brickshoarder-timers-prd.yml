@@ -20,6 +20,7 @@ defaults:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: prd
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
