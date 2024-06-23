@@ -18,7 +18,15 @@ var host = new HostBuilder()
     .ConfigureServices((builder, services) =>
     {
         var config = builder.Configuration;
-        Production(services, config);
+
+        if (builder.HostingEnvironment.IsDevelopment())
+        {
+            Development(services, config);
+        }
+        else
+        {
+            Production(services, config);
+        }
     })
     .Build();
 
