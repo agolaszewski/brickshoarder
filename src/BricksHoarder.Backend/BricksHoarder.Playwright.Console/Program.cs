@@ -10,10 +10,10 @@ namespace BricksHoarder.Playwright.Console
         private static async Task Main(string[] args)
         {
             var factory = new DebuggingPageFactory();
-            var runner = new OlxScrapper(factory, new CookiesFactory(), new DateTimeProvider());
+            var runner = new LegoScrapper(factory, new CookiesFactory(), new DateTimeProvider());
             try
             {
-                await runner.HandleAsync();
+                await runner.RunProductAsync(new LegoScrapper.LegoSetId("41744"));
             }
             catch (Exception e)
             {

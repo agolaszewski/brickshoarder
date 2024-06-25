@@ -1,10 +1,10 @@
-﻿using System.Text;
-using System.Text.Json;
-using Azure.Messaging.ServiceBus;
+﻿using Azure.Messaging.ServiceBus;
 using BricksHoarder.Core.Commands;
 using BricksHoarder.Core.Events;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Logging;
+using System.Text;
+using System.Text.Json;
 
 namespace BricksHoarder.Azure.ServiceBus.Services
 {
@@ -12,11 +12,28 @@ namespace BricksHoarder.Azure.ServiceBus.Services
     {
         private readonly ServiceBusClient _serviceBusClient = serviceBusClientFactory.CreateClient("ServiceBusClient");
 
-        public async Task HandleAsync(int amount)
+        public async Task HandleAsync(int amount, string queueName)
         {
             logger.LogWarning("ResubmitDeadQueueService invoked");
 
-            var receiver = _serviceBusClient.CreateReceiver("brickshoarder/fault", "default", new ServiceBusReceiverOptions()
+            var receiver = _serviceBusClient.CreateReceiver(queueName, new ServiceBusReceiverOptions()
+            {
+                SubQueue = SubQueue.DeadLetter
+            });
+
+            var messages = await receiver.ReceiveMessagesAsync(amount);
+            foreach (var message in messages)
+            {
+                await ResendAsync(message);
+                await receiver.CompleteMessageAsync(message);
+            }
+        }
+
+        public async Task HandleAsync(int amount, string topicName, string subscription)
+        {
+            logger.LogWarning("ResubmitDeadQueueService invoked");
+
+            var receiver = _serviceBusClient.CreateReceiver(topicName, subscription, new ServiceBusReceiverOptions()
             {
                 SubQueue = SubQueue.DeadLetter
             });

@@ -35,4 +35,4 @@ jobs:
         context: ./src/BricksHoarder.Backend
         file: ./Docker/BricksHoarder.Api/Dockerfile
         push: true
-        tags: agolaszewski1337/brickshoardertest:latest  
+        tags: agolaszewski1337/brickshoarder:latest  

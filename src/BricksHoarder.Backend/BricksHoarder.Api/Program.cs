@@ -1,5 +1,6 @@
 using Azure.Identity;
 using BricksHoarder.Azure.ServiceBus;
+using BricksHoarder.Azure.ServiceBus.Services;
 using BricksHoarder.Commands.Sets;
 using BricksHoarder.Commands.Themes;
 using BricksHoarder.Common;
@@ -25,6 +26,7 @@ using BricksHoarder.Websites.Scrappers;
 using BricksHoarder.Websites.Scrappers.Lego;
 using Marten;
 using MassTransit;
+using MassTransit.Transports;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
 using Serilog;
@@ -156,14 +158,31 @@ app.MapGet("/lego/{id}", async ([FromServices] LegoScrapper legoScrapper, IComma
 .WithName("Lego")
 .WithOpenApi();
 
-app.MapGet("/saga/sync", async ([FromServices] IEventDispatcher dispatcher, ICacheService cache, IDocumentStore ds) =>
+app.MapGet("/saga/sync", async ([FromServices] ISendEndpointProvider dispatcherCommand, ICacheService cache, IDocumentStore ds) =>
     {
-        await cache.ClearAsync();
-        await ds.Advanced.ResetAllData();
+        //await cache.ClearAsync();
+        //await ds.Advanced.ResetAllData();
 
-        await dispatcher.DispatchAsync<SyncSagaStarted>(new SyncSagaStarted(DateTime.UtcNow.Date.ToGuid()));
+        //await dispatcher.DispatchAsync<SyncSagaStarted>(new SyncSagaStarted(DateTime.UtcNow.Date.ToGuid()));
+
+        //ISendEndpoint endpoint = await dispatcherCommand.GetSendEndpoint(new Uri($"queue:SyncSetRebrickableDataCommand"));
+        //await endpoint.Send(new SyncSetRebrickableDataCommand("2811-1"), callback => { callback.CorrelationId = Guid.Parse("c33a4000-8ff2-08dc-0000-000000000000"); });
     })
 .WithName("SyncSaga")
+.WithOpenApi();
+
+app.MapPost("/queues/{queue}/resubmit", async ([FromServices] ResubmitDeadQueueService resubmitDeadQueueService, string queue) =>
+{
+    await resubmitDeadQueueService.HandleAsync(10, queue);
+})
+.WithName("QueueResubmit")
+.WithOpenApi();
+
+app.MapPost("/topics/{topic}/subscriptions/{subscription}/resubmit", async ([FromServices] ResubmitDeadQueueService resubmitDeadQueueService, string topic, string subscription) =>
+{
+    await resubmitDeadQueueService.HandleAsync(10, topic, subscription);
+})
+.WithName("TopicResubmit")
 .WithOpenApi();
 
 if (app.Environment.IsDevelopment())
