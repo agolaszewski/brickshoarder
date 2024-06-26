@@ -55,28 +55,28 @@ var app = builder.Build();
 
 void Production(IServiceCollection services, IConfiguration config)
 {
-    Common(services, config);
+    //Common(services, config);
 
     //services.AddApplicationInsightsTelemetryWorkerService();
     //services.ConfigureFunctionsApplicationInsights();
 
-    var martenCredentials = new PostgresAzureCredentials(config, "MartenAzure");
-    services.AddMartenEventStore(martenCredentials);
+    //var martenCredentials = new PostgresAzureCredentials(config, "MartenAzure");
+    //services.AddMartenEventStore(martenCredentials);
 }
 
 void Development(IServiceCollection services, IConfiguration config)
 {
-    Common(services, config);
+    //Common(services, config);
 
-    Log.Logger = Log.Logger
-        .AddSerilog()
-        .AddConsole()
-        .AddSeq(new Uri("http://localhost:5341/")).CreateLogger();
+    //Log.Logger = Log.Logger
+    //    .AddSerilog()
+    //    .AddConsole()
+    //    .AddSeq(new Uri("http://localhost:5341/")).CreateLogger();
 
-    services.AddLogging(lb => lb.AddSerilog(Log.Logger, true));
+    //services.AddLogging(lb => lb.AddSerilog(Log.Logger, true));
 
-    var martenCredentials = new PostgresCredentials(config, "MartenAzure");
-    services.AddMartenEventStore(martenCredentials);
+    //var martenCredentials = new PostgresCredentials(config, "MartenAzure");
+    //services.AddMartenEventStore(martenCredentials);
 }
 
 void Common(IServiceCollection services, IConfiguration config)
@@ -151,39 +151,46 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/lego/{id}", async ([FromServices] LegoScrapper legoScrapper, ICommandDispatcher dispatcher, string id) =>
+//app.MapGet("/lego/{id}", async ([FromServices] LegoScrapper legoScrapper, ICommandDispatcher dispatcher, string id) =>
+//    {
+//        await dispatcher.DispatchAsync<SyncSetLegoDataCommand>(new SyncSetLegoDataCommand(id));
+//    })
+//.WithName("Lego")
+//.WithOpenApi();
+
+//app.MapGet("/saga/sync", async ([FromServices] ISendEndpointProvider dispatcherCommand, ICacheService cache, IDocumentStore ds) =>
+//    {
+//        //await cache.ClearAsync();
+//        //await ds.Advanced.ResetAllData();
+
+//        //await dispatcher.DispatchAsync<SyncSagaStarted>(new SyncSagaStarted(DateTime.UtcNow.Date.ToGuid()));
+
+//        //ISendEndpoint endpoint = await dispatcherCommand.GetSendEndpoint(new Uri($"queue:SyncSetRebrickableDataCommand"));
+//        //await endpoint.Send(new SyncSetRebrickableDataCommand("2811-1"), callback => { callback.CorrelationId = Guid.Parse("c33a4000-8ff2-08dc-0000-000000000000"); });
+//    })
+//.WithName("SyncSaga")
+//.WithOpenApi();
+
+//app.MapPost("/queues/{queue}/resubmit", async ([FromServices] ResubmitDeadQueueService resubmitDeadQueueService, string queue) =>
+//{
+//    await resubmitDeadQueueService.HandleAsync(10, queue);
+//})
+//.WithName("QueueResubmit")
+//.WithOpenApi();
+
+//app.MapPost("/topics/{topic}/subscriptions/{subscription}/resubmit", async ([FromServices] ResubmitDeadQueueService resubmitDeadQueueService, string topic, string subscription) =>
+//{
+//    await resubmitDeadQueueService.HandleAsync(10, topic, subscription);
+//})
+//.WithName("TopicResubmit")
+//.WithOpenApi();
+
+app.MapGet("/echo",  () =>
     {
-        await dispatcher.DispatchAsync<SyncSetLegoDataCommand>(new SyncSetLegoDataCommand(id));
+        return "Hello, World!";
     })
-.WithName("Lego")
-.WithOpenApi();
-
-app.MapGet("/saga/sync", async ([FromServices] ISendEndpointProvider dispatcherCommand, ICacheService cache, IDocumentStore ds) =>
-    {
-        //await cache.ClearAsync();
-        //await ds.Advanced.ResetAllData();
-
-        //await dispatcher.DispatchAsync<SyncSagaStarted>(new SyncSagaStarted(DateTime.UtcNow.Date.ToGuid()));
-
-        //ISendEndpoint endpoint = await dispatcherCommand.GetSendEndpoint(new Uri($"queue:SyncSetRebrickableDataCommand"));
-        //await endpoint.Send(new SyncSetRebrickableDataCommand("2811-1"), callback => { callback.CorrelationId = Guid.Parse("c33a4000-8ff2-08dc-0000-000000000000"); });
-    })
-.WithName("SyncSaga")
-.WithOpenApi();
-
-app.MapPost("/queues/{queue}/resubmit", async ([FromServices] ResubmitDeadQueueService resubmitDeadQueueService, string queue) =>
-{
-    await resubmitDeadQueueService.HandleAsync(10, queue);
-})
-.WithName("QueueResubmit")
-.WithOpenApi();
-
-app.MapPost("/topics/{topic}/subscriptions/{subscription}/resubmit", async ([FromServices] ResubmitDeadQueueService resubmitDeadQueueService, string topic, string subscription) =>
-{
-    await resubmitDeadQueueService.HandleAsync(10, topic, subscription);
-})
-.WithName("TopicResubmit")
-.WithOpenApi();
+    .WithName("ECHO")
+    .WithOpenApi();
 
 if (app.Environment.IsDevelopment())
 {

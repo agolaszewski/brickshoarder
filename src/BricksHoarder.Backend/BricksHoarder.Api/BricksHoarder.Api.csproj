@@ -9,6 +9,7 @@
   <PropertyGroup>
   	<PlaywrightPlatform>win;linux</PlaywrightPlatform>
   	<OutputType>Exe</OutputType>
+  	<UserSecretsId>a0594e0f-0e41-45c3-b8da-8d82a5aad15c</UserSecretsId>
   </PropertyGroup>	  	
 
   <ItemGroup>
